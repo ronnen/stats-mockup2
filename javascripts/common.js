@@ -83,13 +83,13 @@ var getTranslation = function(transform) {
   return [matrix.e, matrix.f];
 };
 
-var countNonHidden = function(array) {
-  if (FADE_HIDDEN) return array.length;
+var countNonHidden = function(array, overrideFade) {
+  if (!overrideFade && FADE_HIDDEN) return array.length;
   return array.reduce(function(count, element) {return count + (element.hidden ? 0 : 1)}, 0);
 };
 
-var filterNonHidden = function(array) {
-  if (FADE_HIDDEN) return array;
+var filterNonHidden = function(array, overrideFade) {
+  if (!overrideFade && FADE_HIDDEN) return array;
   return array.filter(function(element) {return !element.hidden});
 };
 

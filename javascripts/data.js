@@ -207,6 +207,7 @@ function filterDataByCriteria(criteria) {
   return mainUnits;
 }
 
+/*
 function filterApproverDataByCriteria(approver, criteria) {
 
   approver.approvalTypes.forEach(function(approvalType) {
@@ -223,15 +224,24 @@ function filterApproverDataByCriteria(approver, criteria) {
   return approver;
 
 }
+*/
 
 function getAllVisibleApprovals() {
-  var approvals = [];
-  mainUnits.forEach(function(unit) {
-    unit.approvers.forEach(function(approver) {
-      approvals = approvals.concat(filterNonHidden(approver.approvals));
+  var result = [];
+  mainUnits.forEach(function(request) {
+    request.approvers.forEach(function(approver) {
+      result = result.concat(filterNonHidden(approver.approvals, true).map(function(approval) {
+        return {
+          request: request.request,
+          approver: approver.approverName,
+          submitter: approval.submitter,
+          value: approval.value,
+          waitTime: approval.waitTime
+        }
+      }))
     });
   });
-  return approvals.sort(function(a,b) {
+  return result.sort(function(a,b) {
     if (a.waitTime > b.waitTime) return -1;
     if (b.waitTime > a.waitTime) return 1;
     return 0;
@@ -239,11 +249,20 @@ function getAllVisibleApprovals() {
 }
 
 function getRequestVisibleApprovals(request) {
-  var approvals = [];
+  var result = [];
   request.approvers.forEach(function(approver) {
-    approvals = approvals.concat(filterNonHidden(approver.approvals));
+    result = result.concat(filterNonHidden(approver.approvals, true).map(function(approval) {
+      return {
+        request: request.request,
+        approver: approver.approverName,
+        submitter: approval.submitter,
+        value: approval.value,
+        waitTime: approval.waitTime
+      }
+    }))
   });
-  return approvals.sort(function(a,b) {
+
+  return result.sort(function(a,b) {
     if (a.waitTime > b.waitTime) return -1;
     if (b.waitTime > a.waitTime) return 1;
     return 0;

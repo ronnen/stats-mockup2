@@ -635,8 +635,18 @@ body.debug .view-json {
     padding-left: 10px;
 }
 
-.data-row .submitter, .data-row .value, .data-row .table-wait-time {
+.data-row .caption, .data-row .data {
     padding: 3px 5px 5px 3px;
+}
+
+.data-row .request {
+    display: flex;
+    flex: 0 200px;
+}
+
+.data-row .approver {
+    display: flex;
+    flex: 0 200px;
 }
 
 .data-row .submitter {

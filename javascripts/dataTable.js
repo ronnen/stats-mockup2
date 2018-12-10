@@ -26,19 +26,35 @@ function refreshTable(approvals) {
 
   dataRows
     .append("div")
-    .attr("class", "submitter")
+    .attr("class", "request data")
+    .text(function(d) {return d.request});
+  dataRows
+    .append("div")
+    .attr("class", "approver data")
+    .text(function(d) {return d.approver});
+  dataRows
+    .append("div")
+    .attr("class", "submitter data")
     .text(function(d) {return d.submitter});
   dataRows
     .append("div")
-    .attr("class", "value")
+    .attr("class", "value data")
     .text(function(d) {return valueToText(d.value)});
   dataRows
     .append("div")
-    .attr("class", "table-wait-time")
+    .attr("class", "table-wait-time data")
     .text(function(d) {return waitToText(d.waitTime)});
 
   var captionRow = tableRows.insert("div", "div")
     .attr("class", "data-row");
+  captionRow
+    .append("div")
+    .attr("class", "request caption")
+    .text("Request type");
+  captionRow
+    .append("div")
+    .attr("class", "approver caption")
+    .text("Request type");
   captionRow
     .append("div")
     .attr("class", "submitter caption")
