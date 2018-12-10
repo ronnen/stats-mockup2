@@ -187,15 +187,16 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     function approverMouseEnter(d, index) {
       console.log(d.approver.approverName);
       d3.select(this).classed("highlight", true);
-      d3.selectAll("g.sphere").each(function(d,i) {
-        var focused = d3.select(this).classed("sphere" + index)
-        d3.select(this).classed("dim", !focused);
-      });
+      d3.select(".detailed-group").classed("approver-highlight", true);
+      d3.selectAll("g.sphere"+index).classed("highlight", true);
+      d3.select("#average-guide" + index).classed("highlight", true);
     }
 
     function approverMouseLeave(d, i) {
       d3.select(this).classed("highlight", false);
-      d3.selectAll("g.sphere").classed("dim", false);
+      d3.select(".detailed-group").classed("approver-highlight", false);
+      d3.selectAll("g.sphere").classed("highlight", false);
+      d3.selectAll(".average-guide").classed("highlight", false);
     }
 
     circularGroups
@@ -276,6 +277,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .enter()
       .append("svg:g")
       .attr("class", "average-guide")
+      .attr("id", function(d,i) {return "average-guide" + i})
       .attr("transform", function (d) {
         var sampleDegrees = -180 + approvalsRadialStart +
           (approvalsRadialEnd - approvalsRadialStart) * (d.average / maxWaitTime);
@@ -286,7 +288,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
     avgGuideGroup
       .append("svg:line")
-      .attr("class", "average-guide")
+      .attr("class", "average-guide-line")
       .style("stroke-dasharray", ("5, 2"))
       .attr("x1", 0)
       .attr("y1", 0)
@@ -379,6 +381,9 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         .attr("cy", currentApprovalCircle.attr("cy"))
         .attr("transform", currentApprovalCircle.attr("transform"))
         .attr("r", parseFloat(currentApprovalCircle.attr("r")) + 5)
+        .on("click", function() {
+          d3.event.stopPropagation();
+        })
         .on("mouseleave", approvalMouseLeave);
 
       var rect = this.getBoundingClientRect();
@@ -616,9 +621,9 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   drawCircularMarkers();
   drawSpheresGuidelines();
   drawSpheres();
+  drawColorfulRibbon();
   drawAverageDelayMarkers();
   drawCenterSphere();
-  drawColorfulRibbon();
 
   if (firstTimeDrawDetailedView) {
     firstTimeDrawDetailedView = !firstTimeDrawDetailedView;

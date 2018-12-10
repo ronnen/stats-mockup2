@@ -100,8 +100,26 @@ body {
     font-weight: 800;
 }
 
-g.sphere.dim {
+.detailed-group.approver-highlight .sphere {
     opacity: 0.2;
+}
+
+.detailed-group.approver-highlight .sphere.highlight {
+    opacity: 1;
+}
+
+/*
+.detailed-group.approver-highlight .average-guide {
+    opacity: 0.2;
+}
+*/
+
+.detailed-group .average-guide {
+    opacity: 0;
+}
+
+.detailed-group.approver-highlight .average-guide.highlight {
+    opacity: 1;
 }
 
 .dark-legend {
