@@ -154,69 +154,98 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .attr("startOffset", "24%")
       .text(mainObject.unitLabel);
 
-    // approval type circular markers (approval labels)
+    // approvers' circular markers (approval labels)
 
-    detailedGroup.selectAll("approval-type.path")
+    var circularGroups = detailedGroup.selectAll("g.approver-group")
       .data(subUnits.map(function(d, i) {
         var radius = outerRadius * (circleStartRadius + (i+1)*circleMarkersGap);
-        // var gap = estimateAngleGapForText(radius, d.approverName);
         return {
-          radius: radius,
-          from: 0, // toRadians(-30) + gap/2,
-          to: 2*Math.PI // toRadians(330) - gap/2
+          approver: d,
+          radius: radius
         };
       }))
       .enter()
+      .append("svg:g")
+      .attr("class", "approver-group")
+      .on("mouseenter", approverMouseEnter)
+      .on("mouseleave", approverMouseLeave);
+
+    circularGroups
       .append("svg:path")
-      .attr("class", "approval-type circular-marker")
+      .attr("class", "circular-marker")
       .attr("fill", "transparent")
       .attr("stroke-width", function(d) {
         return 1;
       })
       .attr("stroke-linejoin", "round")
-      .attr("d", function(d) {return arcSliceFull(d);});
+      .attr("d", function(d) {return arcSliceFull({
+        radius: d.radius,
+        from: 0,
+        to: 2*Math.PI
+      })});
 
-    // add approval type labels on circles
+    function approverMouseEnter(d, index) {
+      console.log(d.approver.approverName);
+      d3.select(this).classed("highlight", true);
+      d3.selectAll("g.sphere").each(function(d,i) {
+        var focused = d3.select(this).classed("sphere" + index)
+        d3.select(this).classed("dim", !focused);
+      });
+    }
+
+    function approverMouseLeave(d, i) {
+      d3.select(this).classed("highlight", false);
+      d3.selectAll("g.sphere").classed("dim", false);
+    }
+
+    circularGroups
+      .append("svg:path")
+      .attr("class", "circular-marker-2")
+      .attr("fill", "transparent")
+      .attr("stroke", "transparent")
+      .attr("stroke-width", function(d) {
+        return outerRadius * circleMarkersGap;
+      })
+      .attr("stroke-linejoin", "round")
+      .attr("d", function(d) {return arcSliceFull({
+        radius: d.radius,
+        from: 0,
+        to: 2*Math.PI
+      });});
 
     // background for the label
-    detailedGroup
-      .selectAll("approval-type-label-background.path")
-      .data(subUnits.map(function(d, i) {
-        var radius = outerRadius * (circleStartRadius + (i+1)*circleMarkersGap);
-        var gap = estimateAngleGapForText(radius, d.approverName);
-        return {
-          radius: radius,
-          to: toRadians(-30) + gap/2,
-          from: toRadians(-30) - gap/2
-        };
-      }))
-      .enter()
+    circularGroups
       .append("svg:path")
       .attr("id", function(d, i) {
-        return "approvalType" + i;
+        return "approverID" + i;
       })
-      .attr("class", "approval-type-label-background background-stroke")
+      .attr("class", "approver-name-label-background background-stroke")
       .attr("fill", "transparent")
       .attr("stroke-width", 1)
-      .attr("d",  function(d) {return arcSliceFull(d);});
+      .attr("d",  function(d) {
+        var gap = estimateAngleGapForText(d.radius, d.approver.approverName);
+        return arcSliceFull({
+          radius: d.radius,
+          to: toRadians(-30) + gap/2,
+          from: toRadians(-30) - gap/2
+        });
+      });
 
-    detailedGroup
-      .selectAll("approval-type-label.text")
-      .data(subUnits)
-      .enter()
+    circularGroups
       .append("text")
-      .attr("class", "approval-type-label")
+      .attr("class", "approver-name-label")
       .attr("dy", 3)
       .append("textPath") //append a textPath to the text element
       .attr("xlink:href", function(d,i) {
-        return "#approvalType" + i
+        return "#approverID" + i
       }) //place the ID of the path here
       .style("text-anchor","middle") //place the text halfway on the arc
       // .attr("startOffset", "79%") // this will show the invert text
       .attr("startOffset", "24%")
       .text(function(d) {
-        return d.approverName;
+        return d.approver.approverName;
       });
+
   }
 
   // subUnits denote all the visible approvers
@@ -232,15 +261,6 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   var maxValue = d3.max(subUnits.map(function(v) {
     return d3.max(v.approvals, function(a) {return a.value})
   }));
-
-  // for interpolation purposes (approvals don't occupy entire circle to keep space for legend)
-  const approvalsGlobalSlice = (approvalsRadialEnd - approvalsRadialStart)/360;
-
-/*
-  var linearScale = d3.scaleLinear()
-    .domain([0, maxWaitTime / approvalsGlobalSlice])
-    .range([0, 4]);  // corresponds to 4 color segments
-*/
 
   // values translated between 0 and diameter of
   var valueDiameterScale = d3.scaleLinear()
