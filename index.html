@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link href="stylesheets/main.css" media="screen" rel="stylesheet" type="text/css"/>
+<link href="stylesheets/font-awesome-4.0.3.css" media="screen" rel="stylesheet" type="text/css"/>
+<link href="stylesheets/d3RangeSlider.css" rel="stylesheet">
+<script src="javascripts/vendor/d3.v5.min.js"></script>
+<script src="javascripts/vendor/d3-ease.v1.min.js"></script>
+<script src="javascripts/vendor/d3-transform.js"></script>
+<script src="javascripts/vendor/d3RangeSlider.js"></script>
+<script src="javascripts/vendor/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="javascripts/vendor/papaparse.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="javascripts/data.js"></script>
+<script src="javascripts/common.js"></script>
+<script src="javascripts/drawOverview.js"></script>
+<script src="javascripts/drawDetailedView.js"></script>
+<script src="javascripts/menu.js"></script>
+<script src="javascripts/editData.js"></script>
+<script src="javascripts/dataTable.js"></script>
+<script>
+    var debugMode = false;
+    const FADE_HIDDEN = true;
+
+    window.addEventListener("load", function(e) {
+        debugMode = getUrlVars()["debug"];
+        if (debugMode) d3.select("body").classed("debug", true);
+        console.log(parseInt(d3.select('.svg-container').style('height')));
+        drawOverview(parseCSV(CSVData));
+    });
+</script>
+<body>
+<div class="svg-container"></div>
+<div class="table-container">
+    <div class="table-resize">
+        <div class="center-table">
+            <div class="drag-line-1"></div>
+            <div class="drag-line-2"></div>
+            <div class="drag-line-3"></div>
+            <div class="drag-line-4"></div>
+        </div>
+    </div>
+    <div class="table-rows">
+
+    </div>
+</div>
+<div class="menu-right">
+    <div class="actions-container">
+        <div class="legend-button">Legend</div>
+        <div class="load-data">Load Data</div>
+    </div>
+    <div id="table-toggle-container">
+        <div class="table-toggle">
+            <div class="stats-filter-title">Tabular View</div>
+            <div class="switch-container">
+                <div class="switch-handle"></div>
+            </div>
+        </div>
+    </div>
+    <div id="custom-filter" class="custom-filter">
+        <div class="custom-filter-container">
+            <div class="filter-option">Custom Filter</div>
+            <div class="open-filter fa fa-angle-down"></div>
+        </div>
+    </div>
+    <div id="time-range-filter" class="stats-filter on">
+        <div class="filter-header">
+            <div class="stats-filter-title">Time Range</div>
+            <div class="switch-container">
+                <div class="switch-handle"></div>
+            </div>
+        </div>
+        <div class="stats-slider"></div>
+        <div class="labels">
+            <div class="label-left">START DATE</div>
+            <div class="label-right">END DATE</div>
+        </div>
+    </div>
+    <div id="amount-filter" class="stats-filter">
+        <div class="filter-header">
+            <div class="stats-filter-title">Amount</div>
+            <div class="switch-container">
+                <div class="switch-handle"></div>
+            </div>
+        </div>
+        <div class="stats-slider"></div>
+        <div class="labels">
+            <div class="label-left">$ 0</div>
+            <div class="label-right">$ 5M</div>
+        </div>
+    </div>
+    <div id="wait-time-filter" class="stats-filter on">
+        <div class="filter-header">
+            <div class="stats-filter-title">Wait time</div>
+            <div class="switch-container">
+                <div class="switch-handle"></div>
+            </div>
+        </div>
+        <div class="stats-slider"></div>
+        <div class="labels">
+            <div class="label-left">5 HOURS</div>
+            <div class="label-right">54 DAYS</div>
+        </div>
+    </div>
+    <div id="approval-type-switches">
+    </div>
+</div>
+
+<div id="type-filter-template" class="type-filter on">
+    <div class="stats-filter-title">Placeholder</div>
+    <div class="switch-container">
+        <div class="switch-handle"></div>
+    </div>
+</div>
+
+<div class="mainObjectLegend">
+    On an hover event we show<br>
+    department details.<br>
+    <br>
+    Inspired by a clock design, circular<br>
+    distance from the start & color<br>
+    represents the wait time.<br>
+    <br>
+    Bubble size represents approval's<br>
+    value.<br>
+    <br>
+    Arc length indicates approval type.
+</div>
+
+<div class="bigDiameterLegend">
+    This diameter represents<br>
+    department's number<br>
+    of employees
+</div>
+
+<div class="submitterTooltip">
+    <div class="submitter-content">
+        <div class="submitter-name"></div>
+        <div class="wait-time"></div>
+        <div class="misc">Prompt</div>
+    </div>
+</div>
+
+<div class="shield"></div>
+
+<div class="loadDataDialog">
+    <div class="dialog-wrapper">
+        <div id="editor" class="editor"></div>
+        <div class="editor-actions">
+            <div class="cancel-edit">Cancel</div>
+            <div class="load-edit">Load</div>
+            <div class="view-json">View as JSON</div>
+        </div>
+    </div>
+</div>
+</body>
