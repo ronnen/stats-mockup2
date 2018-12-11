@@ -185,18 +185,23 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       })});
 
     function approverMouseEnter(d, index) {
-      console.log(d.approver.approverName);
       d3.select(this).classed("highlight", true);
       d3.select(".detailed-group").classed("approver-highlight", true);
       d3.selectAll("g.sphere"+index).classed("highlight", true);
+      d3.selectAll(".bubble-guide"+index).classed("highlight", true);
       d3.select("#average-guide" + index).classed("highlight", true);
+      d3.select(".detailed-group .request-value")
+        .text(typedValueToText(d.approver.value, mainObject.presentation));
     }
 
     function approverMouseLeave(d, i) {
       d3.select(this).classed("highlight", false);
       d3.select(".detailed-group").classed("approver-highlight", false);
+      d3.selectAll(".bubble-guide").classed("highlight", false);
       d3.selectAll("g.sphere").classed("highlight", false);
       d3.selectAll(".average-guide").classed("highlight", false);
+      d3.select(".detailed-group .request-value")
+        .text(typedValueToText(mainObject.totalValue, mainObject.presentation));
     }
 
     circularGroups
@@ -339,7 +344,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         .data(filterNonHidden(t.approvals))
         .enter()
         .append("svg:line")
-        .attr("class", function(d) {return "bubble-guide" + (d.hidden ? " hidden" : "")})
+        .attr("class", function(d) {return "bubble-guide bubble-guide" + index + (d.hidden ? " hidden" : "")})
+        .attr("id", function(d,i) {
+          return "a" + index + "g" + i; // a [approver index] g [approval index]
+        })
         .attr("fill", "transparent")
         // .attr("stroke", "black")
         .attr("stroke", function (d) {
@@ -361,9 +369,12 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   }
 
   function approvalMouseLeave() {
-    d3.selectAll(".approval-highlight").remove();
+    d3.selectAll(".approval-halo").remove();
     d3.select(".submitterTooltip")
       .style("display","none");
+    d3.selectAll(".sphere").classed("highlight", false);
+    d3.selectAll(".bubble-guide").classed("highlight", false);
+    d3.select(".detailed-group").classed("approval-highlight", false);
   }
 
   function drawSpheres() {
@@ -373,10 +384,15 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       var currentApprovalCircle = d3.select(this).select(".approval-circle-foreground");
       var approvalRadius = parseFloat(currentApprovalCircle.attr("r"));
 
+      var sphereID = d3.select(this).attr("id"); //e.g.  a3b8 will be matched with guide a3g8
+
+      d3.select(this).classed("highlight", true);
+      d3.select("#" + sphereID.replace("b","g")).classed("highlight", true);
+      d3.select(".detailed-group").classed("approval-highlight", true);
 
       d3.select(this)
         .append("circle")
-        .attr("class", "approval-highlight")
+        .attr("class", "approval-halo")
         .attr("cx", currentApprovalCircle.attr("cx"))
         .attr("cy", currentApprovalCircle.attr("cy"))
         .attr("transform", currentApprovalCircle.attr("transform"))
@@ -405,7 +421,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
           .data(filterNonHidden(t.approvals))
           .enter()
           .append("svg:g")
-          .attr("class", className + " " + className + index);
+          .attr("class", className + " " + className + index)
+          .attr("id", function(d,i) {
+            return foreground ? ("a" + index + "b" + i) : null; // a [approver index] b [approval index]
+          });
 
         // the first iteration will create an opaque background to hide background
         // the second iteration has some transparency to show overlapping intersections

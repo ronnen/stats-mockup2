@@ -11,7 +11,6 @@ function drawOverview(mainUnits) {
 
   var width = parseInt(d3.select('.svg-container').style('width')),
       height = window.innerHeight;
-  console.log("height: " + height);
       // height = Math.max(parseInt(d3.select('.svg-container').style('height')), window.innerHeight);
 
   mainUnits = filterNonHidden(mainUnits);
@@ -119,6 +118,8 @@ function drawOverview(mainUnits) {
       totalValueMin: 0,
       totalValueMax: maxValue,
 */
+      timeRangeMin: new Date((new Date()).getTime()- (30 * 864e5)).getTime(), // before a month
+      timeRangeMax: (new Date()).getTime(), // today
       waitTimeMin: minWait,
       waitTimeMax: maxWait,
       amountMin: minValue,

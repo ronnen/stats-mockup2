@@ -11,12 +11,31 @@ function drawMenu(criteria) {
   var waitTimeMin = criteria.waitTimeMin || 0, waitTimeMax = criteria.waitTimeMax || 100000000;
   var amountMin = criteria.amountMin || 0, amountMax = criteria.amountMax || 100000000;
 
+  var amountFilterState = false;
+  var timeFilterState = true;
+  var waitFilterState = true;
+
   // d3.select("#total-value-filter .label-left").text("$ " + valueToText(totalValueMin));
   // d3.select("#total-value-filter .label-right").text("$ " + valueToText(totalValueMax));
-  d3.select("#amount-filter .label-left").text(valueToText(amountMin));
-  d3.select("#amount-filter .label-right").text(valueToText(amountMax));
-  d3.select("#wait-time-filter .label-left").text(waitToText(waitTimeMin));
-  d3.select("#wait-time-filter .label-right").text(waitToText(waitTimeMax));
+
+  function setTimeRangeLabels() {
+    d3.select("#time-range-filter .label-left").text(!timeFilterState ? "START DATE" : valueToDate(timeRangeMin));
+    d3.select("#time-range-filter .label-right").text(!timeFilterState ? "END DATE" : valueToDate(timeRangeMax));
+  }
+
+  function setAmountLabels() {
+    d3.select("#amount-filter .label-left").text(!amountFilterState ? "LOWEST" : valueToText(amountMin));
+    d3.select("#amount-filter .label-right").text(!amountFilterState ? "HIGHEST" : valueToText(amountMax));
+  }
+
+  function setWaitTimeLabels() {
+    d3.select("#wait-time-filter .label-left").text(!waitFilterState ? "SHORTEST" : waitToText(waitTimeMin));
+    d3.select("#wait-time-filter .label-right").text(!waitFilterState ? "LONGEST" : waitToText(waitTimeMax));
+  }
+
+  setTimeRangeLabels();
+  setAmountLabels();
+  setWaitTimeLabels();
 
   d3.selectAll(".stats-slider").html(null);
 
@@ -35,31 +54,30 @@ function drawMenu(criteria) {
   });
 
   // Time Range filter
-  var timeFilterState = true;
-
   d3.select("#time-range-filter .switch-container")
     .on("click", timeSliderClick);
 
   function timeSliderClick() {
     d3.select("#time-range-filter").classed("on", !timeFilterState);
     timeFilterState = !timeFilterState;
+    setTimeRangeLabels();
     drawOverviewByCriteria();
   }
 
   var timeSlider = createD3RangeSlider(timeRangeMin, timeRangeMax, "#time-range-filter .stats-slider", false);
 
   timeSlider.onChange(function(newRange){
-    // d3.select("#range-label").html(newRange.begin + " &mdash; " + newRange.end);
+    d3.select("#time-range-filter .label-left").text(valueToDate(newRange.begin));
+    d3.select("#time-range-filter .label-right").text(valueToDate(newRange.end));
   });
 
   timeSlider.onRelease(function(newRange){
     drawOverviewByCriteria();
   });
 
-  timeSlider.range(timeRangeMin,timeRangeMax);
+  // timeSlider.range(timeRangeMin,timeRangeMax);
 
   // Amount filter
-  var amountFilterState = false;
   d3.select("#amount-filter").classed("on", amountFilterState);
 
   d3.select("#amount-filter .switch-container")
@@ -68,19 +86,22 @@ function drawMenu(criteria) {
   function amountSliderClick() {
     d3.select("#amount-filter").classed("on", !amountFilterState);
     amountFilterState = !amountFilterState;
+    setAmountLabels();
     drawOverviewByCriteria();
   }
 
   var amountSlider = createD3RangeSlider(amountMin, amountMax, "#amount-filter .stats-slider", false);
 
   amountSlider.onChange(function(newRange){
+    d3.select("#amount-filter .label-left").text(valueToText(newRange.begin));
+    d3.select("#amount-filter .label-right").text(valueToText(newRange.end));
   });
 
   amountSlider.onRelease(function(newRange){
     drawOverviewByCriteria();
   });
 
-  amountSlider.range(amountMin,amountMax);
+  // amountSlider.range(amountMin,amountMax);
 
 /*
   // Total Value filter
@@ -109,24 +130,28 @@ function drawMenu(criteria) {
 */
 
   // Wait Time filter
-  var waitFilterState = true;
-
   d3.select("#wait-time-filter .switch-container")
     .on("click", waitSliderClick);
 
   function waitSliderClick() {
     d3.select("#wait-time-filter").classed("on", !waitFilterState);
     waitFilterState = !waitFilterState;
+    setWaitTimeLabels();
     drawOverviewByCriteria();
   }
 
   var waitSlider = createD3RangeSlider(waitTimeMin, waitTimeMax, "#wait-time-filter .stats-slider", false);
 
+  waitSlider.onChange(function(newRange){
+    d3.select("#wait-time-filter .label-left").text(waitToText(newRange.begin));
+    d3.select("#wait-time-filter .label-right").text(waitToText(newRange.end));
+  });
+
   waitSlider.onRelease(function(newRange){
     drawOverviewByCriteria();
   });
 
-  waitSlider.range(waitTimeMin,waitTimeMax);
+  // waitSlider.range(waitTimeMin,waitTimeMax);
 
 
   // approval type filters

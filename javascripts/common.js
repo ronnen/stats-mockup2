@@ -24,6 +24,11 @@ var arcSliceFull = d3.arc()
     return d.radius;
   });
 
+var valueToDate = function(value) {
+  // can take many parameters for formatting and loc.
+  return (new Date(value)).toLocaleDateString('en-US',{ year: 'numeric', month: 'short', day: 'numeric' });
+};
+
 var valueToText = function(value) {
   var totalValueText;
   if (value > 1000000) {
@@ -59,7 +64,7 @@ var waitToText = function(value) {
     waitText = Math.ceil(value/24) + " Days";
   }
   else {
-    waitText = value + " HOURS";
+    waitText = value.toFixed(0) + " HOURS";
   }
 
   return waitText;

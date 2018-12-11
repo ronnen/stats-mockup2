@@ -1,145 +1,131 @@
 var CSVData = '\
 # Enter CSV data with the following structure to replace the current view\n\
 approverDept,approver,request,presentation,submitter,value,waitTime\n\
-"Customer Success Dept.","Tim Pence","Purchase Orders","currency","Ning Hou",92000,10\n\
-"Customer Success Dept.","Tim Pence","Purchase Orders","currency","Ning Hou",64000,80\n\
-"Customer Success Dept.","Tim Pence","Purchase Orders","currency","Jeremy Lambeth",8000,130\n\
-"Customer Success Dept.","Tim Pence","Purchase Orders","currency","Rick Smith",120000,180\n\
-"Customer Success Dept.","Tim Pence","Purchase Orders","currency","Don Mclean",3200,280\n\
-"Customer Success Dept.","Sammy Davis","Purchase Orders","currency","Chelsia Hu",32000,20\n\
-"Customer Success Dept.","Sammy Davis","Purchase Orders","currency","Ning Hou",42000,43\n\
-"Supply Chain Dept.","Sammy Davis","Purchase Orders","currency","Derek Holmes",9500,77\n\
-"Supply Chain Dept.","Sammy Davis","Purchase Orders","currency","Frank Reilly",9500,87\n\
-"Supply Chain Dept.","Sammy Davis","Purchase Orders","currency","Chelsia Hu",32000,91\n\
-"Customer Success Dept.","Sammy Davis","Purchase Orders","currency","Rick Smith",120000,180\n\
-"Supply Chain Dept.","Sammy Davis","Purchase Orders","currency","Brian May",180000,270\n\
-"Customer Success Dept.","Sammy Davis","Purchase Orders","currency","Brian May",736,280\n\
-"Customer Success Dept.","Sammy Davis","Purchase Orders","currency","Frank Reilly",92000,450\n\
-"Supply Chain Dept.","Sammy Davis","Purchase Orders","currency","Ning Hou",14000,460\n\
-"Sales Dept.","Sam Abbasi","Purchase Orders","currency","Chelsia Hu",32000,20\n\
-"Sales Dept.","Sam Abbasi","Purchase Orders","currency","Carter Dwaine",67000,43\n\
-"Sales Dept.","Sam Abbasi","Purchase Orders","currency","Harper Lee",64000,80\n\
-"Sales Dept.","Sam Abbasi","Purchase Orders","currency","Ning Hou",64000,270\n\
-"Supply Chain Dept.","Rudy Jewels","Purchase Orders","currency","Frank Reilly",14000,10\n\
-"Supply Chain Dept.","Rudy Jewels","Purchase Orders","currency","Linda Packer",32000,20\n\
-"Supply Chain Dept.","Rudy Jewels","Purchase Orders","currency","Frank Reilly",14000,43\n\
-"Supply Chain Dept.","Rudy Jewels","Purchase Orders","currency","Ning Hou",64000,80\n\
-"Supply Chain Dept.","Rudy Jewels","Purchase Orders","currency","Brian May",180000,280\n\
-"Supply Chain Dept.","Rudy Jewels","Purchase Orders","currency","Frank Reilly",64000,450\n\
-"Supply Chain Dept.","Peter Ham","Purchase Orders","currency","Alex White",5000,40\n\
-"Supply Chain Dept.","Peter Ham","Purchase Orders","currency","Dora Van-Halen",32000,70\n\
-"Supply Chain Dept.","Peter Ham","Purchase Orders","currency","Xhi Choo Ohn",5400,466\n\
-"Sales Dept.","Percy Davis","Purchase Orders","currency","Cynthia Hope",2900,10\n\
-"Sales Dept.","Percy Davis","Purchase Orders","currency","Penelope Dribble",64000,43\n\
-"Sales Dept.","Percy Davis","Purchase Orders","currency","Daniel Grouchko",32000,80\n\
-"Sales Dept.","Percy Davis","Purchase Orders","currency","Rick Smith",120000,180\n\
-"Sales Dept.","Percy Davis","Purchase Orders","currency","Frank Reilly",52000,450\n\
-"Customer Success Dept.","Linda Grey","Purchase Orders","currency","Ning Hou",70000,10\n\
-"Customer Success Dept.","Linda Grey","Purchase Orders","currency","Linda Packer",32000,20\n\
-"Customer Success Dept.","Linda Grey","Purchase Orders","currency","Frank Reilly",70000,43\n\
-"Customer Success Dept.","Linda Grey","Purchase Orders","currency","Frank Reilly",70000,80\n\
-"Sales Dept.","George Wallace","Purchase Orders","currency","Jason Hobart",64000,10\n\
-"Sales Dept.","George Wallace","Purchase Orders","currency","Gim Botright",32000,20\n\
-"Sales Dept.","George Wallace","Purchase Orders","currency","Carley Stephanus",87000,43\n\
-"Sales Dept.","George Wallace","Purchase Orders","currency","Diana Harvest",64000,80\n\
-"Sales Dept.","George Wallace","Purchase Orders","currency","Louise Drexel",87000,450\n\
-"Sales Dept.","Bobby McGee","Purchase Orders","currency","Jeremy Lambeth",8000,130\n\
-"Supply Chain Dept.","Bobby McGee","Purchase Orders","currency","Jeremy Lambeth",8000,130\n\
-"Supply Chain Dept.","Bobby McGee","Purchase Orders","currency","Rick Smith",120000,180\n\
-"Sales Dept.","Bobby McGee","Purchase Orders","currency","Steve Caper, Jr.",320000,280\n\
-"R&D Dept.","Billie Hollins","Purchase Orders","currency","Ning Hou",64000,10\n\
-"R&D Dept.","Billie Hollins","Purchase Orders","currency","Linda Packer",32000,20\n\
-"R&D Dept.","Billie Hollins","Purchase Orders","currency","Frank Reilly",64000,43\n\
-"R&D Dept.","Billie Hollins","Purchase Orders","currency","Ning Hou",64000,80\n\
-"R&D Dept.","Billie Hollins","Purchase Orders","currency","Don Mclean",180000,92\n\
-"R&D Dept.","Billie Hollins","Purchase Orders","currency","Jeremy Lambeth",8000,130\n\
-"R&D Dept.","Billie Hollins","Purchase Orders","currency","Rick Smith",120000,180\n\
-"R&D Dept.","Billie Hollins","Purchase Orders","currency","Don Mclean",320000,280\n\
-"R&D Dept.","Billie Hollins","Purchase Orders","currency","Frank Reilly",64000,300\n\
-"Sales Dept.","Percy Davis","Asset Transfer","currency","Brian May",180000,280\n\
-"Sales Dept.","Bobby McGee","Capex","currency","Rick Smith",120000,180\n\
-"Customer Success Dept.","Tim Pence","Absence","Days","Linda Packer",4,20\n\
-"Customer Success Dept.","Tim Pence","Absence","Days","Frank Reilly",11,43\n\
-"Customer Success Dept.","Tim Pence","Absence","Days","Frank Reilly",10,450\n\
-"Customer Success Dept.","Sammy Davis","Absence","Days","Frank Reilly",6,10\n\
-"Supply Chain Dept.","Sammy Davis","Absence","Days","Rick Smith",10,180\n\
-"Sales Dept.","Sam Abbasi","Absence","Days","Jeremy Lambeth",8,130\n\
-"Sales Dept.","Sam Abbasi","Absence","Days","Rick Smith",3,180\n\
-"Sales Dept.","Sam Abbasi","Absence","Days","Brian May",4,280\n\
-"Sales Dept.","Sam Abbasi","Absence","Days","Zach Princeton",5,450\n\
-"Supply Chain Dept.","Rudy Jewels","Absence","Days","Jeremy Lambeth",7,130\n\
-"Supply Chain Dept.","Rudy Jewels","Absence","Days","Rick Smith",9,180\n\
-"Supply Chain Dept.","Peter Ham","Absence","Days","Russ King",6,55\n\
-"Supply Chain Dept.","Peter Ham","Absence","Days","Jennifer Pascal",2,133\n\
-"Customer Success Dept.","Linda Grey","Absence","Days","Ning Hou",3,450\n\
-"Supply Chain Dept.","Bobby McGee","Absence","Days","Steve Caper, Jr.",2,280\n\
-"Supply Chain Dept.","Katie Denver","Purchase Requests","currency","Ning Hou",64000,10\n\
-"Supply Chain Dept.","Katie Denver","Purchase Requests","currency","Chelsia Hu",32000,20\n\
-"Supply Chain Dept.","Katie Denver","Purchase Requests","currency","John Flanagan",33000,43\n\
-"Supply Chain Dept.","Katie Denver","Purchase Requests","currency","Andrew Horton",18000,80\n\
-"Supply Chain Dept.","Katie Denver","Purchase Requests","currency","Cynthia Van-Leer",50000,90\n\
-"Supply Chain Dept.","Katie Denver","Purchase Requests","currency","Theofilia Drapes",12000,95\n\
-"Supply Chain Dept.","Katie Denver","Purchase Requests","currency","Frank Reilly",64000,116\n\
-"Supply Chain Dept.","Katie Denver","Purchase Requests","currency","Jeremy Lambeth",8000,130\n\
-"Supply Chain Dept.","Katie Denver","Purchase Requests","currency","Rick Smith",120000,180\n\
-"Supply Chain Dept.","Katie Denver","Purchase Requests","currency","Steve Caper, Jr.",320000,310\n\
-"Customer Success Dept.","Don Flanagan","Purchase Requests","currency","Ning Hou",64000,10\n\
-"Customer Success Dept.","Don Flanagan","Purchase Requests","currency","Chelsia Hu",32000,20\n\
-"Customer Success Dept.","Don Flanagan","Purchase Requests","currency","John Flanagan",33000,43\n\
-"Customer Success Dept.","Don Flanagan","Purchase Requests","currency","Andrew Horton",18000,80\n\
-"Customer Success Dept.","Don Flanagan","Purchase Requests","currency","Cynthia Van-Leer",50000,90\n\
-"Customer Success Dept.","Don Flanagan","Purchase Requests","currency","Theofilia Drapes",12000,95\n\
-"Customer Success Dept.","Don Flanagan","Purchase Requests","currency","Frank Reilly",64000,116\n\
-"Customer Success Dept.","Don Flanagan","Purchase Requests","currency","Jeremy Lambeth",8000,130\n\
-"Customer Success Dept.","Don Flanagan","Purchase Requests","currency","Rick Smith",120000,180\n\
-"Customer Success Dept.","Don Flanagan","Purchase Requests","currency","Steve Caper, Jr.",320000,280\n\
-"Sales Dept.","Catarina Cota","Purchase Requests","currency","Linda Packer",32000,40\n\
-"Sales Dept.","Catarina Cota","Purchase Requests","currency","John Flanagan",33000,68\n\
-"Sales Dept.","Catarina Cota","Purchase Requests","currency","Frank Reilly",5000,73\n\
-"Sales Dept.","Catarina Cota","Purchase Requests","currency","Andrew Horton",18000,111\n\
-"Sales Dept.","Catarina Cota","Purchase Requests","currency","Ning Hou",64000,116\n\
-"Sales Dept.","Catarina Cota","Purchase Requests","currency","Cynthia Van-Leer",50000,120\n\
-"Sales Dept.","Catarina Cota","Purchase Requests","currency","Theofilia Drapes",12000,157\n\
-"Sales Dept.","Catarina Cota","Purchase Requests","currency","Jeremy Lambeth",8000,193\n\
-"Sales Dept.","Catarina Cota","Purchase Requests","currency","Rick Smith",120000,210\n\
-"Sales Dept.","Catarina Cota","Purchase Requests","currency","Steve Caper, Jr.",320000,360\n\
-"Customer Success Dept.","Terence Bing","Change","Changes","Larry Quench",8,400\n\
-"Customer Success Dept.","Terence Bing","Change","Changes","Rick Smith",3,500\n\
-"Customer Success Dept.","Terence Bing","Change","Changes","Pete Donovan",6,520\n\
-"Supply Chain Dept.","Pierre Rocheford","Change","Changes","Larry Quench",4,180\n\
-"Supply Chain Dept.","Pierre Rocheford","Change","Changes","Rick Smith",5,360\n\
-"Supply Chain Dept.","Pierre Rocheford","Change","Changes","Pete Donovan",11,470\n\
-"Sales Dept.","Esmail Mazza","Change","Changes","Pete Donovan",2,355\n\
-"Sales Dept.","Esmail Mazza","Change","Changes","Larry Quench",6,390\n\
-"Sales Dept.","Esmail Mazza","Change","Changes","Rick Smith",4,450\n\
-"Marketing Dept.","Perikilis Nazario","Expenses","currency","Frank Reilly",64000,15\n\
-"Marketing Dept.","Perikilis Nazario","Expenses","currency","Linda Packer",32000,33\n\
-"Marketing Dept.","Perikilis Nazario","Expenses","currency","Chelsia Hu",32000,47\n\
-"Marketing Dept.","Perikilis Nazario","Expenses","currency","Ning Hou",64000,50\n\
-"Marketing Dept.","Perikilis Nazario","Expenses","currency","Frank Reilly",64000,80\n\
-"Marketing Dept.","Perikilis Nazario","Expenses","currency","Roger Crabs",320000,120\n\
-"Marketing Dept.","Perikilis Nazario","Expenses","currency","Rick Smith",120000,340\n\
-"Marketing Dept.","Perikilis Nazario","Expenses","currency","Steve Caper, Jr.",55000,400\n\
-"R&D Dept.","Billie Hollins","Expenses","currency","Ning Hou",64000,15\n\
-"R&D Dept.","Billie Hollins","Expenses","currency","Linda Packer",32000,33\n\
-"R&D Dept.","Billie Hollins","Expenses","currency","Frank Reilly",64000,50\n\
-"R&D Dept.","Billie Hollins","Expenses","currency","Ning Hou",64000,80\n\
-"R&D Dept.","Billie Hollins","Expenses","currency","Steve Caper, Jr.",80000,120\n\
-"R&D Dept.","Billie Hollins","Expenses","currency","Jeremy Lambeth",8000,160\n\
-"R&D Dept.","Billie Hollins","Expenses","currency","Rick Smith",120000,340\n\
-"R&D Dept.","Billie Hollins","Expenses","currency","Don Mclean",320000,400\n\
-"R&D Dept.","Billie Hollins","Expenses","currency","Frank Reilly",64000,520\n\
-"Marketing Dept.","Perikilis Nazario","Campaign Invoices","currency","Ning Hou",64000,10\n\
-"Marketing Dept.","Perikilis Nazario","Campaign Invoices","currency","Chelsia Hu",32000,20\n\
-"Marketing Dept.","Perikilis Nazario","Campaign Invoices","currency","Frank Reilly",64000,80\n\
-"Marketing Dept.","Perikilis Nazario","Campaign Invoices","currency","Roger Crabs",80000,92\n\
-"Marketing Dept.","Perikilis Nazario","Campaign Invoices","currency","Jeremy Lambeth",8000,130\n\
-"Marketing Dept.","Perikilis Nazario","Campaign Invoices","currency","Ning Hou",64000,150\n\
-"Marketing Dept.","Perikilis Nazario","Vendor Payment","currency","Jeremy Lambeth",10000,150\n\
-"Marketing Dept.","Perikilis Nazario","Vendor Payment","currency","Roger Crabs",55000,300\n\
-"Marketing Dept.","Perikilis Nazario","Vendor Payment","currency","Roger Crabs",320000,350\n\
-"Marketing Dept.","Perikilis Nazario","Vendor Payment","currency","Rick Smith",120000,370\n\
-"Marketing Dept.","Perikilis Nazario","Vendor Payment","currency","Ning Hou",64000,420\n\
+Finance,Stacy Hoolahan,Change,Changes,Thando Nkosi,1,18.29\n\
+Finance,Stacy Hoolahan,Change,Changes,Luke DeCoste,1,17.35\n\
+Finance,Stacy Hoolahan,Change,Changes,Fei Meng ZHENG,1,89.05\n\
+G&A,Chris McCoy,Change,Changes,Jon Estrada,1,25.46\n\
+IT,Don Frampton,Expense,currency,Sonny Becca,2388.13,83.05\n\
+G&A,Chris McCoy,Expense,currency,Tim Gilday,185.71,91\n\
+IT,Don Frampton,Expense,currency,Jeremy Huddleston,1942.3,61.02\n\
+Finance,Stacy Hoolahan,Expense,currency,Selma Trenton,150.66,143.51\n\
+G&A,Chris McCoy,Expense,currency,Michael Harder,1077.44,49.11\n\
+Finance,Stacy Hoolahan,Expense,currency,Patrick VonHorn,2191.88,46.27\n\
+Finance,Stacy Hoolahan,Expense,currency,Kenn Moffitt,372.26,36.04\n\
+Finance,Stacy Hoolahan,Expense,currency,Nancy Mitchell,896.45,125.01\n\
+Finance,Stacy Hoolahan,Expense,currency,Anand Andrew Bolor,1323.76,140.42\n\
+IT,Don Frampton,Expense,currency,Gaurav Pawar,1964.8,69.52\n\
+IT,Don Frampton,Expense,currency,patrick furmage,3436.22,11.6\n\
+Finance,Stacy Hoolahan,Invoice,currency,Tatiana Cristea,76904.1,113.24\n\
+Finance,Stacy Hoolahan,Invoice,currency,James Guy,95444.59,110.27\n\
+Finance,Stacy Hoolahan,Invoice,currency,Seunghyun Son,103036.76,163.38\n\
+Finance,Stacy Hoolahan,Invoice,currency,Edgar Solberg,129952.12,157.53\n\
+Finance,Stacy Hoolahan,Invoice,currency,Jose Houed,108629.94,57.49\n\
+Sales,Mo Barrick,Invoice,currency,James Guy,55297.16,131.47\n\
+Sales,Mo Barrick,Invoice,currency,Joe Reeves,36969.28,48.46\n\
+Sales,Mo Barrick,Invoice,currency,Sonny Fian,30938.22,80.41\n\
+IT,Don Frampton,Invoice,currency,Ian Horwich,124233.18,145.17\n\
+IT,Don Frampton,Invoice,currency,Brian Jantzen,100178.36,20.01\n\
+IT,Don Frampton,Invoice,currency,Kenn Moffitt,89237.6,27.04\n\
+G&A,Chris McCoy,Invoice,currency,Jon Nickokay,128380.99,77.48\n\
+Sales,Mo Barrick,Leave,Days,Sandra Garsele,15,29.03\n\
+Sales,Mo Barrick,Leave,Days,Jesse Winding,13,3.6\n\
+IT,Don Frampton,Leave,Days,Doctor Aal-Anubia,11,154.2\n\
+G&A,Chris McCoy,Leave,Days,Joaquim Dsouza,9,12.11\n\
+IT,Don Frampton,Leave,Days,Mark Benjamin,11,113.18\n\
+G&A,Chris McCoy,Leave,Days,Angel Quirzones,15,132.47\n\
+G&A,Chris McCoy,Leave,Days,Nick McCaffery,10,90.25\n\
+G&A,Chris McCoy,Leave,Days,Alberto Quintero,11,109.46\n\
+IT,Don Frampton,Leave,Days,MALEISA RAY,16,116.6\n\
+G&A,Chris McCoy,Leave,Days,Bev Lovely,11,120.33\n\
+G&A,Chris McCoy,Leave,Days,Douglas Doucette,16,120.57\n\
+G&A,Chris McCoy,Leave,Days,Sarah Carr,6,115.49\n\
+G&A,Chris McCoy,Leave,Days,Sherri Hoffman,4,94.41\n\
+IT,Don Frampton,Leave,Days,Amy Lam,5,79.11\n\
+Finance,Stacy Hoolahan,Leave,Days,Chris McCoy,4,1.22\n\
+G&A,Chris McCoy,Leave,Days,Mo Barrick,15,154.16\n\
+IT,Don Frampton,Leave,Days,Dana Wyttenbachblue Diamond Ministrip,11,32.01\n\
+G&A,Chris McCoy,Leave,Days,Rodollfo Cabrera,3,39.07\n\
+G&A,Chris McCoy,Leave,Days,Howard Kelly,1,100.37\n\
+IT,Don Frampton,Leave,Days,David Brim,8,110.54\n\
+G&A,Chris McCoy,Leave,Days,Philimina Lardner,16,28.28\n\
+IT,Don Frampton,Leave,Days,Cheli Rosas,16,100.46\n\
+G&A,Chris McCoy,Leave,Days,Michele Tortorici,11,128.26\n\
+IT,Don Frampton,Leave,Days,Richard Payton,7,121.04\n\
+IT,Don Frampton,Leave,Days,Chris McCoy,10,123.27\n\
+IT,Don Frampton,Leave,Days,Rentia Fay Henry,8,112.09\n\
+Sales,Mo Barrick,Leave,Days,Susan Vale tine,4,36.24\n\
+IT,Don Frampton,Leave,Days,Bill Swavely,7,104.01\n\
+IT,Don Frampton,Leave,Days,Glen Seamster,10,88.07\n\
+Sales,Mo Barrick,Leave,Days,Joyana Rhone,14,22.45\n\
+Sales,Mo Barrick,Leave,Days,Don Frampton,8,12.16\n\
+G&A,Chris McCoy,Leave,Days,Cedric Hunter,2,43.44\n\
+G&A,Chris McCoy,Leave,Days,David Franzen,8,117.24\n\
+Sales,Mo Barrick,Leave,Days,Bruno Pereira,11,144.02\n\
+G&A,Chris McCoy,Leave,Days,Sharon Vernon,12,57.07\n\
+IT,Don Frampton,Leave,Days,Mariam Mazhar,15,104.39\n\
+G&A,Chris McCoy,Leave,Days,Jean Guerrier,16,45.46\n\
+Finance,Stacy Hoolahan,Leave,Days,James Ward,12,80.39\n\
+G&A,Chris McCoy,Leave,Days,Marie Smith,10,72.17\n\
+Finance,Stacy Hoolahan,Purchase,currency,Willem Geyer,233392.06,126.3\n\
+Sales,Mo Barrick,Purchase,currency,Marie Petion,159674.89,9.56\n\
+IT,Don Frampton,Purchase,currency,Chris McCoy,182783.8,31.59\n\
+Finance,Stacy Hoolahan,Purchase,currency,Mark Killeen,860.89,9.1\n\
+Finance,Stacy Hoolahan,Purchase,currency,FREQC Tester,158256.21,6.09\n\
+Finance,Stacy Hoolahan,Purchase,currency,Danny Stamp,232022.28,89.11\n\
+IT,Don Frampton,Purchase,currency,EMANUEL Gary,49759.17,147.55\n\
+Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,47372.02,97.21\n\
+IT,Don Frampton,Purchase,currency,Graham Wilkinson,3063.72,163.38\n\
+IT,Don Frampton,Purchase,currency,Johanna P‚âàŒ©rez Cuevas,261467.21,3.24\n\
+IT,Don Frampton,Purchase,currency,RYAN Lowe,111179.83,104.48\n\
+Finance,Stacy Hoolahan,Purchase,currency,Odesen Naidoo,15520.47,51.19\n\
+Finance,Stacy Hoolahan,Purchase,currency,Sharansh Srivastava,263631.13,61.14\n\
+Finance,Stacy Hoolahan,Purchase,currency,Juan Perena,251263.58,127.21\n\
+Finance,Stacy Hoolahan,Purchase,currency,Chris Saxon,79875.21,4.07\n\
+Finance,Stacy Hoolahan,Purchase,currency,TopApp Regression1,109088.45,119.05\n\
+Finance,Stacy Hoolahan,Purchase,currency,Hector Gallo De Diego,200419.15,55.42\n\
+Finance,Stacy Hoolahan,Purchase,currency,Lenny Advies,92327.36,80.59\n\
+IT,Don Frampton,Purchase,currency,Victor Corral,156356.97,141.17\n\
+Finance,Stacy Hoolahan,Purchase,currency,Reto Wettstein,146398.98,52.46\n\
+Finance,Stacy Hoolahan,Purchase,currency,Kumaresan MS,45194.44,74.09\n\
+Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,202030.27,65.03\n\
+Finance,Stacy Hoolahan,Purchase,currency,Mogens B. Lassen,20959.28,100.35\n\
+IT,Don Frampton,Purchase,currency,Ashley Kelly,130536.39,120.04\n\
+Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,132966.74,116.11\n\
+IT,Don Frampton,Purchase,currency,JoE Spearing,64873.96,143.35\n\
+G&A,Chris McCoy,Purchase,currency,Sunny Davis,37698.2,76.15\n\
+G&A,Chris McCoy,Purchase,currency,Dennis Frimpong,7247.8,57.28\n\
+Finance,Stacy Hoolahan,Purchase,currency,Ignacio Diaz Alvarez,266475.84,74.48\n\
+G&A,Chris McCoy,Purchase,currency,Evelyn Espinal,86659.03,14.18\n\
+Finance,Stacy Hoolahan,Purchase,currency,Germano Bertoldo,99097.11,70.12\n\
+Finance,Stacy Hoolahan,Purchase,currency,Mitja Lavri?,49027,137.35\n\
+Finance,Stacy Hoolahan,Purchase,currency,Fernando Tezanos Pinto,189659.04,77.17\n\
+IT,Don Frampton,Purchase,currency,Chris McCoy,204975.94,151.28\n\
+Finance,Stacy Hoolahan,Purchase,currency,Anvil Dsouza,165620.98,50.52\n\
+IT,Don Frampton,Purchase,currency,Jose Gomez,19766.41,39.41\n\
+IT,Don Frampton,Purchase,currency,Miguel Ortiz,201847.75,164.42\n\
+Finance,Stacy Hoolahan,Purchase,currency,Mary Bowler,168423.24,130.4\n\
+Finance,Stacy Hoolahan,Purchase,currency,Mo Jalloh,215643.02,48.44\n\
+Finance,Stacy Hoolahan,Purchase,currency,Salvador Espino,180350.75,115.29\n\
+Finance,Stacy Hoolahan,Purchase,currency,Mengyu Wu,158147.58,24.21\n\
+Sales,Mo Barrick,Purchase,currency,Steve Lyles,21595.31,80.42\n\
+G&A,Chris McCoy,Purchase,currency,Tom Tatarczuk,252423.98,60.17\n\
+Finance,Stacy Hoolahan,Purchase,currency,Danny Melein,87458.76,103.43\n\
+IT,Don Frampton,Purchase,currency,Chris McCoy,35380.74,65.21\n\
+Finance,Stacy Hoolahan,Purchase,currency,Mark Davies,219316.14,11.25\n\
+Finance,Stacy Hoolahan,Purchase,currency,Julian Morelli,28491.96,52.25\n\
+Finance,Stacy Hoolahan,Purchase,currency,Kuok Han Yong,146101.23,87.38\n\
+Finance,Stacy Hoolahan,Purchase,currency,ST Ring-0 Test3 [unknown],93810.32,92.34\n\
+IT,Don Frampton,Purchase,currency,Mohit Gupta,265542.9,115.03\n\
+Sales,Mo Barrick,Purchase,currency,Ramy Gabra,105206.25,6.14\n\
+IT,Don Frampton,Purchase,currency,Salvador Espino,130547.09,157.18\n\
+Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,96810.51,116.45\n\
+IT,Don Frampton,Purchase,currency,Leslie Neal,80304.11,111.59\n\
+Finance,Stacy Hoolahan,Purchase,currency,Merwan Hade,243204.16,23.04\n\
+IT,Don Frampton,Purchase,currency,Kami Hunter,191744.57,22.07\n\
+G&A,Chris McCoy,Purchase,currency,Evelyn Torres,89211.08,28.12\n\
+IT,Don Frampton,Purchase,currency,Russ Daniels,233190.49,68.34\n\
+IT,Don Frampton,Purchase,currency,Muiz Murad,173187.79,155\n\
 ';
 
 var mainUnits;
@@ -153,6 +139,8 @@ function calculateTotalValues(originalData) {
         }, [0, 0, 0]);
 
       approver.average = reduced[0] > 0 ? reduced[2]/reduced[0] : 0;
+      approver.count = reduced[0];
+      approver.value = reduced[1];
 
       return [c[0] + reduced[0], c[1] + reduced[1], c[2] + reduced[2]];
     }, [0, 0, 0]);

@@ -43,7 +43,7 @@ body {
     font-size: 20px;
 }
 
-.approval-highlight {
+.approval-halo {
     stroke: red;
     fill: transparent;
     stroke-width: 2;
@@ -102,10 +102,32 @@ body {
 
 .detailed-group.approver-highlight .sphere {
     opacity: 0.2;
+    transition: opacity 0.15s ease-in-out;
 }
 
 .detailed-group.approver-highlight .sphere.highlight {
     opacity: 1;
+    transition: opacity 0.15s ease-in-out;
+}
+
+.detailed-group.approver-highlight .bubble-guide {
+    opacity: 0.2;
+    transition: opacity 0.15s ease-in-out;
+}
+
+.detailed-group.approver-highlight .bubble-guide.highlight {
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out;
+}
+
+.detailed-group.approval-highlight .sphere, .detailed-group.approval-highlight .bubble-guide {
+    opacity: 0.2;
+    transition: opacity 0.15s ease-in-out;
+}
+
+.detailed-group.approval-highlight .sphere.highlight, .detailed-group.approval-highlight .bubble-guide.highlight {
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out;
 }
 
 /*
@@ -116,10 +138,12 @@ body {
 
 .detailed-group .average-guide {
     opacity: 0;
+    transition: opacity 0.15s ease-in-out;
 }
 
 .detailed-group.approver-highlight .average-guide.highlight {
     opacity: 1;
+    transition: opacity 0.15s ease-in-out;
 }
 
 .dark-legend {
@@ -206,7 +230,7 @@ body {
 }
 
 .menu-right {
-    width: 240px;
+    width: 250px;
     background-color: rgb(74,77,93);
 }
 
@@ -591,7 +615,7 @@ body.debug .view-json {
     position: fixed;
     bottom: 0;
     left: 0;
-    right: 240px;
+    right: 250px;
     height: 200px;
     background-color: rgb(74,77,93);
     display: none;
