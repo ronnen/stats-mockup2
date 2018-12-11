@@ -124,7 +124,9 @@ function drawOverview(mainUnits) {
       waitTimeMax: maxWait,
       amountMin: minValue,
       amountMax: maxValue,
-      approvalTypes: approvalTypeLabels
+      approvalTypes: approvalTypeLabels,
+
+      getSimulation: function() {return simulation;}
     });
 
     freshDataLoaded = false;

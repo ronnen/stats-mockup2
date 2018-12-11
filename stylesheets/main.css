@@ -196,7 +196,7 @@ body {
     stroke: transparent;
 }
 
-.mainObjectLegend, .bigDiameterLegend {
+.mainObjectLegend, .bigDiameterLegend, .smallDiameterLegend {
     display: none;
     position: absolute;
     color: #ffffff;
@@ -208,6 +208,10 @@ body {
 
 .bigDiameterLegend {
     transform: translate(0%, -50%);
+}
+
+.smallDiameterLegend {
+    transform: translate(40px, -50%);
 }
 
 .closed-sphere-background {
