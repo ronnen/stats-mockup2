@@ -55,7 +55,7 @@ body {
 }
 
 .request-type-closed.hidden {
-    fill: #bbbbbb;
+    fill: #dddddd;
     stroke: transparent;
     pointer-events: none;
 }
@@ -171,10 +171,10 @@ body {
 }
 
 .bubble-guide.hidden {
-    stroke: #bbbbbb;
+    stroke: #dddddd;
 }
 .approval-circle-foreground.hidden {
-    fill: #bbbbbb;
+    fill: #dddddd;
     pointer-events: none;
 }
 
