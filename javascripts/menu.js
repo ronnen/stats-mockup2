@@ -209,7 +209,7 @@ function drawMenu(criteria) {
         if (d3.select(this).classed("on")) typesFilter.push(d3.select(this).attr("data-type-filter"));
       });
 
-    var criteria = {
+    var newCriteria = {
       timeRangeMin: timeFilterState ? currentTimeRange.begin : null,
       timeRangeMax: timeFilterState ? currentTimeRange.end : null,
       // totalValueMin: valueFilterState ? currentValueRange.begin : null,
@@ -222,13 +222,14 @@ function drawMenu(criteria) {
       typesFilter: typesFilter
     };
 
-    filterDataByCriteria(criteria);
+    filterDataByCriteria(newCriteria);
 
     // if one flower is open then update only its content
     if (d3.select(".main-units.selected").size() || (params && params.selectedNode)) {
       lastOverviewParams = drawOverview(mainUnits);
       var selectedNode = d3.select(".main-units.selected");
       if (selectedNode.size()) drawDetailedView(selectedNode, lastOverviewParams);
+      lastOverviewParams.runSimulation(0.3);
 
       if (tableToggleState) {
         refreshTable(getRequestVisibleApprovals(selectedNode.datum()));
@@ -243,6 +244,7 @@ function drawMenu(criteria) {
       });
 
       lastOverviewParams = drawOverview(mainUnits);
+      lastOverviewParams.runSimulation(0.3);
 
       if (tableToggleState) {
         refreshTable(getAllVisibleApprovals());

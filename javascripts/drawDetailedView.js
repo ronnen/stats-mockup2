@@ -32,10 +32,18 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
   var unitGroup = selectedUnit;
 
+  var detailedGroupBase = selectedUnit.selectAll(".detailed-group")
+    .data([mainObject], function(d) {return d.request});
+
+  var detailedGroup = detailedGroupBase
+    .enter();
+
+/*
   // ensure cleanup before we start
   d3.selectAll(".main-units .detailed-group").remove();
+*/
 
-  var detailedGroup = unitGroup.append("svg:g")
+  detailedGroup = detailedGroup.append("svg:g")
     .attr("class", "detailed-group")
     .on("click", handleFlowerClick)
     .on("mouseleave", approvalMouseLeave);
@@ -340,8 +348,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
     // first drawing guide lines
     subUnits.forEach(function (t, index) {
-      detailedGroup.selectAll("bubble-guide.line")
-        .data(filterNonHidden(t.approvals))
+      var localGroup = d3.select(".detailed-group").selectAll("line.bubble-guide" + index)
+        .data(filterNonHidden(t.approvals), function(d,i) {return i;});
+
+      var enteredGroup = localGroup
         .enter()
         .append("svg:line")
         .attr("class", function(d) {return "bubble-guide bubble-guide" + index + (d.hidden ? " hidden" : "")})
@@ -365,6 +375,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
             (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / maxWaitTime);
           return "rotate(" + sampleDegrees + ")";
         });
+
+      enteredGroup
+        .merge(localGroup)
+        .classed("hidden", function(d) {return d.hidden;});
     });
   }
 
@@ -416,9 +430,13 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     function drawBackgroundOrForeground(foreground) {
       // now drawing spheres
       subUnits.forEach(function (t, index) {
+        var x = detailedGroup;
         var className = foreground ? "sphere" : "sphere-background";
-        var spheres = detailedGroup.selectAll("g." + className + index)
-          .data(filterNonHidden(t.approvals))
+        // due to general update pattern detailedGroup might be empty so selecting explicitly
+        var spheresSelection = d3.select(".detailed-group").selectAll("g." + className + index)
+          .data(filterNonHidden(t.approvals), function(d,i) {return i;});
+
+        var spheres = spheresSelection
           .enter()
           .append("svg:g")
           .attr("class", className + " " + className + index)
@@ -486,6 +504,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
             return typedValueToTextShort(d.value, d.presentation);
           });
 
+        var a = spheres
+          .merge(spheresSelection)
+          .select(".approval-circle-foreground")
+          .classed("hidden", function(d) {return d.hidden});
       });
     }
 

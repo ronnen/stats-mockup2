@@ -1,5 +1,6 @@
 var freshDataLoaded = true; // being set every time fresh data is loaded
 const zoomInDiameterFactor = 0.85;
+var simulation;
 
 function drawOverview(mainUnits) {
   if (freshDataLoaded) {
@@ -131,74 +132,113 @@ function drawOverview(mainUnits) {
 
     freshDataLoaded = false;
 
+    onFreshData();
+
+    if (mainUnits.length <= 0) return;
+
   }
 
-  d3.select("svg").remove();
+  function onFreshData() {
+    d3.select("svg").remove();
 
-  svg = d3.select(".svg-container").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .on("click", function() {
-      console.log("svg-container clicked");
-      d3.event.stopPropagation();
+    svg = d3.select(".svg-container").append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .on("click", function() {
+        d3.event.stopPropagation();
 
-      if (closeOpenFlowers()) {
-        simulation.stop();
-        window.dispatchEvent(new CustomEvent("drawOverviewByCriteria", { detail: { }}));
-      }
-    });
-
-  mainGroup = svg.append("svg:g")
-    .attr("transform", "translate(" + (width / 2) + "," + (height / 2) + ")")
-    .attr("class","main-group");
-
-  const forceX = d3.forceX(width / 2).strength(0.015);
-  const forceY = d3.forceY(height / 2).strength(0.015);
-
-  if (mainUnits.length <= 0) {
-    mainGroup
-      .append("text")
-      .attr("class", "all-data-hidden")
-      .attr("text-anchor", "middle")
-      .text("No data match your criteria");
-    return;
-  }
-
-  // console.log("simulation forceSimulation with mainUnits")
-  // reference: https://d3indepth.com/force-layout/
-  var simulation = d3.forceSimulation(mainUnits)
-    .alphaDecay(0.03)
-    .velocityDecay(0.2)
-    // .force('charge', d3.forceManyBody().strength(800))
-    .force("x", forceX)
-    .force("y", forceY)
-    .force('collision', d3.forceCollide().radius(function(d, index) {
-      return (d.selected ? blownUpRadius : d.outerRadius) + 10; // d.radius
-    }))
-    .on('tick', ticked);
-
-  function ticked() {
-    unitGroups
-      .attr("transform", function (d, index) {
-        var y = d.y - (height/2);
-        var x = d.x - (width/2);
-        return "translate(" + x + "," + y + ")";
+        if (closeOpenFlowers()) {
+          simulation.stop();
+          window.dispatchEvent(new CustomEvent("drawOverviewByCriteria", { detail: { }}));
+        }
       });
+
+    mainGroup = svg.append("svg:g")
+      .attr("transform", "translate(" + (width / 2) + "," + (height / 2) + ")")
+      .attr("class","main-group");
+
+    const forceX = d3.forceX(width / 2).strength(0.015);
+    const forceY = d3.forceY(height / 2).strength(0.015);
+
+    if (mainUnits.length <= 0) {
+      mainGroup
+        .append("text")
+        .attr("class", "all-data-hidden")
+        .attr("text-anchor", "middle")
+        .text("No data match your criteria");
+
+      return;
+    }
+
+    // console.log("simulation forceSimulation with mainUnits")
+    // reference: https://d3indepth.com/force-layout/
+    if (simulation) {
+      simulation.on('tick', null); // remove old handler
+    }
+
+    simulation = d3.forceSimulation(mainUnits)
+      .alphaDecay(0.03)
+      .velocityDecay(0.2)
+      // .force('charge', d3.forceManyBody().strength(800))
+      .force("x", forceX)
+      .force("y", forceY)
+      .force('collision', d3.forceCollide().radius(function(d, index) {
+        if (d.selected) {
+          console.log("simulation caught selected mainUnit");
+        }
+        return (d.selected ? blownUpRadius : d.outerRadius) + 10; // d.radius
+      }))
+      .on('tick', ticked);
+
+    simulation.lastState = null;
+
+    function belowThresholdMovement(state1, state2) {
+      return !state1.some(function(s1, i) {
+        if (s1.x.toFixed(1) != state2[i].x.toFixed(1) || s1.y.toFixed(1) != state2[i].y.toFixed(1))
+          return true;
+      });
+    }
+
+    function ticked() {
+      var newData = unitGroups.data();
+      if (simulation.lastState != null && belowThresholdMovement(newData, simulation.lastState)) {
+        simulation.stop();
+        return;
+      }
+      simulation.lastState = newData.map(function(d) {return {x: d.x, y: d.y}});
+      unitGroups
+        .attr("transform", function (d, index) {
+          var y = d.y - (height/2);
+          var x = d.x - (width/2);
+          return "translate(" + x + "," + y + ")";
+        });
+    }
+
   }
+
+  svg = d3.select(".svg-container").select("svg");
+  mainGroup = svg.select("g.main-group");
+
+  // DATA JOIN
+  // Join new data with old elements, if any.
+  // var text = g.selectAll("text")
+  //   .data(data);
 
   var unitGroupsBase = mainGroup.selectAll("g.main-units")
     .data(filterNonHidden(mainUnits), function(d) {return d.request});
 
+/*
+  var unitGroups = unitGroupsBase
+    .enter();
+
+  unitGroups = unitGroups
+*/
+  // var unitGroups = unitGroupsBase
+
   var unitGroups = unitGroupsBase
     .enter()
-    .append("svg:g");
-
-  unitGroups
-    .merge(unitGroupsBase)
+    .append("svg:g")
     .attr("class", "main-units")
-    .classed("selected", function(d) {
-      return d.selected
-    })
     .attr("transform", function (d, index) {
       if (!isNaN(parseFloat(d.fx))) {
         return d3.select(this).attr("transform");
@@ -313,12 +353,6 @@ function drawOverview(mainUnits) {
     .append("circle")
     .attr("class", function(d) {return "request-type-closed" + (d.hidden ? " hidden" : "")})
     .attr("stroke", "transparent")
-    .attr("fill", function (d) {
-      if (d.totalCount > 0)
-        return colorGenerator(d.totalWaitTime/d.totalCount);
-      else
-        return "#000000";
-    })
     .style("mix-blend-mode", "multiply")
     .attr("r", function(d) {
       if (d.presentation == "currency")
@@ -354,38 +388,30 @@ function drawOverview(mainUnits) {
       return typedValueToText(d.totalValue, d.presentation);
     });
 
-/*
-  // add approver bubbles inside units
-
-  var approverGroups = unitGroups
-    .selectAll("g.approver-group")
-    .data(function(d) {
-      return d.approvers.filter(function(approver) {return !approver.hidden});
+  // acting on the MERGE = ENTER + UPDATE
+  unitGroups
+    .merge(unitGroupsBase)
+    .classed("selected", function(d) {
+      return d.selected
     })
-    .enter()
-    .append("svg:g")
-    .attr("class", "approver-group")
-    .attr("transform", function (d, index) {
-      return "translate(" + d.x + "," + d.y + ")";
-    })
-    .on("mouseenter", function(d) {
-      d3.select(this).classed("highlight", true);
-    })
-    .on("mouseleave", function(d) {
-      d3.select(this).classed("highlight", false);
+    .selectAll(".request-type-closed")
+    .attr("class", function(d) {return "request-type-closed" + (d.hidden ? " hidden" : "")})
+    .attr("fill", function (d) {
+      if (d.totalCount > 0)
+        return colorGenerator(d.totalWaitTime/d.totalCount);
+      else
+        return "#000000";
     });
 
-  approverGroups
-    .append("circle")
-    .attr("r", function(d) {
-      var parentData = d3.select(this.parentNode.parentNode).datum();
-      return Math.max(approverBubbleRadiusGenerator(parentData)(d.approverTotalValue), minApproverBubbleRatio * parentData.outerRadius);
-    })
-    .style("mix-blend-mode", "multiply")
-    .attr("class", "approver-sphere-background")
-    .on("click", handleClick);
-    // .on("mouseenter", handleMouseOver);
+  simulation
+    .force('collision', d3.forceCollide().radius(function(d, index) {
+/*
+      if (d.selected) {
+        console.log("[2] simulation caught selected mainUnit");
+      }
 */
+      return (d.selected ? blownUpRadius : d.outerRadius) + 10; // d.radius
+    }));
 
   function closeOpenFlowers() {
     // there's supposed to be only one really
@@ -407,7 +433,7 @@ function drawOverview(mainUnits) {
 
   function handleClick(d, i) {
     d3.event.stopPropagation();
-    console.log("handleClick");
+    // console.log("handleClick");
 
     // first close all open flowers
     closeOpenFlowers();

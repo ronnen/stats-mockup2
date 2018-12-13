@@ -23,7 +23,7 @@
     window.addEventListener("load", function(e) {
         debugMode = getUrlVars()["debug"];
         if (debugMode) d3.select("body").classed("debug", true);
-        console.log(parseInt(d3.select('.svg-container').style('height')));
+        // console.log(parseInt(d3.select('.svg-container').style('height')));
         drawOverview(parseCSV(CSVData));
     });
 </script>

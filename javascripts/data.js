@@ -1,11 +1,12 @@
+
 var CSVData = '\
 # Enter CSV data with the following structure to replace the current view\n\
 approverDept,approver,request,presentation,submitter,value,waitTime\n\
-Finance,Stacy Hoolahan,Change,Changes,Thando Nkosi,1,18.29\n\
+Finance,Stacy Hoolahan,Change,Changes,Thando Nkosi,1,45.29\n\
 Finance,Stacy Hoolahan,Change,Changes,Luke DeCoste,1,17.35\n\
 Finance,Stacy Hoolahan,Change,Changes,Fei Meng ZHENG,1,89.05\n\
-G&A,Chris McCoy,Change,Changes,Jon Estrada,1,25.46\n\
 IT,Don Frampton,Expense,currency,Sonny Becca,2388.13,83.05\n\
+G&A,Chris McCoy,Change,Changes,Jon Estrada,1,25.46\n\
 G&A,Chris McCoy,Expense,currency,Tim Gilday,185.71,91\n\
 IT,Don Frampton,Expense,currency,Jeremy Huddleston,1942.3,61.02\n\
 Finance,Stacy Hoolahan,Expense,currency,Selma Trenton,150.66,143.51\n\
@@ -80,7 +81,7 @@ IT,Don Frampton,Purchase,currency,Johanna P‚âàŒ©rez Cuevas,261467.21,3.24\
 IT,Don Frampton,Purchase,currency,RYAN Lowe,111179.83,104.48\n\
 Finance,Stacy Hoolahan,Purchase,currency,Odesen Naidoo,15520.47,51.19\n\
 Finance,Stacy Hoolahan,Purchase,currency,Sharansh Srivastava,263631.13,61.14\n\
-Finance,Stacy Hoolahan,Purchase,currency,Juan Perena,251263.58,127.21\n\
+Finance,Stacy Hoolahan,Purchase,currency,Juan Perena,251263.58,148.21\n\
 Finance,Stacy Hoolahan,Purchase,currency,Chris Saxon,79875.21,4.07\n\
 Finance,Stacy Hoolahan,Purchase,currency,TopApp Regression1,109088.45,119.05\n\
 Finance,Stacy Hoolahan,Purchase,currency,Hector Gallo De Diego,200419.15,55.42\n\
@@ -95,10 +96,10 @@ Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,132966.74,116.11\n\
 IT,Don Frampton,Purchase,currency,JoE Spearing,64873.96,143.35\n\
 G&A,Chris McCoy,Purchase,currency,Sunny Davis,37698.2,76.15\n\
 G&A,Chris McCoy,Purchase,currency,Dennis Frimpong,7247.8,57.28\n\
-Finance,Stacy Hoolahan,Purchase,currency,Ignacio Diaz Alvarez,266475.84,74.48\n\
+Finance,Mo Barrick,Purchase,currency,Ignacio Diaz Alvarez,266475.84,98.48\n\
 G&A,Chris McCoy,Purchase,currency,Evelyn Espinal,86659.03,14.18\n\
 Finance,Stacy Hoolahan,Purchase,currency,Germano Bertoldo,99097.11,70.12\n\
-Finance,Stacy Hoolahan,Purchase,currency,Mitja Lavri?,49027,137.35\n\
+Finance,Stacy Hoolahan,Purchase,currency,Mitja Lavri,49027,137.35\n\
 Finance,Stacy Hoolahan,Purchase,currency,Fernando Tezanos Pinto,189659.04,77.17\n\
 IT,Don Frampton,Purchase,currency,Chris McCoy,204975.94,151.28\n\
 Finance,Stacy Hoolahan,Purchase,currency,Anvil Dsouza,165620.98,50.52\n\
@@ -107,7 +108,7 @@ IT,Don Frampton,Purchase,currency,Miguel Ortiz,201847.75,164.42\n\
 Finance,Stacy Hoolahan,Purchase,currency,Mary Bowler,168423.24,130.4\n\
 Finance,Stacy Hoolahan,Purchase,currency,Mo Jalloh,215643.02,48.44\n\
 Finance,Stacy Hoolahan,Purchase,currency,Salvador Espino,180350.75,115.29\n\
-Finance,Stacy Hoolahan,Purchase,currency,Mengyu Wu,158147.58,24.21\n\
+Finance,Stacy Hoolahan,Purchase,currency,Mengyu Wu,158147.58,35.21\n\
 Sales,Mo Barrick,Purchase,currency,Steve Lyles,21595.31,80.42\n\
 G&A,Chris McCoy,Purchase,currency,Tom Tatarczuk,252423.98,60.17\n\
 Finance,Stacy Hoolahan,Purchase,currency,Danny Melein,87458.76,103.43\n\
