@@ -313,10 +313,11 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     avgGuideGroup
       .append("text")
       .attr("class", "average-guide-label")
-      .attr("text-anchor", function(d) {return d.flipText ? "start" : "end"})
+      .attr("text-anchor", function(d) {return d.flipText ? "middle" : "middle"}) // "start" : "end"
       .attr("dy", "1.2em")
       .attr("x", function (d, index) {
-        return 0;
+        var visibleAverageLen = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap) - approverRadius * outerRadius
+        return (d.flipText ? visibleAverageLen : -visibleAverageLen) * 0.5;
       })
       .attr("y", function (d, index) {
         return outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap);
