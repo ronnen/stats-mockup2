@@ -5,9 +5,12 @@ var simulation;
 function drawOverview(mainUnits) {
   if (freshDataLoaded) {
     calculateTotalValues(mainUnits);
+/*
     if (tableToggleState) {
       refreshTable(getAllVisibleApprovals());
     }
+*/
+    refreshTable(mainUnits);
   }
 
   var width = parseInt(d3.select('.svg-container').style('width')),

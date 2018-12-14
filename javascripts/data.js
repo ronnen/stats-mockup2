@@ -77,7 +77,7 @@ Finance,Stacy Hoolahan,Purchase,currency,Danny Stamp,232022.28,89.11\n\
 IT,Don Frampton,Purchase,currency,EMANUEL Gary,49759.17,147.55\n\
 Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,47372.02,97.21\n\
 IT,Don Frampton,Purchase,currency,Graham Wilkinson,3063.72,163.38\n\
-IT,Don Frampton,Purchase,currency,Johanna P‚âàŒ©rez Cuevas,261467.21,3.24\n\
+IT,Don Frampton,Purchase,currency,Johanna Cuevas,261467.21,3.24\n\
 IT,Don Frampton,Purchase,currency,RYAN Lowe,111179.83,104.48\n\
 Finance,Stacy Hoolahan,Purchase,currency,Odesen Naidoo,15520.47,51.19\n\
 Finance,Stacy Hoolahan,Purchase,currency,Sharansh Srivastava,263631.13,61.14\n\

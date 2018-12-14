@@ -13,59 +13,82 @@ function drawTable() {
   }
 }
 
-function refreshTable(approvals) {
+function refreshTable(mainUnits) {
   var tableRows = d3.select(".table-rows");
 
-  tableRows.html(null);
+  if (freshDataLoaded) {
+    tableRows.html(null);
 
-  var dataRows = tableRows.selectAll(".data-row")
-    .data(approvals)
-    .enter()
-    .append("div")
-    .attr("class", "data-row");
+    var captionRow = tableRows.append("div", "div")
+      .attr("class", "caption-row");
+    captionRow
+      .append("div")
+      .attr("class", "request caption")
+      .text("Request type");
+    captionRow
+      .append("div")
+      .attr("class", "approver caption")
+      .text("Approver");
+    captionRow
+      .append("div")
+      .attr("class", "submitter caption")
+      .text("Submitted by");
+    captionRow
+      .append("div")
+      .attr("class", "value caption")
+      .text("Amount requested");
+    captionRow
+      .append("div")
+      .attr("class", "table-wait-time caption")
+      .text("Pending since");
+  }
 
-  dataRows
-    .append("div")
-    .attr("class", "request data")
-    .text(function(d) {return d.request});
-  dataRows
-    .append("div")
-    .attr("class", "approver data")
-    .text(function(d) {return d.approver});
-  dataRows
-    .append("div")
-    .attr("class", "submitter data")
-    .text(function(d) {return d.submitter});
-  dataRows
-    .append("div")
-    .attr("class", "value data")
-    .text(function(d) {return valueToText(d.value)});
-  dataRows
-    .append("div")
-    .attr("class", "table-wait-time data")
-    .text(function(d) {return waitToText(d.waitTime)});
+  var selectedRequestIndex = mainUnits.findIndex(function(r) {return r.selected});
 
-  var captionRow = tableRows.insert("div", "div")
-    .attr("class", "data-row");
-  captionRow
-    .append("div")
-    .attr("class", "request caption")
-    .text("Request type");
-  captionRow
-    .append("div")
-    .attr("class", "approver caption")
-    .text("Request type");
-  captionRow
-    .append("div")
-    .attr("class", "submitter caption")
-    .text("Submitted by");
-  captionRow
-    .append("div")
-    .attr("class", "value caption")
-    .text("Amount requested");
-  captionRow
-    .append("div")
-    .attr("class", "table-wait-time caption")
-    .text("Pending since");
+  mainUnits.forEach(function(request, requestIndex) {
+    request.approvers.forEach(function(approver, approverIndex) {
+      var dataRows = tableRows.selectAll(".data-row.r" + requestIndex + "a" + approverIndex)
+        .data(approver.approvals/*, function(d, i) {return [requestIndex, approverIndex, i]}*/);
+
+      var enteredDataRows = dataRows
+        .enter()
+        .append("div")
+        .attr("class", "data-row " + "r" + requestIndex + "a" + approverIndex); // r2a3 (request 2, approver 3)
+
+      enteredDataRows
+        .append("div")
+        .attr("class", "request data")
+        .text(function(d) {return request.request});
+      enteredDataRows
+        .append("div")
+        .attr("class", "approver data")
+        .text(function(d) {return approver.approverName});
+      enteredDataRows
+        .append("div")
+        .attr("class", "submitter data")
+        .text(function(d) {return d.submitter});
+      enteredDataRows
+        .append("div")
+        .attr("class", "value data")
+        .text(function(d) {return valueToText(d.value)});
+      enteredDataRows
+        .append("div")
+        .attr("class", "table-wait-time data")
+        .text(function(d) {
+          return waitToText(d.waitTime)
+        });
+
+
+      // update existing and new
+      enteredDataRows.merge(dataRows)
+        .classed("hidden", function(d) {
+          if (selectedRequestIndex >= 0 && requestIndex != selectedRequestIndex)
+            return true;
+          return d.hidden;
+        });
+
+    });
+  });
+
 
 }

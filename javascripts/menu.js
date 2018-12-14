@@ -7,7 +7,6 @@ function drawMenu(criteria) {
   // criteria {totalValueMin, totalValueMax, waitTimeMin, waitTimeMax, amountMin, amountMax, approvalTypes}
 
   var timeRangeMin = criteria.timeRangeMin || 0, timeRangeMax = criteria.timeRangeMax || 100;
-  var totalValueMin = criteria.totalValueMin || 0, totalValueMax = criteria.totalValueMax || 100000000;
   var waitTimeMin = criteria.waitTimeMin || 0, waitTimeMax = criteria.waitTimeMax || 100000000;
   var amountMin = criteria.amountMin || 0, amountMax = criteria.amountMax || 100000000;
 
@@ -16,9 +15,6 @@ function drawMenu(criteria) {
   var waitFilterState = true;
 
   var lastOverviewParams = null;
-
-  // d3.select("#total-value-filter .label-left").text("$ " + valueToText(totalValueMin));
-  // d3.select("#total-value-filter .label-right").text("$ " + valueToText(totalValueMax));
 
   function setTimeRangeLabels() {
     d3.select("#time-range-filter .label-left").text(!timeFilterState ? "START DATE" : valueToDate(timeRangeMin));
@@ -105,32 +101,6 @@ function drawMenu(criteria) {
 
   // amountSlider.range(amountMin,amountMax);
 
-/*
-  // Total Value filter
-  var valueFilterState = true;
-
-  d3.select("#total-value-filter .switch-container")
-    .on("click", valueSliderClick);
-
-  function valueSliderClick() {
-    d3.select("#total-value-filter").classed("on", !valueFilterState);
-    valueFilterState = !valueFilterState;
-    drawOverviewByCriteria();
-  }
-
-  var valueSlider = createD3RangeSlider(totalValueMin, totalValueMax, "#total-value-filter .stats-slider", false);
-
-  valueSlider.onChange(function(newRange){
-    // d3.select("#range-label").html(newRange.begin + " &mdash; " + newRange.end);
-  });
-
-  valueSlider.onRelease(function(newRange){
-    drawOverviewByCriteria();
-  });
-
-  valueSlider.range(totalValueMin,totalValueMax);
-*/
-
   // Wait Time filter
   d3.select("#wait-time-filter .switch-container")
     .on("click", waitSliderClick);
@@ -154,7 +124,6 @@ function drawMenu(criteria) {
   });
 
   // waitSlider.range(waitTimeMin,waitTimeMax);
-
 
   // approval type filters
   d3.selectAll("#approval-type-switches .switch-container")
@@ -182,10 +151,10 @@ function drawMenu(criteria) {
     if (tableToggleState) {
       if (d3.select(".main-units.selected").size() > 0) {
         var selectedUnit = d3.select(".main-units.selected").datum();
-        refreshTable(getRequestVisibleApprovals(selectedUnit));
+        refreshTable(mainUnits/*getRequestVisibleApprovals(selectedUnit)*/);
       }
       else {
-        refreshTable(getAllVisibleApprovals());
+        refreshTable(mainUnits/*getAllVisibleApprovals()*/);
       }
     }
 
@@ -232,7 +201,7 @@ function drawMenu(criteria) {
       lastOverviewParams.runSimulation(0.3);
 
       if (tableToggleState) {
-        refreshTable(getRequestVisibleApprovals(selectedNode.datum()));
+        refreshTable(mainUnits/*getRequestVisibleApprovals(selectedNode.datum())*/);
       }
 
     }
@@ -247,7 +216,7 @@ function drawMenu(criteria) {
       lastOverviewParams.runSimulation(0.3);
 
       if (tableToggleState) {
-        refreshTable(getAllVisibleApprovals());
+        refreshTable(mainUnits/*getAllVisibleApprovals()*/);
       }
     }
 

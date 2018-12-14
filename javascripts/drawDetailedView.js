@@ -19,6 +19,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
   var unitNode = selectedUnit.node();
   var mainObject = selectedUnit.datum();
+  var requestIndex = mainUnits.findIndex(function(a) {return a === mainObject;});
+  if (requestIndex < 0) {
+    console.error("Bad requestIndex");
+  }
 
   d3.select(unitNode).raise();
 
@@ -200,6 +204,9 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.select("#average-guide" + index).classed("highlight", true);
       d3.select(".detailed-group .request-value")
         .text(typedValueToText(d.approver.value, mainObject.presentation));
+
+      d3.select(".table-rows").classed("approver-highlight", true);
+      d3.selectAll(".table-rows .data-row.r" + requestIndex + "a" + index).classed("highlight", true);
     }
 
     function approverMouseLeave(d, i) {
@@ -210,6 +217,9 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.selectAll(".average-guide").classed("highlight", false);
       d3.select(".detailed-group .request-value")
         .text(typedValueToText(mainObject.totalValue, mainObject.presentation));
+
+      d3.select(".table-rows").classed("approver-highlight", false);
+      d3.selectAll(".table-rows .data-row").classed("highlight", false);
     }
 
     circularGroups

@@ -682,7 +682,7 @@ body.debug .view-json {
     width: 100%;
 }
 
-.data-row {
+.caption-row, .data-row {
     /*background-color: #888888;*/
     color: whitesmoke;
     font-family: Verdana, sans-serif;
@@ -693,35 +693,46 @@ body.debug .view-json {
     padding-left: 10px;
 }
 
-.data-row .caption, .data-row .data {
+.caption-row .caption, .data-row .data {
     padding: 3px 5px 5px 3px;
 }
 
-.data-row .request {
+.caption-row .request, .data-row .request {
     display: flex;
     flex: 0 200px;
 }
 
-.data-row .approver {
+.caption-row .approver, .data-row .approver {
     display: flex;
     flex: 0 200px;
 }
 
-.data-row .submitter {
+.caption-row .submitter, .data-row .submitter {
     display: flex;
     flex: 0 200px;
 }
 
-.data-row .value {
+.caption-row .value, .data-row .value {
     display: flex;
     flex: 0 200px;
 }
 
-.data-row .table-wait-time {
+.caption-row .table-wait-time, .data-row .table-wait-time {
     display: flex;
     flex: 0 200px;
 }
 
-.data-row .caption {
+.caption-row .caption {
     color: coral;
+}
+
+.table-rows .data-row.hidden {
+    display: none;
+}
+
+.table-rows.approver-highlight .data-row {
+    display: none;
+}
+.table-rows.approver-highlight .data-row.highlight {
+    display: flex;
 }
