@@ -53,6 +53,7 @@ function refreshTable(mainUnits) {
       var enteredDataRows = dataRows
         .enter()
         .append("div")
+        .attr("id", function(d,i) {return "r" + requestIndex + "a" + approverIndex + "b" + i})  // r4a3b5 (request 4, approver 3, approval 5)
         .attr("class", "data-row " + "r" + requestIndex + "a" + approverIndex); // r2a3 (request 2, approver 3)
 
       enteredDataRows

@@ -736,3 +736,11 @@ body.debug .view-json {
 .table-rows.approver-highlight .data-row.highlight {
     display: flex;
 }
+.table-rows.approval-highlight .data-row {
+    display: none;
+}
+.table-rows.approval-highlight .data-row.highlight {
+    /*background-color: mintcream;*/
+    display: flex;
+    color: orange;
+}

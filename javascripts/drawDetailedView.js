@@ -400,6 +400,9 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     d3.selectAll(".sphere").classed("highlight", false);
     d3.selectAll(".bubble-guide").classed("highlight", false);
     d3.select(".detailed-group").classed("approval-highlight", false);
+
+    d3.select(".table-rows").classed("approval-highlight", false);
+    d3.selectAll(".table-rows .data-row").classed("highlight", false);
   }
 
   function drawSpheres() {
@@ -414,6 +417,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.select(this).classed("highlight", true);
       d3.select("#" + sphereID.replace("b","g")).classed("highlight", true);
       d3.select(".detailed-group").classed("approval-highlight", true);
+
+      d3.select(".table-rows").classed("approval-highlight", true);
+      d3.selectAll(".table-rows .data-row").classed("highlight", false); // in case mouseLeave was not fired
+      d3.select("#r" + requestIndex + sphereID).classed("highlight", true); // r4a3b5 (request 4, approver 3, approval 5)
 
       d3.select(this)
         .append("circle")
