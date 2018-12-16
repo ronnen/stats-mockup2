@@ -1,5 +1,3 @@
-var firstTimeDrawDetailedView = true;
-
 function drawDetailedView(selectedUnit, drawOverviewParam) {
 
   // var height = parseInt(d3.select('.svg-container').style('height'));
@@ -28,13 +26,11 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
   // compute center and radius
   var outerRadius = Math.max(mainObject.outerRadius, zoomInDiameterFactor/2 * height);
-  const circleMarkersGap = (circleEndRadius - circleStartRadius) / (countNonHidden(mainObject.approvers) + 1);
+  const circleMarkersGap = (circleEndRadius - circleStartRadius) / (state.common.countNonHidden(mainObject.approvers) + 1);
 
-  var maxWaitTime = drawOverviewParam.maxWait;
+  var colorGenerator = state.common.colorForWaitTime(state.configLowWait, state.configHighWait);
 
-  var colorGenerator = colorForWaitTime(maxWaitTime);
-
-  var unitGroup = selectedUnit;
+  // var unitGroup = selectedUnit;
 
   var detailedGroupBase = selectedUnit.selectAll(".detailed-group")
     .data([mainObject], function(d) {return d.request});
@@ -65,7 +61,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .style("display","none");
 
     d3.select(unitNode).raise().classed("active", true);
-    // var translated = getTranslation(d3.select(unitNode).attr("transform"));
+    // var translated = state.common.getTranslation(d3.select(unitNode).attr("transform"));
 
     if (!d3.event.active) runSimulation(0.3); // simulation.alphaTarget(0.3).restart();
     d.fx = d.x;
@@ -131,8 +127,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     detailedGroup.selectAll("identity.path")
       .data([{
         radius: outerRadius - identityMargin,
-        from: 0, // toRadians(-30) + gap/2,
-        to: 2*Math.PI // toRadians(330) - gap/2
+        from: 0, // state.common.toRadians(-30) + gap/2,
+        to: 2*Math.PI // state.common.toRadians(330) - gap/2
       }])
       .enter()
       .append("svg:path")
@@ -143,7 +139,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         return 1;
       })
       .attr("stroke-linejoin", "round")
-      .attr("d", function(d) {return arcSliceFull(d);});
+      .attr("d", function(d) {return state.common.arcSliceFull(d);});
 
     // background for the label
     detailedGroup
@@ -152,10 +148,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .attr("class", "background-stroke")
       .attr("fill", "transparent")
       .attr("stroke-width", 1)
-      .attr("d", arcSliceFull({
+      .attr("d", state.common.arcSliceFull({
         radius: outerRadius - identityMargin,
-        to: toRadians(-30) + gap/2,
-        from: toRadians(-30) - gap/2
+        to: state.common.toRadians(-30) + gap/2,
+        from: state.common.toRadians(-30) - gap/2
       }));
 
     detailedGroup
@@ -192,7 +188,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         return 1;
       })
       .attr("stroke-linejoin", "round")
-      .attr("d", function(d) {return arcSliceFull({
+      .attr("d", function(d) {return state.common.arcSliceFull({
         radius: d.radius,
         from: 0,
         to: 2*Math.PI
@@ -205,7 +201,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.selectAll(".bubble-guide"+index).classed("highlight", true);
       d3.select("#average-guide" + index).classed("highlight", true);
       d3.select(".detailed-group .request-value")
-        .text(typedValueToText(d.approver.value, mainObject.presentation));
+        .text(state.common.typedValueToText(d.approver.value, mainObject.presentation));
 
       d3.select(".table-rows").classed("approver-highlight", true);
       d3.selectAll(".table-rows .data-row.r" + requestIndex + "a" + index).classed("highlight", true);
@@ -218,7 +214,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.selectAll("g.sphere").classed("highlight", false);
       d3.selectAll(".average-guide").classed("highlight", false);
       d3.select(".detailed-group .request-value")
-        .text(typedValueToText(mainObject.totalValue, mainObject.presentation));
+        .text(state.common.typedValueToText(mainObject.totalValue, mainObject.presentation));
 
       d3.select(".table-rows").classed("approver-highlight", false);
       d3.selectAll(".table-rows .data-row").classed("highlight", false);
@@ -233,7 +229,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         return outerRadius * circleMarkersGap;
       })
       .attr("stroke-linejoin", "round")
-      .attr("d", function(d) {return arcSliceFull({
+      .attr("d", function(d) {return state.common.arcSliceFull({
         radius: d.radius,
         from: 0,
         to: 2*Math.PI
@@ -250,10 +246,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .attr("stroke-width", 1)
       .attr("d",  function(d) {
         var gap = estimateAngleGapForText(d.radius, d.approver.approverName);
-        return arcSliceFull({
+        return state.common.arcSliceFull({
           radius: d.radius,
-          to: toRadians(-30) + gap/2,
-          from: toRadians(-30) - gap/2
+          to: state.common.toRadians(-30) + gap/2,
+          from: state.common.toRadians(-30) - gap/2
         });
       });
 
@@ -275,14 +271,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   }
 
   // subUnits denote all the visible approvers
-  var subUnits = filterNonHidden(mainObject.approvers);
-
-/*
-  // calculate radial range based on top waitTime
-  var maxWaitTime = d3.max(subUnits.map(function(v) {
-    return d3.max(v.approvals, function(a) {return a.waitTime})
-  }));
-*/
+  var subUnits = state.common.filterNonHidden(mainObject.approvers);
 
   var maxValue = d3.max(subUnits.map(function(v) {
     return d3.max(v.approvals, function(a) {return a.value})
@@ -305,8 +294,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .attr("id", function(d,i) {return "average-guide" + i})
       .attr("transform", function (d) {
         var sampleDegrees = -180 + approvalsRadialStart +
-          (approvalsRadialEnd - approvalsRadialStart) * (d.average / maxWaitTime);
-        // console.log("sampleDegrees " + sampleDegrees + " " + waitToText(d.average));
+          (approvalsRadialEnd - approvalsRadialStart) * (d.average / state.maxWait);
+        // console.log("sampleDegrees " + sampleDegrees + " " + state.common.waitToText(d.average));
         d.flipText = (sampleDegrees > 0);
         return "rotate(" + sampleDegrees + ")";
       });
@@ -335,7 +324,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         return outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap);
       })
       .text(function (d) {
-        return waitToText(d.average);
+        return state.common.waitToText(d.average);
       })
       .attr("transform", function (d, index) {
         var radius = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap);
@@ -362,7 +351,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     // first drawing guide lines
     subUnits.forEach(function (t, index) {
       var localGroup = d3.select(".detailed-group").selectAll("line.bubble-guide" + index)
-        .data(filterNonHidden(t.approvals), function(d,i) {return i;});
+        .data(state.common.filterNonHidden(t.approvals), function(d,i) {return i;});
 
       var enteredGroup = localGroup
         .enter()
@@ -385,7 +374,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         })
         .attr("transform", function (d) {
           var sampleDegrees = -180 + approvalsRadialStart +
-            (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / maxWaitTime);
+            (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / state.maxWait);
           return "rotate(" + sampleDegrees + ")";
         });
 
@@ -444,7 +433,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         .style("top", (rect.y + rect.height/2) + "px");
 
       d3.select(".submitter-content .submitter-name").text(d.submitter);
-      d3.select(".submitter-content .wait-time").text("Waiting " + waitToText(d.waitTime));
+      d3.select(".submitter-content .wait-time").text("Waiting " + state.common.waitToText(d.waitTime));
     }
 
     function drawBackgroundOrForeground(foreground) {
@@ -454,7 +443,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         var className = foreground ? "sphere" : "sphere-background";
         // due to general update pattern detailedGroup might be empty so selecting explicitly
         var spheresSelection = d3.select(".detailed-group").selectAll("g." + className + index)
-          .data(filterNonHidden(t.approvals), function(d,i) {return i;});
+          .data(state.common.filterNonHidden(t.approvals), function(d,i) {return i;});
 
         var spheres = spheresSelection
           .enter()
@@ -492,7 +481,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
           })
           .attr("transform", function (d) {
             var sampleDegrees = -180 + approvalsRadialStart +
-              (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / maxWaitTime);
+              (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / state.maxWait);
             return "rotate(" + sampleDegrees + ")";
           });
 
@@ -511,17 +500,17 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
           .attr("x", function (d) {
             // calculate absolute position based on radius and angle
             var radius = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap)
-            var angle = -90 + approvalsRadialStart + (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / maxWaitTime);
-            return Math.cos(toRadians(angle)) * radius;
+            var angle = -90 + approvalsRadialStart + (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / state.maxWait);
+            return Math.cos(state.common.toRadians(angle)) * radius;
           })
           .attr("y", function (d) {
             // calculate absolute position based on radius and angle
             var radius = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap)
-            var angle = -90 + approvalsRadialStart + (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / maxWaitTime);
-            return Math.sin(toRadians(angle)) * radius;
+            var angle = -90 + approvalsRadialStart + (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / state.maxWait);
+            return Math.sin(state.common.toRadians(angle)) * radius;
           })
           .text(function (d) {
-            return typedValueToTextShort(d.value, d.presentation);
+            return state.common.typedValueToTextShort(d.value, d.presentation);
           });
 
         var a = spheres
@@ -560,19 +549,19 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .attr("y", 0)
       .attr("dy", 20)
       .text(function(d) {
-        return typedValueToText(d.totalValue, d.presentation);
+        return state.common.typedValueToText(d.totalValue, d.presentation);
       });
   }
 
   function drawColorfulRibbon() {
     var arcSlice = d3.arc()
-      .startAngle(toRadians(0))
-      .endAngle(toRadians(2))
+      .startAngle(state.common.toRadians(0))
+      .endAngle(state.common.toRadians(2))
       .innerRadius(outerRadius * clockColorRibbonRadius)
       .outerRadius(outerRadius * clockColorRibbonRadius);
 
     for (var i = 0; i < 360; i++) {
-      var rgb = colorGenerator(i * maxWaitTime / approvalsRadialEnd); // will generate red colors beyond range as necessary
+      var rgb = colorGenerator(i * state.maxWait / approvalsRadialEnd); // will generate red colors beyond range as necessary
       detailedGroup
         .append("svg:path")
         .attr("stroke", rgb)
@@ -686,8 +675,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   drawAverageDelayMarkers();
   drawCenterSphere();
 
-  if (firstTimeDrawDetailedView) {
-    firstTimeDrawDetailedView = !firstTimeDrawDetailedView;
+  if (state.firstTimeDrawDetailedView) {
+    state.firstTimeDrawDetailedView = !state.firstTimeDrawDetailedView;
     drawClockMotion();
   }
 

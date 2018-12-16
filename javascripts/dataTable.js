@@ -16,7 +16,7 @@ function drawTable() {
 function refreshTable(mainUnits) {
   var tableRows = d3.select(".table-rows");
 
-  if (freshDataLoaded) {
+  if (state.freshDataLoaded) {
     tableRows.html(null);
 
     var captionRow = tableRows.append("div", "div")
@@ -71,12 +71,12 @@ function refreshTable(mainUnits) {
       enteredDataRows
         .append("div")
         .attr("class", "value data")
-        .text(function(d) {return valueToText(d.value)});
+        .text(function(d) {return state.common.valueToText(d.value)});
       enteredDataRows
         .append("div")
         .attr("class", "table-wait-time data")
         .text(function(d) {
-          return waitToText(d.waitTime)
+          return state.common.waitToText(d.waitTime)
         });
 
 

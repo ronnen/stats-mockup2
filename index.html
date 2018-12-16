@@ -16,15 +16,16 @@
 <script src="javascripts/menu.js"></script>
 <script src="javascripts/editData.js"></script>
 <script src="javascripts/dataTable.js"></script>
+<script src="javascripts/configure.js"></script>
 <script>
     var debugMode = false;
     const FADE_HIDDEN = true;
 
     window.addEventListener("load", function(e) {
-        debugMode = getUrlVars()["debug"];
+        debugMode = state.common.getUrlVars()["debug"];
         if (debugMode) d3.select("body").classed("debug", true);
         // console.log(parseInt(d3.select('.svg-container').style('height')));
-        drawOverview(parseCSV(CSVData));
+        state.overviewParams = drawOverview(parseCSV(CSVData));
     });
 </script>
 <body>
@@ -46,6 +47,9 @@
     <div class="actions-container">
         <div class="legend-button">Legend</div>
         <div class="load-data">Load Data</div>
+    </div>
+    <div class="config-container">
+        <div class="config-button">Configure</div>
     </div>
     <div id="table-toggle-container">
         <div class="table-toggle">
@@ -156,4 +160,21 @@
         </div>
     </div>
 </div>
+
+<div class="configureDialog">
+    <div class="dialog-wrapper">
+        <div class="config-content">
+            <div class="config-wait-slider"></div>
+            <div class="labels">
+                <div class="label-left">MIN</div>
+                <div class="label-right">MAX</div>
+            </div>
+        </div>
+        <div class="config-actions">
+            <div class="cancel-config">Cancel</div>
+            <div class="set-config">Set</div>
+        </div>
+    </div>
+</div>
+
 </body>

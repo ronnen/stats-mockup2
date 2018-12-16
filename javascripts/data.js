@@ -130,6 +130,20 @@ IT,Don Frampton,Purchase,currency,Muiz Murad,173187.79,155\n\
 ';
 
 var mainUnits;
+var state = {
+  freshDataLoaded: true, // being set every time fresh data is loaded
+  configLowWait: null,
+  configHighWait: null,
+  legendToggle: false,
+  tableToggleState: false,
+  drawOverviewListener: null,
+  firstTimeDrawDetailedView: true,
+
+  GREEN_COLOR: "rgb(88,141,26)",
+  RED_COLOR: "rgb(234,49,49)",
+
+  common: {}, // common functions
+};
 
 function calculateTotalValues(originalData) {
   originalData.forEach(function(request) {
@@ -155,7 +169,7 @@ function calculateTotalValues(originalData) {
     request.totalCount = stats[0];
     request.totalValue = stats[1];
     request.totalWaitTime = stats[2];
-    request.unitLabel = request.request + ". " + request.totalCount + " requests. " + waitToText(request.totalWaitTime/request.totalCount) + " Average delay.";
+    request.unitLabel = request.request + ". " + request.totalCount + " requests. " + state.common.waitToText(request.totalWaitTime/request.totalCount) + " Average delay.";
   });
 
 }
@@ -218,7 +232,7 @@ function getAllVisibleApprovals() {
   var result = [];
   mainUnits.forEach(function(request) {
     request.approvers.forEach(function(approver) {
-      result = result.concat(filterNonHidden(approver.approvals, true).map(function(approval) {
+      result = result.concat(state.common.filterNonHidden(approver.approvals, true).map(function(approval) {
         return {
           request: request.request,
           approver: approver.approverName,
@@ -239,7 +253,7 @@ function getAllVisibleApprovals() {
 function getRequestVisibleApprovals(request) {
   var result = [];
   request.approvers.forEach(function(approver) {
-    result = result.concat(filterNonHidden(approver.approvals, true).map(function(approval) {
+    result = result.concat(state.common.filterNonHidden(approver.approvals, true).map(function(approval) {
       return {
         request: request.request,
         approver: approver.approverName,

@@ -1,15 +1,61 @@
-var freshDataLoaded = true; // being set every time fresh data is loaded
 const zoomInDiameterFactor = 0.85;
 var simulation;
 
 function drawOverview(mainUnits) {
-  if (freshDataLoaded) {
+  if (state.freshDataLoaded) {
     calculateTotalValues(mainUnits);
-/*
-    if (tableToggleState) {
-      refreshTable(getAllVisibleApprovals());
-    }
-*/
+
+    state.maxCount = d3.max(mainUnits.map(function(v) {
+      return v.totalCount;
+    }));
+
+    state.minCount = d3.min(mainUnits.map(function(v) {
+      return v.totalCount;
+    }));
+
+    // find min-max financial value
+    state.maxTotalFinancialValue = d3.max(mainUnits.filter(function(r) {return r.presentation == "currency"}).map(function(v) {
+      return v.totalValue;
+    }));
+
+    state.minTotalFinancialValue = d3.min(mainUnits.filter(function(r) {return r.presentation == "currency"}).map(function(v) {
+      return v.totalValue;
+    }));
+
+    state.maxWait = d3.max(mainUnits.map(function(v) {
+      return d3.max(v.approvers, function(approver) {
+        return d3.max(approver.approvals, function(approval) {
+          return approval.waitTime;
+        });
+      });
+    }));
+    state.configHighWait = state.maxWait;
+
+    state.minWait = d3.min(mainUnits.map(function(v) {
+      return d3.min(v.approvers, function(approver) {
+        return d3.min(approver.approvals, function(approval) {
+          return approval.waitTime;
+        });
+      });
+    }));
+    state.configLowWait = state.minWait;
+
+    state.maxValue = d3.max(mainUnits.map(function(v) {
+      return d3.max(v.approvers, function(approver) {
+        return d3.max(approver.approvals, function(approval) {
+          return approval.presentation == "currency" ? approval.value : null;
+        });
+      });
+    }));
+
+    state.minValue = d3.min(mainUnits.map(function(v) {
+      return d3.min(v.approvers, function(approver) {
+        return d3.min(approver.approvals, function(approval) {
+          return approval.presentation == "currency" ? approval.value : null;
+        });
+      });
+    }));
+
     refreshTable(mainUnits);
   }
 
@@ -17,7 +63,7 @@ function drawOverview(mainUnits) {
       height = window.innerHeight;
       // height = Math.max(parseInt(d3.select('.svg-container').style('height')), window.innerHeight);
 
-  mainUnits = filterNonHidden(mainUnits);
+  mainUnits = state.common.filterNonHidden(mainUnits);
 
   // const maxDiameter = 0.65 * height;
   // const diameter = Math.min(width / (mainUnits.length), maxDiameter); // diameter of closed state
@@ -26,7 +72,7 @@ function drawOverview(mainUnits) {
   const minApproverBubbleRatio = 0.5;
   const maxApproverBubbleRatio = 0.8;
   const identityMargin = 20;
-  var svg, mainGroup, minCount, maxCount, minTotalFinancialValue, maxTotalFinancialValue, minValue, maxValue, minWait, maxWait, minAmount, maxAmount;
+  var svg, mainGroup;
 
   // calculate appropriate factor for outerRadius
 
@@ -39,27 +85,19 @@ function drawOverview(mainUnits) {
   // var sumOfTotalRequests = d3.sum(mainUnits, function(d) {return d.totalCount});
   // var outerRadiusFactor = width*height*0.7 / (sumOfTotalRequests || 1); // measure how much space per unit given screen size
 
-  maxCount = d3.max(mainUnits.map(function(v) {
-    return v.totalCount;
-  }));
-
-  minCount = d3.min(mainUnits.map(function(v) {
-    return v.totalCount;
-  }));
-
   const minToMaxOuterBubbleRatio = 0.6;
 
   // force min size for request count;
   var countGenerator = d3.scaleLinear()
-    .domain([minCount, maxCount])
+    .domain([state.minCount, state.maxCount])
     .range([minToMaxOuterBubbleRatio,1]);
 
   var sumOfStandardAreas = d3.sum(mainUnits, function(d) {return countGenerator(d.totalCount)});
   var outerRadiusFactor = width*height*0.6 / (sumOfStandardAreas || 1); // measure how much space per unit given screen size
 
   var outerRadiusGenerator = d3.scaleLinear()
-    .domain([minCount, maxCount])
-    .range([countGenerator(minCount) * outerRadiusFactor, countGenerator(maxCount) * outerRadiusFactor]);
+    .domain([state.minCount, state.maxCount])
+    .range([countGenerator(state.minCount) * outerRadiusFactor, countGenerator(state.maxCount) * outerRadiusFactor]);
 
 
   mainUnits.forEach(function(d) {
@@ -70,70 +108,25 @@ function drawOverview(mainUnits) {
   // inner bubble should not extend beyond minToMaxOuterBubbleRatio * outerRadiusFactor
   const innerBubbleMaxRadius = Math.sqrt(minToMaxOuterBubbleRatio * outerRadiusFactor / Math.PI);
 
-  // find min-max financial value
-  maxTotalFinancialValue = d3.max(mainUnits.filter(function(r) {return r.presentation == "currency"}).map(function(v) {
-    return v.totalValue;
-  }));
-
-  minTotalFinancialValue = d3.min(mainUnits.filter(function(r) {return r.presentation == "currency"}).map(function(v) {
-    return v.totalValue;
-  }));
-
-  maxWait = d3.max(mainUnits.map(function(v) {
-    return d3.max(v.approvers, function(approver) {
-      return d3.max(approver.approvals, function(approval) {
-        return approval.waitTime;
-      });
-    });
-  }));
-
-  minWait = d3.min(mainUnits.map(function(v) {
-    return d3.min(v.approvers, function(approver) {
-      return d3.min(approver.approvals, function(approval) {
-        return approval.waitTime;
-      });
-    });
-  }));
-
-  maxValue = d3.max(mainUnits.map(function(v) {
-    return d3.max(v.approvers, function(approver) {
-      return d3.max(approver.approvals, function(approval) {
-        return approval.presentation == "currency" ? approval.value : null;
-      });
-    });
-  }));
-
-  minValue= d3.min(mainUnits.map(function(v) {
-    return d3.min(v.approvers, function(approver) {
-      return d3.min(approver.approvals, function(approval) {
-        return approval.presentation == "currency" ? approval.value : null;
-      });
-    });
-  }));
-
   // collect approval type
   var approvalTypeLabels = mainUnits.map(function(r) {return r.request;});
 
-  if (freshDataLoaded) {
+  if (state.freshDataLoaded) {
     // console.log("max approver value " + maxValue);
 
     drawMenu({
-/*
-      totalValueMin: 0,
-      totalValueMax: maxValue,
-*/
       timeRangeMin: new Date((new Date()).getTime()- (30 * 864e5)).getTime(), // before a month
       timeRangeMax: (new Date()).getTime(), // today
-      waitTimeMin: minWait,
-      waitTimeMax: maxWait,
-      amountMin: minValue,
-      amountMax: maxValue,
+      waitTimeMin: state.minWait,
+      waitTimeMax: state.maxWait,
+      amountMin: state.minValue,
+      amountMax: state.maxValue,
       approvalTypes: approvalTypeLabels,
 
       getSimulation: function() {return simulation;}
     });
 
-    freshDataLoaded = false;
+    state.freshDataLoaded = false;
 
     onFreshData();
 
@@ -232,15 +225,7 @@ function drawOverview(mainUnits) {
   //   .data(data);
 
   var unitGroupsBase = mainGroup.selectAll("g.main-units")
-    .data(filterNonHidden(mainUnits), function(d) {return d.request});
-
-/*
-  var unitGroups = unitGroupsBase
-    .enter();
-
-  unitGroups = unitGroups
-*/
-  // var unitGroups = unitGroupsBase
+    .data(state.common.filterNonHidden(mainUnits), function(d) {return d.request});
 
   var unitGroups = unitGroupsBase
     .enter()
@@ -254,11 +239,15 @@ function drawOverview(mainUnits) {
       var x = d.x - (width/2);
       // console.log("main-unit translate " + "translate(" + x + "," + y + ")");
       return "translate(" + x + "," + y + ")";
-    })
-    .call(d3.drag()
-      .on("start", dragstarted)
-      .on("drag", dragged)
-      .on("end", dragended));
+    });
+
+  if (unitGroups.size()) {
+    unitGroups
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+  }
 
   function dragstarted(d) {
     d3.select(".submitterTooltip")
@@ -318,7 +307,7 @@ function drawOverview(mainUnits) {
       return 1;
     })
     .attr("stroke-linejoin", "round")
-    .attr("d", function(d) {return arcSliceFull({
+    .attr("d", function(d) {return state.common.arcSliceFull({
       radius: d.outerRadius - identityMargin,
       from: 0,
       to: 2*Math.PI
@@ -335,10 +324,10 @@ function drawOverview(mainUnits) {
     .attr("stroke-width", 1)
     .attr("d", function(d) {
       var gap = estimateAngleGapForText(d.outerRadius - identityMargin, d.unitLabel);
-      return arcSliceFull({
+      return state.common.arcSliceFull({
         radius: d.outerRadius - identityMargin,
-        to: toRadians(120) + gap/2,
-        from: toRadians(120) - gap/2
+        to: state.common.toRadians(120) + gap/2,
+        from: state.common.toRadians(120) - gap/2
       })
     });
 
@@ -357,10 +346,10 @@ function drawOverview(mainUnits) {
     });
 
   var closedBubbleScale = d3.scaleLinear()
-    .domain([Math.sqrt(minTotalFinancialValue), Math.sqrt(maxTotalFinancialValue)])
+    .domain([Math.sqrt(state.minTotalFinancialValue), Math.sqrt(state.maxTotalFinancialValue)])
     .range([minApproverBubbleRatio, maxApproverBubbleRatio]);
 
-  var colorGenerator = colorForWaitTime(maxWait);
+  var colorGenerator = state.common.colorForWaitTime(state.configLowWait, state.configHighWait);
 
   unitGroups
     .append("circle")
@@ -398,7 +387,7 @@ function drawOverview(mainUnits) {
     .attr("text-anchor", "middle")
     .attr("dy", "1em")
     .text(function (d) {
-      return typedValueToText(d.totalValue, d.presentation);
+      return state.common.typedValueToText(d.totalValue, d.presentation);
     });
 
   // acting on the MERGE = ENTER + UPDATE
@@ -480,12 +469,17 @@ function drawOverview(mainUnits) {
         var node = this, i = d3.interpolate(node.getAttribute("transform"), "translate(0,0)");
         return function(t) {
           var newTransform = i(t),
-              coords = getTranslation(newTransform);
+              coords = state.common.getTranslation(newTransform);
 
           node.setAttribute("transform", newTransform);
           unit.fx = width/2 + coords[0];
           unit.fy = height/2 + coords[1];
         };
+      })
+      .on("end", function() {
+        window.dispatchEvent(new CustomEvent("flowerOpenAtCenter", {
+          detail: {  }
+        }));
       });
 
   }
@@ -494,6 +488,8 @@ function drawOverview(mainUnits) {
     stopSimulation: simulation.stop,
     runSimulation: runSimulation,
     centerSelected: centerSelected,
-    maxWait: maxWait
+    closeOpenFlowers: closeOpenFlowers,
+    minWait: state.minWait,
+    maxWait: state.maxWait
   };
 }

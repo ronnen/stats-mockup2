@@ -1,7 +1,3 @@
-var legendToggle = false;
-var tableToggleState = false;
-var drawOverviewListener;
-
 function drawMenu(criteria) {
   drawTable(); // to be moved to a menu option
   // criteria {totalValueMin, totalValueMax, waitTimeMin, waitTimeMax, amountMin, amountMax, approvalTypes}
@@ -14,21 +10,19 @@ function drawMenu(criteria) {
   var timeFilterState = true;
   var waitFilterState = true;
 
-  var lastOverviewParams = null;
-
   function setTimeRangeLabels() {
-    d3.select("#time-range-filter .label-left").text(!timeFilterState ? "START DATE" : valueToDate(timeRangeMin));
-    d3.select("#time-range-filter .label-right").text(!timeFilterState ? "END DATE" : valueToDate(timeRangeMax));
+    d3.select("#time-range-filter .label-left").text(!timeFilterState ? "START DATE" : state.common.valueToDate(timeRangeMin));
+    d3.select("#time-range-filter .label-right").text(!timeFilterState ? "END DATE" : state.common.valueToDate(timeRangeMax));
   }
 
   function setAmountLabels() {
-    d3.select("#amount-filter .label-left").text(!amountFilterState ? "LOWEST" : valueToText(amountMin));
-    d3.select("#amount-filter .label-right").text(!amountFilterState ? "HIGHEST" : valueToText(amountMax));
+    d3.select("#amount-filter .label-left").text(!amountFilterState ? "LOWEST" : state.common.valueToText(amountMin));
+    d3.select("#amount-filter .label-right").text(!amountFilterState ? "HIGHEST" : state.common.valueToText(amountMax));
   }
 
   function setWaitTimeLabels() {
-    d3.select("#wait-time-filter .label-left").text(!waitFilterState ? "SHORTEST" : waitToText(waitTimeMin));
-    d3.select("#wait-time-filter .label-right").text(!waitFilterState ? "LONGEST" : waitToText(waitTimeMax));
+    d3.select("#wait-time-filter .label-left").text(!waitFilterState ? "SHORTEST" : state.common.waitToText(waitTimeMin));
+    d3.select("#wait-time-filter .label-right").text(!waitFilterState ? "LONGEST" : state.common.waitToText(waitTimeMax));
   }
 
   setTimeRangeLabels();
@@ -65,8 +59,8 @@ function drawMenu(criteria) {
   var timeSlider = createD3RangeSlider(timeRangeMin, timeRangeMax, "#time-range-filter .stats-slider", false);
 
   timeSlider.onChange(function(newRange){
-    d3.select("#time-range-filter .label-left").text(valueToDate(newRange.begin));
-    d3.select("#time-range-filter .label-right").text(valueToDate(newRange.end));
+    d3.select("#time-range-filter .label-left").text(state.common.valueToDate(newRange.begin));
+    d3.select("#time-range-filter .label-right").text(state.common.valueToDate(newRange.end));
   });
 
   timeSlider.onRelease(function(newRange){
@@ -91,8 +85,8 @@ function drawMenu(criteria) {
   var amountSlider = createD3RangeSlider(amountMin, amountMax, "#amount-filter .stats-slider", false);
 
   amountSlider.onChange(function(newRange){
-    d3.select("#amount-filter .label-left").text(valueToText(newRange.begin));
-    d3.select("#amount-filter .label-right").text(valueToText(newRange.end));
+    d3.select("#amount-filter .label-left").text(state.common.valueToText(newRange.begin));
+    d3.select("#amount-filter .label-right").text(state.common.valueToText(newRange.end));
   });
 
   amountSlider.onRelease(function(newRange){
@@ -115,8 +109,8 @@ function drawMenu(criteria) {
   var waitSlider = createD3RangeSlider(waitTimeMin, waitTimeMax, "#wait-time-filter .stats-slider", false);
 
   waitSlider.onChange(function(newRange){
-    d3.select("#wait-time-filter .label-left").text(waitToText(newRange.begin));
-    d3.select("#wait-time-filter .label-right").text(waitToText(newRange.end));
+    d3.select("#wait-time-filter .label-left").text(state.common.waitToText(newRange.begin));
+    d3.select("#wait-time-filter .label-right").text(state.common.waitToText(newRange.end));
   });
 
   waitSlider.onRelease(function(newRange){
@@ -145,10 +139,10 @@ function drawMenu(criteria) {
     .on("click", tableToggleClick);
 
   function tableToggleClick() {
-    d3.select("#table-toggle-container .table-toggle").classed("on", !tableToggleState);
-    d3.select(".table-container").classed("on", !tableToggleState);
-    tableToggleState = !tableToggleState;
-    if (tableToggleState) {
+    d3.select("#table-toggle-container .table-toggle").classed("on", !state.tableToggleState);
+    d3.select(".table-container").classed("on", !state.tableToggleState);
+    state.tableToggleState = !state.tableToggleState;
+    if (state.tableToggleState) {
       if (d3.select(".main-units.selected").size() > 0) {
         var selectedUnit = d3.select(".main-units.selected").datum();
         refreshTable(mainUnits/*getRequestVisibleApprovals(selectedUnit)*/);
@@ -160,9 +154,9 @@ function drawMenu(criteria) {
 
   }
 
-  if (drawOverviewListener) window.removeEventListener("drawOverviewByCriteria" , drawOverviewListener);
-  drawOverviewListener = drawOverviewByCriteriaHandler;
-  window.addEventListener("drawOverviewByCriteria", drawOverviewListener);
+  if (state.drawOverviewListener) window.removeEventListener("drawOverviewByCriteria" , state.drawOverviewListener);
+  state.drawOverviewListener = drawOverviewByCriteriaHandler;
+  window.addEventListener("drawOverviewByCriteria", state.drawOverviewListener);
 
   function drawOverviewByCriteria(params) {
     // either refreshes the whole svg based on current criteria. or
@@ -195,14 +189,12 @@ function drawMenu(criteria) {
 
     // if one flower is open then update only its content
     if (d3.select(".main-units.selected").size() || (params && params.selectedNode)) {
-      lastOverviewParams = drawOverview(mainUnits);
+      state.overviewParams = drawOverview(mainUnits);
       var selectedNode = d3.select(".main-units.selected");
-      if (selectedNode.size()) drawDetailedView(selectedNode, lastOverviewParams);
-      // TODO replace simulation with moving selected node to center
-      // lastOverviewParams.runSimulation(0.3);
-      lastOverviewParams.centerSelected();
+      if (selectedNode.size()) drawDetailedView(selectedNode, state.overviewParams);
+      state.overviewParams.centerSelected();
 
-      if (tableToggleState) {
+      if (state.tableToggleState) {
         refreshTable(mainUnits);
       }
 
@@ -214,10 +206,10 @@ function drawMenu(criteria) {
         delete unit.fy;
       });
 
-      lastOverviewParams = drawOverview(mainUnits);
-      lastOverviewParams.runSimulation(0);
+      state.overviewParams = drawOverview(mainUnits);
+      state.overviewParams.runSimulation(0.3);
 
-      if (tableToggleState) {
+      if (state.tableToggleState) {
         refreshTable(mainUnits/*getAllVisibleApprovals()*/);
       }
     }
@@ -234,7 +226,7 @@ function drawMenu(criteria) {
     d3.event.preventDefault();
     d3.event.stopPropagation();
 
-    if (legendToggle) {
+    if (state.legendToggle) {
       d3.select(window).on("click",null);
       d3.selectAll('.legend-svg').remove();
       d3.select(".shield").classed("on dark", false);
@@ -245,7 +237,7 @@ function drawMenu(criteria) {
       d3.select(".smallDiameterLegend")
         .style("display","none");
       d3.selectAll(".main-units").classed("legend-unit", false);
-      legendToggle = !legendToggle;
+      state.legendToggle = !state.legendToggle;
       return;
     }
 
@@ -285,165 +277,190 @@ function drawMenu(criteria) {
       }
     }
 
-    var selectedUnit = d3.select(".main-units.selected").size() ? d3.select(".main-units.selected") : findLargestVisibleUnit(d3.selectAll(".main-units"));
-    if (!selectedUnit) return;
-
-    var circle = selectedUnit.select(".detailed-group circle").size() ? selectedUnit.select(".detailed-group circle") : selectedUnit.select(".closed-sphere-background");
-    if (circle.size() <= 0) return;
-    var outerRadius = parseFloat(circle.attr("r"));
-    selectedUnit.classed("legend-unit legend-round", true);
-
-    var requestLegendUnit = d3.selectAll(".main-units").filter(function(d, i) {
-      return !d3.select(this).classed("legend-unit")
-    });
-
-    requestLegendUnit = findLargestVisibleUnit(requestLegendUnit)
-
-    if (requestLegendUnit) {
-      requestLegendUnit.classed("legend-unit request-legend", true);
-
-      // find most visible unit
-      var mostVisible = 0, mostVisibleIndex = -1;
-      requestLegendUnit.each(function(d,i) {
-        var rect = this.getBoundingClientRect();
-        var left = Math.max(0, rect.left);
-        var right = Math.min(screenWidth, rect.right);
-        var top = Math.max(0, rect.top);
-        var bottom = Math.min(screenHeight, rect.bottom);
-        if ((right-left)*(bottom-top) > mostVisible) {
-          mostVisibleIndex = i;
-          mostVisible = (right-left)*(bottom-top);
-        }
-      });
-      if (mostVisible) {
-        requestLegendUnit = d3.select(requestLegendUnit.nodes()[mostVisibleIndex]);
-        requestLegendUnit.classed("legend-unit request-legend", true);
-      }
-      else
-        requestLegendUnit = null;
+    if (!d3.select(".main-units.selected").size()) {
+      var closedUnit = d3.select(".main-units"); // arbitrary first one
+      closedUnit.datum().selected = true;
+      window.addEventListener("flowerOpenAtCenter", showLegend);
+      window.dispatchEvent(new CustomEvent("drawOverviewByCriteria", { detail : {selectedNode: closedUnit.node()} }));
+      return;
+    }
+    else {
+      showLegend();
     }
 
-    var arcLegendCircle = d3.arc()
-      .startAngle(0)
-      .endAngle(toRadians(330))
-      .innerRadius(outerRadius - identityMargin)
-      .outerRadius(outerRadius - identityMargin);
+    function showLegend() {
+      simulation.stop();
 
-    console.log("show or hide legend " + legendToggle);
+      var selectedUnit = d3.select(".main-units.selected").size() ? d3.select(".main-units.selected") : findLargestVisibleUnit(d3.selectAll(".main-units"));
+      if (!selectedUnit) return;
 
-    d3.selectAll('.legend-svg').remove(); // just to make sure
-    d3.select(".shield").classed("on dark", true);
+      var circle = selectedUnit.select(".detailed-group circle").size() ? selectedUnit.select(".detailed-group circle") : selectedUnit.select(".closed-sphere-background");
+      if (circle.size() <= 0) return;
+      var outerRadius = parseFloat(circle.attr("r"));
+      selectedUnit.classed("legend-unit legend-round", true);
 
-    var mainSVGRect = svg.node().getBoundingClientRect();
+      var requestLegendUnit = d3.selectAll(".main-units").filter(function(d, i) {
+        return !d3.select(this).classed("legend-unit")
+      });
 
-    var legendSVG = d3.select("body").append("svg")
-      .attr("x",mainSVGRect.x)
-      .attr("y",mainSVGRect.y)
-      .attr("width", mainSVGRect.width)
-      .attr("height", mainSVGRect.height)
-      .attr("class","legend-svg")
-      .style("position", "fixed");
+      requestLegendUnit = findLargestVisibleUnit(requestLegendUnit)
 
-    var legendScreen = legendSVG
-      .append("svg:g")
-      .attr("class", "main-legend-group");
+      if (requestLegendUnit) {
+        requestLegendUnit.classed("legend-unit request-legend", true);
 
-    // by now the transform of the detailed sphere has change due to forceSimulation so
-    // need to sample it again.
-    var rect = selectedUnit.node().getBoundingClientRect();
+        // find most visible unit
+        var mostVisible = 0, mostVisibleIndex = -1;
+        requestLegendUnit.each(function(d,i) {
+          var rect = this.getBoundingClientRect();
+          var left = Math.max(0, rect.left);
+          var right = Math.min(screenWidth, rect.right);
+          var top = Math.max(0, rect.top);
+          var bottom = Math.min(screenHeight, rect.bottom);
+          if ((right-left)*(bottom-top) > mostVisible) {
+            mostVisibleIndex = i;
+            mostVisible = (right-left)*(bottom-top);
+          }
+        });
+        if (mostVisible) {
+          requestLegendUnit = d3.select(requestLegendUnit.nodes()[mostVisibleIndex]);
+          requestLegendUnit.classed("legend-unit request-legend", true);
+        }
+        else
+          requestLegendUnit = null;
+      }
 
-    var legendGroup = legendScreen
-      .append("svg:g")
-      .attr("class", "legend-group")
-      .attr("transform", "translate(" + (rect.x + rect.width/2) + "," + (rect.y + rect.height/2) + ")");
+      var arcLegendCircle = d3.arc()
+        .startAngle(0)
+        .endAngle(state.common.toRadians(330))
+        .innerRadius(outerRadius - identityMargin)
+        .outerRadius(outerRadius - identityMargin);
 
-    // add circular legend
-    legendGroup
-      .append("svg:path")
-      .attr("class", "circular-legend")
-      .attr("d", arcLegendCircle());
+      d3.selectAll('.legend-svg').remove(); // just to make sure
+      d3.select(".shield").classed("on dark", true);
 
-    var pX = Math.cos(toRadians(240))*(outerRadius - identityMargin),
-      pY = Math.sin(toRadians(240))*(outerRadius - identityMargin);
+      var mainSVGRect = svg.node().getBoundingClientRect();
 
-    legendGroup
-      .append("line")
-      .attr("class", "circular-legend")
-      .attr("x1", pX).attr("y1", pY).attr("x2", pX-40).attr("y2", pY);
-    legendGroup
-      .append("line")
-      .attr("class", "circular-legend")
-      .attr("x1", pX).attr("y1", pY).attr("x2", pX).attr("y2", pY+40);
+      var legendSVG = d3.select("body").append("svg")
+        .attr("x",mainSVGRect.x)
+        .attr("y",mainSVGRect.y)
+        .attr("width", mainSVGRect.width)
+        .attr("height", mainSVGRect.height)
+        .attr("class","legend-svg")
+        .style("position", "fixed");
 
-    d3.select(".mainObjectLegend")
-      .style("display","block")
-      .style("left", (rect.x + rect.width/2) + "px")
-      .style("top", (rect.y + rect.height/2) + "px")
-      .raise();
+      var legendScreen = legendSVG
+        .append("svg:g")
+        .attr("class", "main-legend-group");
 
-    if (requestLegendUnit) {
-      // add diameter to employee legend unit
-      rect = requestLegendUnit.node().getBoundingClientRect();
+      // by now the transform of the detailed sphere has change due to forceSimulation so
+      // need to sample it again.
+      var rect = selectedUnit.node().getBoundingClientRect();
 
-      var diameter1 = legendScreen
+      var legendGroup = legendScreen
         .append("svg:g")
         .attr("class", "legend-group")
-        .attr("transform", "translate(" + (rect.x + rect.width / 2) + "," + (rect.y + rect.height / 2) + ")");
+        .attr("transform", "translate(" + (rect.x + rect.width/2) + "," + (rect.y + rect.height/2) + ")");
 
-      var requestUnitRadius = requestLegendUnit.datum().outerRadius;
-      diameter1
+      // add circular legend
+      legendGroup
+        .append("svg:path")
+        .attr("class", "circular-legend")
+        .attr("d", arcLegendCircle());
+
+      var pX = Math.cos(state.common.toRadians(240))*(outerRadius - identityMargin),
+        pY = Math.sin(state.common.toRadians(240))*(outerRadius - identityMargin);
+
+      legendGroup
         .append("line")
-        .attr("class","diameter-legend")
-        .attr("x1", -requestUnitRadius)
-        .attr("x2", requestUnitRadius)
-        .attr("y1", 0)
-        .attr("y2", 0);
+        .attr("class", "circular-legend")
+        .attr("x1", pX).attr("y1", pY).attr("x2", pX-40).attr("y2", pY);
+      legendGroup
+        .append("line")
+        .attr("class", "circular-legend")
+        .attr("x1", pX).attr("y1", pY).attr("x2", pX).attr("y2", pY+40);
 
-      d3.select(".bigDiameterLegend")
+      d3.select(".mainObjectLegend")
         .style("display","block")
-        .style("left", (rect.right + 20) + "px")
+        .style("left", (rect.x + rect.width/2) + "px")
         .style("top", (rect.y + rect.height/2) + "px")
         .raise();
 
-      var valueRadius = parseFloat(requestLegendUnit.select(".request-type-closed").attr("r"));
+      if (requestLegendUnit) {
+        // add diameter to employee legend unit
+        rect = requestLegendUnit.node().getBoundingClientRect();
 
-      diameter1
-        .append("line")
-        .attr("class","diameter-legend")
-        .attr("x1", -valueRadius)
-        .attr("x2", valueRadius)
-        .attr("y1", 0)
-        .attr("y2", 0)
-        .attr("transform", "rotate(-50)");
+        var diameter1 = legendScreen
+          .append("svg:g")
+          .attr("class", "legend-group")
+          .attr("transform", "translate(" + (rect.x + rect.width / 2) + "," + (rect.y + rect.height / 2) + ")");
 
-      var rad50 = (50/360)*2*Math.PI;
+        var requestUnitRadius = requestLegendUnit.datum().outerRadius;
+        diameter1
+          .append("line")
+          .attr("class","diameter-legend")
+          .attr("x1", -requestUnitRadius)
+          .attr("x2", requestUnitRadius)
+          .attr("y1", 0)
+          .attr("y2", 0);
 
-      diameter1
-        .append("line")
-        .attr("class","diameter-legend")
-        .attr("x1", valueRadius)
-        .attr("y1", 0)
-        .attr("x2", valueRadius + 30)
-        .attr("y2", 30 * Math.tan(rad50))
-        .attr("transform", "rotate(-50)");
+        d3.select(".bigDiameterLegend")
+          .style("display","block")
+          .style("left", (rect.right + 20) + "px")
+          .style("top", (rect.y + rect.height/2) + "px")
+          .raise();
 
-      d3.select(".smallDiameterLegend")
-        .style("display","block")
-        .style("left", (rect.x + rect.width/2 + Math.cos(rad50) * valueRadius) + "px")
-        .style("top", (rect.y + rect.height/2 - Math.sin(rad50) * valueRadius) + "px")
-        .raise();
+        var valueRadius = parseFloat(requestLegendUnit.select(".request-type-closed").attr("r"));
+
+        diameter1
+          .append("line")
+          .attr("class","diameter-legend")
+          .attr("x1", -valueRadius)
+          .attr("x2", valueRadius)
+          .attr("y1", 0)
+          .attr("y2", 0)
+          .attr("transform", "rotate(-50)");
+
+        var rad50 = (50/360)*2*Math.PI;
+
+        diameter1
+          .append("line")
+          .attr("class","diameter-legend")
+          .attr("x1", valueRadius)
+          .attr("y1", 0)
+          .attr("x2", valueRadius + 30)
+          .attr("y2", 30 * Math.tan(rad50))
+          .attr("transform", "rotate(-50)");
+
+        d3.select(".smallDiameterLegend")
+          .style("display","block")
+          .style("left", (rect.x + rect.width/2 + Math.cos(rad50) * valueRadius) + "px")
+          .style("top", (rect.y + rect.height/2 - Math.sin(rad50) * valueRadius) + "px")
+          .raise();
+
+      }
+
+      d3.select(window).on("click",legendClickEvent);
+      window.removeEventListener("flowerOpenAtCenter", showLegend);
+
+      state.legendToggle = !state.legendToggle;
 
     }
-
-    d3.select(window).on("click",legendClickEvent);
-
-    legendToggle = !legendToggle;
 
   }
 
   d3.select(".load-data")
     .on("click", openEditDialog);
 
+  d3.select(".config-button")
+    .on("click", function() {openConfigDialog(function(newConfig) {
+      state.overviewParams.closeOpenFlowers();
+      state.configLowWait = newConfig.begin;
+      state.configHighWait = newConfig.end;
+      // d3.selectAll("g.main-units").remove(); // force re-draw
+
+      drawOverview(mainUnits);
+      state.overviewParams.runSimulation();
+    })});
 
 }
 

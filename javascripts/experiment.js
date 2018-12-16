@@ -98,7 +98,7 @@
 
   function dragended(d) {
     d3.select(this).classed("active", false);
-    // var translated = getTranslation(d3.select(this).attr("transform"));
+    // var translated = state.common.getTranslation(d3.select(this).attr("transform"));
     // suppose to fixate this node
     if (!d3.event.active) simulation.alphaTarget(0);
     d.fx = null;

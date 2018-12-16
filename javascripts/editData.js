@@ -49,7 +49,7 @@ function parseCSV(csvString) {
       result.push(obj);
     });
 
-    freshDataLoaded = true;
+    state.freshDataLoaded = true;
     mainUnits = result;
 
     return result;
@@ -110,76 +110,6 @@ function openEditDialog() {
 
     drawOverview(mainUnits);
 
-    return;
-
-    try {
-      var results = Papa.parse(csvString, {
-        header: true,
-        delimiter: ",",
-        comments: true,
-        skipEmptyLines: true
-      });
-
-      if (results.errors.length) {
-        alert("following error(s) where encountered: \n" + results.errors.map(function(e) {return e.message}).join("\n"));
-        return;
-      }
-
-      var units = {};
-      results.data.forEach(function(row) {
-        var department = units[row.department] = units[row.department] || {};
-        var approvers = department.approvers = department.approvers || {};
-        var approver = approvers[row.approver] = approvers[row.approver] || {};
-        var approvalType = approver[row.type] = approver[row.type] || {};
-        var approvals = approvalType.approvals = approvalType.approvals || [];
-        approvals.push({
-          submitter: row.submitter,
-          value: parseFloat(row.value),
-          waitTime: parseFloat(row.waitTime)
-        });
-      });
-
-      var result = [];
-
-      Object.keys(units).forEach(function(unit) {
-        var obj = {
-          department: unit,
-          employees: 40,
-          approvers: []
-        };
-        var submitters = {}; // only way to get department size
-        Object.keys(units[unit].approvers).forEach(function(approver) {
-          var objApprover = {
-            approverName: approver,
-            approvalTypes: []
-          };
-          Object.keys(units[unit].approvers[approver]).forEach(function(approvalType) {
-            units[unit].approvers[approver][approvalType].approvals.forEach(function(approval) {
-              submitters[approval.submitter] = true;
-            });
-            objApprover.approvalTypes.push({
-              label: approvalType,
-              approvals: units[unit].approvers[approver][approvalType].approvals
-            });
-          });
-          obj.approvers.push(objApprover);
-        });
-        obj.employees = Object.keys(submitters).length;
-        result.push(obj);
-      });
-
-      freshDataLoaded = true;
-      mainUnits = result;
-
-      d3.select(".shield").classed("on", false);
-      d3.select(".loadDataDialog").classed("on", false);
-
-      drawOverview(mainUnits);
-    }
-    catch(err) {
-      console.log("illegal json provided..." + err);
-      alert("Please provide a valid JSON object");
-    }
   });
 
   d3.select(".view-json").on("click", function() {

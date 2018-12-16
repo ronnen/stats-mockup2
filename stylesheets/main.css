@@ -421,7 +421,51 @@ body {
 
 }
 
-.legend-button, .load-data {
+.config-container {
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.config-wait-slider {
+    position: relative;
+    margin-top: 25px;
+    height: 25px;
+    margin-left: 30px;
+    margin-right: 30px;
+    color: rgb(143,158,239);
+}
+
+.config-wait-slider .slider-container {
+    /*background: rgb(56, 60, 77);*/
+    background-image: linear-gradient(to right, rgb(88,141,26) 0px, rgb(234,49,49) 0px);
+}
+
+.config-wait-slider .slider {
+    /*background: rgb(143,158,239);*/
+    background-image: linear-gradient(to right, rgb(88,141,26) 0%, rgb(201,193,12) 50%, rgb(234,49,49) 100%);
+
+    border: none;
+    /*
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    */
+}
+
+.config-wait-slider .slider .handle {
+    width: 8px;
+    height: 22px;
+    border: solid 2px white;
+    transform: translate(0%,-50%);
+    margin-top: 0;
+    /*background: none;*/
+    border-radius: 6px;
+    background-color: transparent;
+}
+
+.legend-button, .load-data, .config-button {
     font-family: Verdana, sans-serif;
     font-size: 12px;
     border-radius: 3px;
@@ -558,6 +602,19 @@ body {
     display: flex;
 }
 
+.configureDialog {
+    position:fixed;
+    left:50%;
+    top: 50%;
+    width: 450px;
+    height: 200px;
+    display: none;
+}
+
+.configureDialog.on {
+    display: flex;
+}
+
 .dialog-wrapper {
     position:relative;
     left:-50%;
@@ -574,7 +631,7 @@ body {
     flex: 1;
 }
 
-.editor-actions {
+.editor-actions, .config-actions {
     height: 44px;
     display: flex;
     justify-content: center;
@@ -582,7 +639,16 @@ body {
     border-top: 1px solid #888888;
 }
 
-.cancel-edit, .load-edit, .view-json {
+.config-content {
+    flex: 1;
+    flex-direction: column;
+}
+
+.config-actions {
+    flex: 0 0 44px;
+}
+
+.cancel-edit, .load-edit, .view-json, .cancel-config, .set-config {
     font-family: Verdana, sans-serif;
     font-size: 12px;
     border-radius: 3px;
