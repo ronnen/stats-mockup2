@@ -194,17 +194,21 @@ function drawOverview(mainUnits) {
       .on('tick', ticked);
 
     simulation.lastState = null;
+    simulation.started = Date.now();
 
     function belowThresholdMovement(state1, state2) {
+      // return false;
+      var elapsedSinceStart = Date.now() - simulation.started;
+      if (elapsedSinceStart < 2000) return false;
       return !state1.some(function(s1, i) {
-        if (s1.x.toFixed(1) != state2[i].x.toFixed(1) || s1.y.toFixed(1) != state2[i].y.toFixed(1))
-          return true;
+        return !!(s1.x.toFixed(0) != state2[i].x.toFixed(0) || s1.y.toFixed(0) != state2[i].y.toFixed(0));
       });
     }
 
     function ticked() {
       var newData = unitGroups.data();
       if (simulation.lastState != null && belowThresholdMovement(newData, simulation.lastState)) {
+        simulation.lastState = newData.map(function(d) {return {x: d.x, y: d.y}});
         simulation.stop();
         return;
       }
@@ -257,6 +261,9 @@ function drawOverview(mainUnits) {
       .on("end", dragended));
 
   function dragstarted(d) {
+    d3.select(".submitterTooltip")
+      .style("display","none");
+
     // release all other nodes
     mainUnits.forEach(function(unit) {
       delete unit.fx;
@@ -281,8 +288,11 @@ function drawOverview(mainUnits) {
     d3.select(this).classed("active", false);
     // these lines commented out to fix node
     if (!d3.event.active) runSimulation(0); // simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
+
+    if (!d.selected) {
+      delete d.fx;
+      delete d.fy;
+    }
   }
 
   unitGroups
@@ -421,7 +431,6 @@ function drawOverview(mainUnits) {
     var any = d3.selectAll(".main-units.selected .detailed-group").nodes().length;
     if (any) {
       d3.selectAll(".main-units.selected .detailed-group").remove();
-      d3.select(".main-units.selected").on('mousedown.drag', null);
       d3.selectAll(".main-units").classed("selected", false).each(function(d) {
         d.selected = false;
         d.fx = null;
@@ -449,10 +458,42 @@ function drawOverview(mainUnits) {
 
   function runSimulation(alphaTarget) {
     alphaTarget = alphaTarget != null ? alphaTarget : 0.3;
+    simulation.lastState = null;
     simulation
       .nodes(mainUnits)
       .alphaTarget(alphaTarget).restart();
+    simulation.started = Date.now();
   }
 
-  return {stopSimulation: simulation.stop, runSimulation: runSimulation, maxWait: maxWait};
+  function centerSelected() {
+    var selectedUnit = d3.select(".main-units.selected");
+    if (!selectedUnit.size()) return;
+
+    var unit = selectedUnit.datum();
+
+    simulation.stop();
+    runSimulation();
+
+    selectedUnit
+      .transition().duration(1000).ease(d3.easeLinear)
+      .tween("attr.transform", function() {
+        var node = this, i = d3.interpolate(node.getAttribute("transform"), "translate(0,0)");
+        return function(t) {
+          var newTransform = i(t),
+              coords = getTranslation(newTransform);
+
+          node.setAttribute("transform", newTransform);
+          unit.fx = width/2 + coords[0];
+          unit.fy = height/2 + coords[1];
+        };
+      });
+
+  }
+
+  return {
+    stopSimulation: simulation.stop,
+    runSimulation: runSimulation,
+    centerSelected: centerSelected,
+    maxWait: maxWait
+  };
 }

@@ -52,6 +52,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     .on("click", handleFlowerClick)
     .on("mouseleave", approvalMouseLeave);
 
+/*
   unitGroup
     .call(d3.drag()
       .on("start", dragstarted)
@@ -84,6 +85,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     // d.fx = null;
     // d.fy = null;
   }
+*/
 
   function drawMainCircularShape() {
     // draws main grey circular shape

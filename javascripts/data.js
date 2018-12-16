@@ -213,7 +213,6 @@ function filterApproverDataByCriteria(approver, criteria) {
   return approver;
 
 }
-*/
 
 function getAllVisibleApprovals() {
   var result = [];
@@ -257,4 +256,5 @@ function getRequestVisibleApprovals(request) {
     return 0;
   });
 }
+*/
 

@@ -198,10 +198,12 @@ function drawMenu(criteria) {
       lastOverviewParams = drawOverview(mainUnits);
       var selectedNode = d3.select(".main-units.selected");
       if (selectedNode.size()) drawDetailedView(selectedNode, lastOverviewParams);
-      lastOverviewParams.runSimulation(0.3);
+      // TODO replace simulation with moving selected node to center
+      // lastOverviewParams.runSimulation(0.3);
+      lastOverviewParams.centerSelected();
 
       if (tableToggleState) {
-        refreshTable(mainUnits/*getRequestVisibleApprovals(selectedNode.datum())*/);
+        refreshTable(mainUnits);
       }
 
     }
@@ -213,7 +215,7 @@ function drawMenu(criteria) {
       });
 
       lastOverviewParams = drawOverview(mainUnits);
-      lastOverviewParams.runSimulation(0.3);
+      lastOverviewParams.runSimulation(0);
 
       if (tableToggleState) {
         refreshTable(mainUnits/*getAllVisibleApprovals()*/);
