@@ -193,6 +193,7 @@ function drawOverview(mainUnits) {
       // return false;
       var elapsedSinceStart = Date.now() - simulation.started;
       if (elapsedSinceStart < 2000) return false;
+      if (elapsedSinceStart > 4000) return true;
       return !state1.some(function(s1, i) {
         return !!(s1.x.toFixed(0) != state2[i].x.toFixed(0) || s1.y.toFixed(0) != state2[i].y.toFixed(0));
       });
