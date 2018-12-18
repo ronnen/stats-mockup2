@@ -290,6 +290,10 @@ body {
     box-shadow: 0 2px #444444;
 }
 
+#wait-time-filter {
+    height: 128px;
+}
+
 #type-filter-template {
     display: none;
 }
@@ -422,11 +426,12 @@ body {
 }
 
 .config-container {
-    height: 40px;
+    height: 46px;
     justify-content: center;
     align-items: center;
     padding-left: 30px;
     padding-right: 30px;
+    display: flex;
 }
 
 .config-wait-slider {
@@ -436,6 +441,16 @@ body {
     margin-left: 30px;
     margin-right: 30px;
     color: rgb(143,158,239);
+}
+
+.config-wait-slider .caption {
+    position: relative;
+    top: -21px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    font-size: 13px;
+    pointer-events: none;
 }
 
 .config-wait-slider .slider-container {
@@ -596,6 +611,7 @@ body {
     width: 80%;
     height: 90%;
     display: none;
+    transform: translate(-50%,-50%);
 }
 
 .loadDataDialog.on {
@@ -607,8 +623,9 @@ body {
     left:50%;
     top: 50%;
     width: 450px;
-    height: 200px;
+    /*height: 200px;*/
     display: none;
+    transform: translate(-50%,-50%);
 }
 
 .configureDialog.on {
@@ -617,14 +634,17 @@ body {
 
 .dialog-wrapper {
     position:relative;
+    /*
     left:-50%;
     top: -50%;
+    */
     flex: 1;
     border: 1px solid #888888;
     border-radius: 4px;
     background-color: rgb(74,77,93);
     display: flex;
     flex-direction: column;
+    font-family: Verdana, sans-serif;
 }
 
 .editor {
@@ -639,13 +659,23 @@ body {
     border-top: 1px solid #888888;
 }
 
+#config-type-template {
+    display: none;
+}
+
 .config-content {
-    flex: 1;
+    flex: auto;
+    flex-direction: column;
+}
+
+.config-item {
+    flex: 0 70px;
     flex-direction: column;
 }
 
 .config-actions {
     flex: 0 0 44px;
+    margin-top: 20px;
 }
 
 .cancel-edit, .load-edit, .view-json, .cancel-config, .set-config {

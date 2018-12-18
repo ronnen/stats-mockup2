@@ -452,11 +452,12 @@ function drawMenu(criteria) {
     .on("click", openEditDialog);
 
   d3.select(".config-button")
-    .on("click", function() {openConfigDialog(function(newConfig) {
+    .on("click", function() {openConfigDialog(function() {
       state.overviewParams.closeOpenFlowers();
+/*
       state.configLowWait = newConfig.begin;
       state.configHighWait = newConfig.end;
-      // d3.selectAll("g.main-units").remove(); // force re-draw
+*/
 
       drawOverview(mainUnits);
       state.overviewParams.runSimulation();

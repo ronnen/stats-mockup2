@@ -132,8 +132,6 @@ IT,Don Frampton,Purchase,currency,Muiz Murad,173187.79,155\n\
 var mainUnits;
 var state = {
   freshDataLoaded: true, // being set every time fresh data is loaded
-  configLowWait: null,
-  configHighWait: null,
   legendToggle: false,
   tableToggleState: false,
   drawOverviewListener: null,

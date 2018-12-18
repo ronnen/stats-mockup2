@@ -48,9 +48,6 @@
         <div class="legend-button">Legend</div>
         <div class="load-data">Load Data</div>
     </div>
-    <div class="config-container">
-        <div class="config-button">Configure</div>
-    </div>
     <div id="table-toggle-container">
         <div class="table-toggle">
             <div class="stats-filter-title">Tabular View</div>
@@ -102,6 +99,9 @@
         <div class="labels">
             <div class="label-left">5 HOURS</div>
             <div class="label-right">54 DAYS</div>
+        </div>
+        <div class="config-container">
+            <div class="config-button">Configure</div>
         </div>
     </div>
     <div id="approval-type-switches">
@@ -161,15 +161,21 @@
     </div>
 </div>
 
+<div id="config-type-template">
+    <div data-type="placeholder" class="config-item">
+        <div class="config-wait-slider">
+            <div class="config-type-label">Kuku</div>
+        </div>
+        <div class="labels">
+            <div class="label-left">MIN</div>
+            <div class="label-right">MAX</div>
+        </div>
+    </div>
+</div>
+
 <div class="configureDialog">
     <div class="dialog-wrapper">
-        <div class="config-content">
-            <div class="config-wait-slider"></div>
-            <div class="labels">
-                <div class="label-left">MIN</div>
-                <div class="label-right">MAX</div>
-            </div>
-        </div>
+        <div class="config-content"></div>
         <div class="config-actions">
             <div class="cancel-config">Cancel</div>
             <div class="set-config">Set</div>

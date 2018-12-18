@@ -29,7 +29,7 @@ function drawOverview(mainUnits) {
         });
       });
     }));
-    state.configHighWait = state.maxWait;
+    // state.configHighWait = state.maxWait;
 
     state.minWait = d3.min(mainUnits.map(function(v) {
       return d3.min(v.approvers, function(approver) {
@@ -38,7 +38,12 @@ function drawOverview(mainUnits) {
         });
       });
     }));
-    state.configLowWait = state.minWait;
+    // state.configLowWait = state.minWait;
+
+    mainUnits.forEach(function(request) {
+      request.configLowWait = state.minWait;
+      request.configHighWait = state.maxWait;
+    });
 
     state.maxValue = d3.max(mainUnits.map(function(v) {
       return d3.max(v.approvers, function(approver) {
@@ -350,7 +355,7 @@ function drawOverview(mainUnits) {
     .domain([Math.sqrt(state.minTotalFinancialValue), Math.sqrt(state.maxTotalFinancialValue)])
     .range([minApproverBubbleRatio, maxApproverBubbleRatio]);
 
-  var colorGenerator = state.common.colorForWaitTime(state.configLowWait, state.configHighWait);
+  // var colorGenerator = state.common.colorForWaitTime(state.configLowWait, state.configHighWait);
 
   unitGroups
     .append("circle")
@@ -400,6 +405,7 @@ function drawOverview(mainUnits) {
     .selectAll(".request-type-closed")
     .attr("class", function(d) {return "request-type-closed" + (d.hidden ? " hidden" : "")})
     .attr("fill", function (d) {
+      var colorGenerator = state.common.colorForWaitTime(d.configLowWait, d.configHighWait);
       if (d.totalCount > 0)
         return colorGenerator(d.totalWaitTime/d.totalCount);
       else

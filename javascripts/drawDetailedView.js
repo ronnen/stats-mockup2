@@ -28,7 +28,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   var outerRadius = Math.max(mainObject.outerRadius, zoomInDiameterFactor/2 * height);
   const circleMarkersGap = (circleEndRadius - circleStartRadius) / (state.common.countNonHidden(mainObject.approvers) + 1);
 
-  var colorGenerator = state.common.colorForWaitTime(state.configLowWait, state.configHighWait);
+  var colorGenerator = state.common.colorForWaitTime(mainObject.configLowWait, mainObject.configHighWait);
 
   // var unitGroup = selectedUnit;
 
