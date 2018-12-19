@@ -840,3 +840,35 @@ body.debug .view-json {
     display: flex;
     color: orange;
 }
+
+/* zoom-widget */
+.zoom-widget-group, .zoom-widget-group .slider {
+    cursor: pointer;
+}
+
+.zoom-widget-group .axis {
+    display: none;
+}
+
+.zoom-widget-group .slider .parameter-value path {
+    fill: rgb(143,158,239);
+    stroke: transparent;
+}
+
+.zoom-widget-group .slider .parameter-value text {
+    display: none;
+}
+
+.zoom-widget-group .slider .track {
+    stroke: rgb(143,158,239);
+}
+
+.detailed-group.zoom .sphere, .detailed-group.zoom .sphere-background, .detailed-group.zoom .bubble-guide {
+    display: none;
+}
+
+.zoom-widget-group .zoom-path {
+    stroke: white;
+    fill: rgb(143,158,239);
+}
+

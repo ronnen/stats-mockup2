@@ -168,6 +168,11 @@ function calculateTotalValues(originalData) {
     request.totalValue = stats[1];
     request.totalWaitTime = stats[2];
     request.unitLabel = request.request + ". " + request.totalCount + " requests. " + state.common.waitToText(request.totalWaitTime/request.totalCount) + " Average delay.";
+
+    request.maxValue = d3.max(state.common.filterNonHidden(request.approvers).map(function(v) {
+      return d3.max(v.approvals, function(a) {return a.value})
+    }));
+
   });
 
 }

@@ -14,6 +14,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   const minApprovalBubble = 0.07;
   const approverRadius = 0.25;
   const clockColorRibbonRadius = 0.3;
+  const ZOOM_DATA = 1;
 
   var unitNode = selectedUnit.node();
   var mainObject = selectedUnit.datum();
@@ -38,50 +39,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   var detailedGroup = detailedGroupBase
     .enter();
 
-/*
-  // ensure cleanup before we start
-  d3.selectAll(".main-units .detailed-group").remove();
-*/
-
   detailedGroup = detailedGroup.append("svg:g")
     .attr("class", "detailed-group")
     .on("click", handleFlowerClick)
     .on("mouseleave", approvalMouseLeave);
-
-/*
-  unitGroup
-    .call(d3.drag()
-      .on("start", dragstarted)
-      .on("drag", dragged)
-      .on("end", dragended));
-
-  function dragstarted(d) {
-    // stopSimulation();
-    d3.select(".submitterTooltip")
-      .style("display","none");
-
-    d3.select(unitNode).raise().classed("active", true);
-    // var translated = state.common.getTranslation(d3.select(unitNode).attr("transform"));
-
-    if (!d3.event.active) runSimulation(0.3); // simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-
-  }
-
-  function dragged(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-  }
-
-  function dragended(d) {
-    d3.select(unitNode).classed("active", false);
-    // these lines commented out to fix node
-    if (!d3.event.active) runSimulation(0); // simulation.alphaTarget(0);
-    // d.fx = null;
-    // d.fy = null;
-  }
-*/
 
   function drawMainCircularShape() {
     // draws main grey circular shape
@@ -273,13 +234,15 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   // subUnits denote all the visible approvers
   var subUnits = state.common.filterNonHidden(mainObject.approvers);
 
+/*
   var maxValue = d3.max(subUnits.map(function(v) {
     return d3.max(v.approvals, function(a) {return a.value})
   }));
+*/
 
   // values translated between 0 and diameter of
-  var valueDiameterScale = d3.scaleLinear()
-    .domain([0, maxValue])
+  var basicValueDiameterScale = d3.scaleLinear()
+    .domain([0, mainObject.maxValue])
     .range([0, maxApprovalBubble * outerRadius * 2]);
   const minimalBubbleSize = minApprovalBubble * outerRadius * 2;
 
@@ -334,29 +297,35 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       });
   }
 
-  function drawSpheresGuidelines() {
+  function drawSpheresGuidelines(dataToShow, classModifier) {
     // draw static base guideline
-    detailedGroup
-      .append("svg:line")
-      .attr("class", "circular-marker")
-      .attr("fill", "transparent")
-      .attr("stroke-width", 1)
-      .attr("x1", 0 )
-      .attr("y1", 0)
-      .attr("x2", 0 )
-      .attr("y2", outerRadius - identityMargin)
-      .attr("transform", "rotate(180)");
+    classModifier = classModifier || "";
 
+    if (!dataToShow) {
+      detailedGroup
+        .append("svg:line")
+        .attr("class", "circular-marker")
+        .attr("fill", "transparent")
+        .attr("stroke-width", 1)
+        .attr("x1", 0)
+        .attr("y1", 0)
+        .attr("x2", 0)
+        .attr("y2", outerRadius - identityMargin)
+        .attr("transform", "rotate(180)");
+    }
 
     // first drawing guide lines
     subUnits.forEach(function (t, index) {
-      var localGroup = d3.select(".detailed-group").selectAll("line.bubble-guide" + index)
-        .data(state.common.filterNonHidden(t.approvals), function(d,i) {return i;});
+      var approvals = dataToShow == ZOOM_DATA ? t.zoomApprovals : t.approvals;
+      var className = classModifier + "bubble-guide";
+
+      var localGroup = d3.select(".detailed-group").selectAll("line." + className + index)
+        .data(state.common.filterNonHidden(approvals), function(d,i) {return i;});
 
       var enteredGroup = localGroup
         .enter()
         .append("svg:line")
-        .attr("class", function(d) {return "bubble-guide bubble-guide" + index + (d.hidden ? " hidden" : "")})
+        .attr("class", function(d) {return className + " " + className + index + (d.hidden ? " hidden" : "")})
         .attr("id", function(d,i) {
           return "a" + index + "g" + i; // a [approver index] g [approval index]
         })
@@ -396,7 +365,12 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     d3.selectAll(".table-rows .data-row").classed("highlight", false);
   }
 
-  function drawSpheres() {
+  function drawSpheres(dataToShow, classModifier, valueDiameterScale) {
+    // default dataToShow is granular approvals
+    // if dataToShow == ZOOM_DATA then show approver.zoomApprovals
+
+    classModifier = classModifier || "";
+    valueDiameterScale = valueDiameterScale || basicValueDiameterScale;
 
     function approvalMouseEnter(d, i) {  // Add interactivity
 
@@ -439,11 +413,13 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     function drawBackgroundOrForeground(foreground) {
       // now drawing spheres
       subUnits.forEach(function (t, index) {
-        var x = detailedGroup;
-        var className = foreground ? "sphere" : "sphere-background";
+
+        // var x = detailedGroup;
+        var approvals = dataToShow == ZOOM_DATA ? t.zoomApprovals : t.approvals;
+        var className = classModifier + (foreground ? "sphere" : "sphere-background");
         // due to general update pattern detailedGroup might be empty so selecting explicitly
         var spheresSelection = d3.select(".detailed-group").selectAll("g." + className + index)
-          .data(state.common.filterNonHidden(t.approvals), function(d,i) {return i;});
+          .data(state.common.filterNonHidden(approvals), function(d,i) {return i;});
 
         var spheres = spheresSelection
           .enter()
@@ -674,6 +650,24 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   drawColorfulRibbon();
   drawAverageDelayMarkers();
   drawCenterSphere();
+
+  drawZoomWidget(function() {
+    var zoomValueDiameterScale = d3.scaleLinear()
+      .domain([0, mainObject.zoomMaxValue])
+      .range([0, maxApprovalBubble * outerRadius * 2]);
+
+    d3.selectAll(".detailed-group .zoom-sphere").remove();
+    d3.selectAll(".detailed-group .zoom-sphere-background").remove();
+    d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
+    d3.select(".detailed-group").classed("zoom", true);
+    drawSpheresGuidelines(ZOOM_DATA, "zoom-");
+    drawSpheres(ZOOM_DATA, "zoom-", zoomValueDiameterScale);
+
+    d3.selectAll(".average-guide").raise();
+    d3.select(".detailed-group .center-circle-background").raise();
+    d3.select(".detailed-group .request-name").raise();
+    d3.select(".detailed-group .request-value").raise();
+  });
 
   if (state.firstTimeDrawDetailedView) {
     state.firstTimeDrawDetailedView = !state.firstTimeDrawDetailedView;

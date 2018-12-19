@@ -166,6 +166,8 @@ function drawMenu(criteria) {
     var currentAmountRange = amountSlider.range();
     var currentWaitRange = waitSlider.range();
 
+    d3.select("svg .zoom-widget-group").remove();
+
     var typesFilter = [];
     d3.selectAll("#approval-type-switches .type-filter")
       .each(function(d) {
