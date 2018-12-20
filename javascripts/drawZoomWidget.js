@@ -20,7 +20,6 @@ function drawZoomWidget(drawCallback) {
     .default(0)
     .handle('M 0, 0 m -8, 0 a 8,8 0 1,0 16,0 a 8,8 0 1,0 -16,0')
     .on('onchange', val => {
-      console.log(val);
       zoomLevel(val);
     });
 
@@ -32,6 +31,17 @@ function drawZoomWidget(drawCallback) {
     .attr("class","zoom-widget-group")
     .attr("transform", `translate(${width-250},${height-100})`)
     .on('click', () => {d3.event.stopPropagation()});
+
+  group1
+    .append("rect")
+    .attr("rx", 8)
+    .attr("ry", 8)
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", 250)
+    .attr("height", 40)
+    .attr("transform", "translate(-50,-20)")
+    .attr('class', 'zoom-widget-background');
 
   group1.call(slider1);
 
@@ -67,6 +77,8 @@ function drawZoomWidget(drawCallback) {
       d3.selectAll(".detailed-group .zoom-sphere").remove();
       d3.selectAll(".detailed-group .zoom-sphere-background").remove();
       d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
+      d3.selectAll(".detailed-group .sphere").transition().duration(200).style("opacity", 1);
+      d3.selectAll(".detailed-group .bubble-guide").transition().duration(200).style("opacity", 1);
 
       return;
     }

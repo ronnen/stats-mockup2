@@ -852,7 +852,7 @@ body.debug .view-json {
 
 .zoom-widget-group .slider .parameter-value path {
     fill: rgb(143,158,239);
-    stroke: transparent;
+    stroke: white;
 }
 
 .zoom-widget-group .slider .parameter-value text {
@@ -862,13 +862,39 @@ body.debug .view-json {
 .zoom-widget-group .slider .track {
     stroke: rgb(143,158,239);
 }
+.zoom-widget-group .slider .track-inset {
+    stroke: transparent;
+}
 
+.detailed-group .sphere, .detailed-group .sphere-background, .detailed-group .bubble-guide {
+    display: block;
+    opacity: 1;
+    /*
+    pointer-events: all;
+    transition: opacity 0.15s ease-in-out;
+    */
+}
 .detailed-group.zoom .sphere, .detailed-group.zoom .sphere-background, .detailed-group.zoom .bubble-guide {
     display: none;
+    pointer-events: none;
+    /*
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    */
 }
 
 .zoom-widget-group .zoom-path {
     stroke: white;
     fill: rgb(143,158,239);
+}
+
+.zoom-sphere {
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out;
+}
+
+.zoom-widget-background {
+    fill: rgb(74,77,93);
+    stroke: transparent;
 }
 

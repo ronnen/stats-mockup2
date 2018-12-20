@@ -325,6 +325,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       var enteredGroup = localGroup
         .enter()
         .append("svg:line")
+        .style("opacity", 0)
         .attr("class", function(d) {return className + " " + className + index + (d.hidden ? " hidden" : "")})
         .attr("id", function(d,i) {
           return "a" + index + "g" + i; // a [approver index] g [approval index]
@@ -346,6 +347,11 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
             (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / state.maxWait);
           return "rotate(" + sampleDegrees + ")";
         });
+
+      enteredGroup
+        .transition()
+        .duration(150)
+        .style("opacity", 1);
 
       enteredGroup
         .merge(localGroup)
@@ -434,6 +440,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
         // add sphere or sphere background
         spheres
+          .style("opacity", 0)
           .append("circle")
           .attr("class", function(d) {
             if (!foreground) return "main-circle-background";
@@ -460,6 +467,11 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
               (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / state.maxWait);
             return "rotate(" + sampleDegrees + ")";
           });
+
+        spheres
+          .transition()
+          .duration(150)
+          .style("opacity", 1);
 
         if (!foreground) return;
 
@@ -659,6 +671,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     d3.selectAll(".detailed-group .zoom-sphere").remove();
     d3.selectAll(".detailed-group .zoom-sphere-background").remove();
     d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
+
+    d3.selectAll(".detailed-group .sphere").style("opacity", 0);
+    d3.selectAll(".detailed-group .bubble-guide").style("opacity", 0);
+
     d3.select(".detailed-group").classed("zoom", true);
     drawSpheresGuidelines(ZOOM_DATA, "zoom-");
     drawSpheres(ZOOM_DATA, "zoom-", zoomValueDiameterScale);
