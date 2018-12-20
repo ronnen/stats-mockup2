@@ -19,31 +19,6 @@ function refreshTable(mainUnits) {
 
   if (state.freshDataLoaded) {
     tableRows.html(null);
-
-/*
-    var captionRow = tableRows.append("div", "div")
-      .attr("class", "caption-row");
-    captionRow
-      .append("div")
-      .attr("class", "request caption")
-      .text("Request type");
-    captionRow
-      .append("div")
-      .attr("class", "approver caption")
-      .text("Approver");
-    captionRow
-      .append("div")
-      .attr("class", "submitter caption")
-      .text("Submitted by");
-    captionRow
-      .append("div")
-      .attr("class", "value caption")
-      .text("Amount requested");
-    captionRow
-      .append("div")
-      .attr("class", "table-wait-time caption")
-      .text("Pending since");
-*/
   }
 
   var selectedRequestIndex = mainUnits.findIndex(function(r) {return r.selected});

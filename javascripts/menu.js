@@ -143,14 +143,9 @@ function drawMenu(criteria) {
     d3.select(".table-container").classed("on", !state.tableToggleState);
     state.tableToggleState = !state.tableToggleState;
     if (state.tableToggleState) {
-      if (d3.select(".main-units.selected").size() > 0) {
-        var selectedUnit = d3.select(".main-units.selected").datum();
-        refreshTable(mainUnits/*getRequestVisibleApprovals(selectedUnit)*/);
-      }
-      else {
-        refreshTable(mainUnits/*getAllVisibleApprovals()*/);
-      }
+      refreshTable(mainUnits);
     }
+    window.dispatchEvent(new CustomEvent("tableStateChanged", { detail: {state: state.tableToggleState}}));
 
   }
 
@@ -212,7 +207,7 @@ function drawMenu(criteria) {
       state.overviewParams.runSimulation(0.3);
 
       if (state.tableToggleState) {
-        refreshTable(mainUnits/*getAllVisibleApprovals()*/);
+        refreshTable(mainUnits);
       }
     }
 

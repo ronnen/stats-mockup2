@@ -29,7 +29,7 @@ function drawZoomWidget(drawCallback) {
   var group1 = d3.select("svg")
     .append("g")
     .attr("class","zoom-widget-group")
-    .attr("transform", `translate(${width-250},${height-100})`)
+    .attr("transform", `translate(${width-250},${state.tableToggleState ? 70 : height-100})`)
     .on('click', () => {d3.event.stopPropagation()});
 
   group1
@@ -68,6 +68,23 @@ function drawZoomWidget(drawCallback) {
     .append('path')
     .attr('d', 'M -10,0 a 10,10 0 1,1 20,0 a 10,10 0 1,1 -20,0 M -6,0 l 12,0')
     .attr('class', 'zoom-path');
+
+  if (state.zoomWidgetShouldMove) window.removeEventListener("tableStateChanged" , state.zoomWidgetShouldMove);
+  state.zoomWidgetShouldMove = function(event) {
+    // console.log("table state changed " + event.detail.state); // true - table is showing
+
+    if (d3.select(".zoom-widget-group").size()) {
+      if (event.detail.state) {
+        d3.select(".zoom-widget-group").transition().duration(300)
+          .attr("transform",`translate(${width-250},${70})`);
+      }
+      else {
+        d3.select(".zoom-widget-group").transition().duration(300)
+          .attr("transform",`translate(${width-250},${height-100})`);
+      }
+    }
+  };
+  window.addEventListener("tableStateChanged", state.zoomWidgetShouldMove);
 
   function zoomLevel(level) {
     level = Math.floor(level);
