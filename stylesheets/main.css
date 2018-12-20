@@ -774,8 +774,13 @@ body.debug .view-json {
     border-top: solid 1px rgb(60,64,81);
 }
 
-.table-rows {
+.approvals-table {
     width: 100%;
+}
+
+.table-rows {
+    overflow: scroll;
+    height: 172px; /* 200 - 28 == container - caption-row - drag-size */
 }
 
 .caption-row, .data-row {

@@ -4,12 +4,13 @@ function drawTable() {
       .on("drag", dragged));
 
   function dragged(d) {
-    console.log(d3.event.dx + " " + d3.event.dy + " " + d3.event.x + " " + d3.event.y);
+    // console.log(d3.event.dx + " " + d3.event.dy + " " + d3.event.x + " " + d3.event.y);
     var tableContainerNode = this.parentNode;
     var beforeHeight = tableContainerNode.getBoundingClientRect().height;
     var afterHeight = beforeHeight - d3.event.y;
 
     d3.select(tableContainerNode).style('height',afterHeight + "px");
+    d3.select(tableContainerNode).select('.table-rows').style('height', (afterHeight-28) + "px");
   }
 }
 
@@ -19,6 +20,7 @@ function refreshTable(mainUnits) {
   if (state.freshDataLoaded) {
     tableRows.html(null);
 
+/*
     var captionRow = tableRows.append("div", "div")
       .attr("class", "caption-row");
     captionRow
@@ -41,6 +43,7 @@ function refreshTable(mainUnits) {
       .append("div")
       .attr("class", "table-wait-time caption")
       .text("Pending since");
+*/
   }
 
   var selectedRequestIndex = mainUnits.findIndex(function(r) {return r.selected});
