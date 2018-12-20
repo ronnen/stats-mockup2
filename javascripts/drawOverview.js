@@ -397,8 +397,9 @@ function drawOverview(mainUnits) {
     });
 
   // acting on the MERGE = ENTER + UPDATE
-  unitGroups
-    .merge(unitGroupsBase)
+  var mergedGroups = unitGroups.merge(unitGroupsBase);
+
+  mergedGroups
     .classed("selected", function(d) {
       return d.selected
     })
@@ -410,6 +411,34 @@ function drawOverview(mainUnits) {
         return colorGenerator(d.totalWaitTime/d.totalCount);
       else
         return "#000000";
+    });
+
+  // add value
+  mergedGroups
+    .select(".request-value")
+    .text(function (d) {
+      return state.common.typedValueToText(d.visibleValue, d.presentation); // instead of v.totalValue
+    });
+
+  mergedGroups
+    .each(function(d) {
+      var requestPercentSelection = d3.select(this).selectAll(".request-percent")
+        .data(d.visibleValue == d.totalValue ? [] : [d]);
+
+      var enteredPercent = requestPercentSelection
+        .enter()
+        .append("text")
+        .attr("class", "request-percent")
+        .attr("text-anchor", "middle")
+        .attr("dy", "2.3em");
+
+      // now acting on the new and the updated
+      enteredPercent.merge(requestPercentSelection)
+        .text(function(d) {
+          return (100*d.visibleValue/d.totalValue).toFixed(0) + "%"
+        });
+
+      requestPercentSelection.exit().remove();
     });
 
   simulation

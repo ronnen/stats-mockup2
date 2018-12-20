@@ -165,7 +165,7 @@ function calculateTotalValues(originalData) {
     });
 
     request.totalCount = stats[0];
-    request.totalValue = stats[1];
+    request.visibleValue = request.totalValue = stats[1];
     request.totalWaitTime = stats[2];
     request.unitLabel = request.request + ". " + request.totalCount + " requests. " + state.common.waitToText(request.totalWaitTime/request.totalCount) + " Average delay.";
 
@@ -183,6 +183,7 @@ function filterDataByCriteria(criteria) {
   // hide approvals that are outside wait time range
   mainUnits.forEach(function(unit) {
     unit.hidden = (criteria.typesFilter.indexOf(unit.request) < 0);
+    unit.visibleValue = 0;
     unit.approvers.forEach(function(approver) {
       approver.approvals.forEach(function(approval) {
         if (unit.hidden) {
@@ -199,6 +200,8 @@ function filterDataByCriteria(criteria) {
         }
       });
       approver.hidden = approver.approvals.every(function(t) {return t.hidden});
+      if (!approver.hidden) unit.visibleValue +=
+        approver.approvals.reduce((sum, a) => a.hidden ? 0 : sum + a.value, 0);
     })
   });
 
@@ -208,6 +211,7 @@ function filterDataByCriteria(criteria) {
     if (!unit.hidden) {
       unit.hidden = unit.approvers.every(function(t) {return t.hidden});
     }
+    if (unit.hidden) unit.visibleValue = 0;
   });
 
   return mainUnits;

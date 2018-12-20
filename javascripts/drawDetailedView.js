@@ -324,7 +324,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
       var enteredGroup = localGroup
         .enter()
-        .append("svg:line")
+        .insert("svg:line", ".sphere-background")
         .style("opacity", 0)
         .attr("class", function(d) {return className + " " + className + index + (d.hidden ? " hidden" : "")})
         .attr("id", function(d,i) {

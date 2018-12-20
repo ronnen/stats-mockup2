@@ -86,17 +86,20 @@ function drawZoomWidget(drawCallback) {
   };
   window.addEventListener("tableStateChanged", state.zoomWidgetShouldMove);
 
+  window.addEventListener("setNonZoomState", function() {
+    d3.select(".detailed-group").classed("zoom", false);
+    d3.selectAll(".detailed-group .zoom-sphere").remove();
+    d3.selectAll(".detailed-group .zoom-sphere-background").remove();
+    d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
+    d3.selectAll(".detailed-group .sphere").transition().duration(200).style("opacity", 1);
+    d3.selectAll(".detailed-group .bubble-guide").transition().duration(200).style("opacity", 1);
+  });
+
   function zoomLevel(level) {
     level = Math.floor(level);
     if (!level) {
       // restore non-zoom classes
-      d3.select(".detailed-group").classed("zoom", false);
-      d3.selectAll(".detailed-group .zoom-sphere").remove();
-      d3.selectAll(".detailed-group .zoom-sphere-background").remove();
-      d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
-      d3.selectAll(".detailed-group .sphere").transition().duration(200).style("opacity", 1);
-      d3.selectAll(".detailed-group .bubble-guide").transition().duration(200).style("opacity", 1);
-
+      window.dispatchEvent(new CustomEvent("setNonZoomState", {detail: {}}));
       return;
     }
 
@@ -105,9 +108,6 @@ function drawZoomWidget(drawCallback) {
     var bucketing = d3.scaleLinear()
       .domain([state.minWait, state.maxWait])
       .rangeRound([0, level]);
-
-    // request
-    // var newApproversData = [];
 
     request.approvers.forEach(approver => {
       var data = [];

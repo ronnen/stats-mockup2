@@ -162,6 +162,7 @@ function drawMenu(criteria) {
     var currentWaitRange = waitSlider.range();
 
     d3.select("svg .zoom-widget-group").remove();
+    window.dispatchEvent(new CustomEvent("setNonZoomState", {detail: {}}));
 
     var typesFilter = [];
     d3.selectAll("#approval-type-switches .type-filter")

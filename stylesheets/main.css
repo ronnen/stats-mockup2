@@ -85,6 +85,15 @@ body {
     pointer-events: none;
 }
 
+.request-percent {
+    font-size: 18px;
+    font-family: Avenir, sans-serif;
+    font-weight: 300;
+    fill: #ffffff;
+    stroke: transparent;
+    pointer-events: none;
+}
+
 .approval-type-label, .approver-name-label {
     font-size: 12px;
     font-family: Avenir, sans-serif;
@@ -170,7 +179,7 @@ body {
     stroke: transparent;
 }
 
-.bubble-guide.hidden {
+.bubble-guide.hidden, .zoom-bubble-guide.hidden {
     stroke: #dddddd;
 }
 .approval-circle-foreground.hidden {
