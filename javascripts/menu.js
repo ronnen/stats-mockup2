@@ -173,8 +173,6 @@ function drawMenu(criteria) {
     var newCriteria = {
       timeRangeMin: timeFilterState ? currentTimeRange.begin : null,
       timeRangeMax: timeFilterState ? currentTimeRange.end : null,
-      // totalValueMin: valueFilterState ? currentValueRange.begin : null,
-      // totalValueMax: valueFilterState ? currentValueRange.end : null,
       amountMin: amountFilterState ? currentAmountRange.begin : null,
       amountMax: amountFilterState ? currentAmountRange.end : null,
       waitTimeMin: waitFilterState ? currentWaitRange.begin : null,

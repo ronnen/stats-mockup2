@@ -40,6 +40,10 @@ function refreshTable(mainUnits) {
         .text(function(d) {return request.request});
       enteredDataRows
         .append("div")
+        .attr("class", "time data")
+        .text(function(d) {return state.common.valueToDate(d.time)});
+      enteredDataRows
+        .append("div")
         .attr("class", "approver data")
         .text(function(d) {return approver.approverName});
       enteredDataRows

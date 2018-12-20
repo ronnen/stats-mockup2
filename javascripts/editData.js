@@ -14,6 +14,12 @@ function parseCSV(csvString) {
 
     var requests = {};
 
+/*
+    var timeGenerator = d3.scaleLinear()
+      .domain([0,1])
+      .rangeRound([Date.now()-60*864e5, Date.now()-864e5]); // dates in the last 2 months or so
+*/
+
     results.data.forEach(function(row) {
       var request = requests[row.request] = requests[row.request] || {};
       var approver = request[row.approver] = request[row.approver] || [];
@@ -22,7 +28,9 @@ function parseCSV(csvString) {
         value: parseFloat(row.value),
         waitTime: parseFloat(row.waitTime),
         presentation: row.presentation,
-        approverDept: row.approverDept
+        approverDept: row.approverDept,
+        time: (new Date(row.time)).getTime()
+        // time: timeGenerator(Math.random())
       });
     });
 
@@ -64,7 +72,7 @@ function openEditDialog() {
   function flattenJSON(units) {
     var result =
       "# Enter CSV data with the following structure to replace the current view\n" +
-      "approverDept,approver,request,presentation,submitter,value,waitTime\n";
+      "approverDept,approver,request,presentation,submitter,value,waitTime,time\n";
     units.forEach(function(unit) {
       unit.approvers.forEach(function(approver) {
         approver.approvals.forEach(function(approval) {
@@ -75,7 +83,8 @@ function openEditDialog() {
             "\"" + approval.presentation + "\"," +
             "\"" + approval.submitter + "\"," +
             approval.value + "," +
-            approval.waitTime + "\n";
+            approval.waitTime + "," +
+            "\"" + state.common.valueToDate(approval.time) + "\"\n";
         });
       });
     });

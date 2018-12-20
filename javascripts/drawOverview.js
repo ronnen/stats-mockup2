@@ -61,6 +61,22 @@ function drawOverview(mainUnits) {
       });
     }));
 
+    state.maxTime = d3.max(mainUnits.map(function(v) {
+      return d3.max(v.approvers, function(approver) {
+        return d3.max(approver.approvals, function(approval) {
+          return approval.time;
+        });
+      });
+    }));
+
+    state.minTime = d3.min(mainUnits.map(function(v) {
+      return d3.min(v.approvers, function(approver) {
+        return d3.min(approver.approvals, function(approval) {
+          return approval.time;
+        });
+      });
+    }));
+
     refreshTable(mainUnits);
   }
 
@@ -120,8 +136,8 @@ function drawOverview(mainUnits) {
     // console.log("max approver value " + maxValue);
 
     drawMenu({
-      timeRangeMin: new Date((new Date()).getTime()- (30 * 864e5)).getTime(), // before a month
-      timeRangeMax: (new Date()).getTime(), // today
+      timeRangeMin: state.minTime,
+      timeRangeMax: state.maxTime,
       waitTimeMin: state.minWait,
       waitTimeMax: state.maxWait,
       amountMin: state.minValue,
