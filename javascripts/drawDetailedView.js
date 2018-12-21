@@ -391,7 +391,12 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
       d3.select(".table-rows").classed("approval-highlight", true);
       d3.selectAll(".table-rows .data-row").classed("highlight", false); // in case mouseLeave was not fired
-      d3.select("#r" + requestIndex + sphereID).classed("highlight", true); // r4a3b5 (request 4, approver 3, approval 5)
+
+      // if in zoom state we highlight according to rows according to zoomBucket, otherwise use sphere ID
+      if (dataToShow == ZOOM_DATA && d.zoomBucket)
+        d3.select(".table-rows").selectAll(`.data-row[data-zoom=${d.zoomBucket}]`).classed("highlight", true);
+      else
+        d3.select("#r" + requestIndex + sphereID).classed("highlight", true); // r4a3b5 (request 4, approver 3, approval 5)
 
       d3.select(this)
         .append("circle")
@@ -683,6 +688,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     d3.select(".detailed-group .center-circle-background").raise();
     d3.select(".detailed-group .request-name").raise();
     d3.select(".detailed-group .request-value").raise();
+
+    refreshTable(mainUnits); // update rows with zoom bucket data
   });
 
   if (state.firstTimeDrawDetailedView) {

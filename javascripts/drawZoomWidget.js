@@ -93,6 +93,7 @@ function drawZoomWidget(drawCallback) {
     d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
     d3.selectAll(".detailed-group .sphere").transition().duration(200).style("opacity", 1);
     d3.selectAll(".detailed-group .bubble-guide").transition().duration(200).style("opacity", 1);
+    d3.selectAll(".table-rows .data-row[data-zoom]").attr("data-zoom", null);
   });
 
   function zoomLevel(level) {
@@ -109,7 +110,7 @@ function drawZoomWidget(drawCallback) {
       .domain([state.minWait, state.maxWait])
       .rangeRound([0, level]);
 
-    request.approvers.forEach(approver => {
+    request.approvers.forEach((approver, approverIndex) => {
       var data = [];
 
       approver.approvals.forEach(approval => {
@@ -119,9 +120,10 @@ function drawZoomWidget(drawCallback) {
         data[bucketedIndex].value += approval.value;
         data[bucketedIndex].hidden += approval.hidden ? 1 : 0;
         data[bucketedIndex].count ++;
+        approval.zoomBucket = "a" + approverIndex + "b" + bucketedIndex;
+        data[bucketedIndex].zoomBucket = "a" + approverIndex + "b" + bucketedIndex; // to keep track of which approvals belongs to each bucket
       });
 
-      // newApproversData.push(data);
       data = data.filter(t => t !== undefined);
       data.forEach(a => {
         a.waitTime = a.waitTime / a.count;

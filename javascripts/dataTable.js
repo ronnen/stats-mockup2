@@ -68,6 +68,12 @@ function refreshTable(mainUnits) {
           if (selectedRequestIndex >= 0 && requestIndex != selectedRequestIndex)
             return true;
           return d.hidden;
+        })
+        .attr("data-zoom", function(d) {
+          if (selectedRequestIndex >= 0 && requestIndex == selectedRequestIndex && d.zoomBucket)
+            return d.zoomBucket;
+          else
+            return null;
         });
 
     });

@@ -168,7 +168,7 @@ body {
     stroke: #555555;
     stroke-width: 2;
     fill: transparent;
-// stroke-dasharray: 5;
+    pointer-events: none;
 }
 
 .average-guide-label {
@@ -829,7 +829,12 @@ body.debug .view-json {
 
 .caption-row .value, .data-row .value {
     display: flex;
-    flex: 0 200px;
+    flex: 0 170px;
+    padding-right: 30px;
+}
+
+.data-row .value {
+    justify-content: flex-end;
 }
 
 .caption-row .table-wait-time, .data-row .table-wait-time {

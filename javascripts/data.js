@@ -88,7 +88,7 @@ approverDept,approver,request,presentation,submitter,value,waitTime,time\n\
 "Finance","Stacy Hoolahan","Purchase","currency","Lenny Advies",92327.36,80.59,"Dec 6, 2018"\n\
 "Finance","Stacy Hoolahan","Purchase","currency","Kuok Han Yong",146101.23,87.38,"Nov 14, 2018"\n\
 "Finance","Stacy Hoolahan","Purchase","currency","Danny Stamp",232022.28,89.11,"Dec 7, 2018"\n\
-"Finance","Stacy Hoolahan","Purchase","currency","ST Ring-0 Test3 [unknown]",93810.32,92.34,"Nov 6, 2018"\n\
+"Finance","Stacy Hoolahan","Purchase","currency","Barbara Sonders",93810.32,92.34,"Nov 6, 2018"\n\
 "Finance","Stacy Hoolahan","Purchase","currency","Chris McCoy",47372.02,97.21,"Nov 21, 2018"\n\
 "Finance","Stacy Hoolahan","Purchase","currency","Mogens B. Lassen",20959.28,100.35,"Oct 24, 2018"\n\
 "Finance","Stacy Hoolahan","Purchase","currency","Danny Melein",87458.76,103.43,"Nov 2, 2018"\n\
