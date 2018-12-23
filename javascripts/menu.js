@@ -450,13 +450,14 @@ function drawMenu(criteria) {
   d3.select(".config-button")
     .on("click", function() {openConfigDialog(function() {
       state.overviewParams.closeOpenFlowers();
-/*
-      state.configLowWait = newConfig.begin;
-      state.configHighWait = newConfig.end;
-*/
 
       drawOverview(mainUnits);
       state.overviewParams.runSimulation();
+    })});
+
+  d3.select(".show-benchmarks")
+    .on("click", function() {showBenchmarks(function() {
+
     })});
 
 }

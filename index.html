@@ -19,6 +19,7 @@
 <script src="javascripts/editData.js"></script>
 <script src="javascripts/dataTable.js"></script>
 <script src="javascripts/configure.js"></script>
+<script src="javascripts/benchmark.js"></script>
 <script>
     var debugMode = false;
     const FADE_HIDDEN = true;
@@ -67,12 +68,6 @@
             </div>
         </div>
     </div>
-    <div id="custom-filter" class="custom-filter">
-        <div class="custom-filter-container">
-            <div class="filter-option">Custom Filter</div>
-            <div class="open-filter fa fa-angle-down"></div>
-        </div>
-    </div>
     <div id="time-range-filter" class="stats-filter on">
         <div class="filter-header">
             <div class="stats-filter-title">Time Range</div>
@@ -116,6 +111,15 @@
         </div>
     </div>
     <div id="approval-type-switches">
+    </div>
+    <div id="custom-filter" class="custom-filter">
+        <div class="custom-filter-container">
+            <div class="filter-option">Custom Filter</div>
+            <div class="open-filter fa fa-angle-down"></div>
+        </div>
+    </div>
+    <div id="show-benchmarks-container">
+        <div class="show-benchmarks">Related Benchmarks</div>
     </div>
 </div>
 
@@ -192,6 +196,16 @@
             <div class="set-config">Set</div>
         </div>
     </div>
+</div>
+
+<div class="benchmark-dialog">
+    <div class="benchmark-rows"></div>
+    <div class="legend">
+        <div class="legend-item best">Best in class</div>
+        <div class="legend-item median">Median</div>
+        <div class="legend-item poor">Acceptable</div>
+    </div>
+    <div class="close">Close</div>
 </div>
 
 </body>
