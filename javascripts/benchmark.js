@@ -4,7 +4,7 @@ function showBenchmarks() {
   d3.select(".benchmark-rows").html(null);
 
   d3.select(".benchmark-dialog .close").on("click", () => {
-    console.log("close clicked");
+    // console.log("close clicked");
     d3.select(".benchmark-dialog .legend").classed("on", false);
     d3.select(".benchmark-dialog").classed("on", false);
     d3.select(".shield").classed("on darkest", false);
@@ -112,7 +112,7 @@ function showBenchmarks() {
     .outerRadius(function(d) { return d.outerRadius; });
 
   function animateBenchmarks() {
-    console.log("started animation");
+    // console.log("started animation");
 
     var tweenNumber = function(d) {
       var i = d3.interpolate(0, d.median);
@@ -175,7 +175,7 @@ function showBenchmarks() {
       .transition().duration(500).ease(d3.easeLinear)
       .attrTween("transform", d => tweenMedian(d.range, d.median))
       .on("end", function(d) {
-        console.log(d.median);
+        // console.log(d.median);
         var degScale = d3.scaleLinear()
           .domain(d.range)
           .range([0, 360]);

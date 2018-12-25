@@ -8,8 +8,6 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   const circleStartRadius = 0.3;
   const circleEndRadius = 0.95;
   const identityMargin = 20;
-  const approvalsRadialStart = 0; // where bubbles start to show in degrees
-  const approvalsRadialEnd = 300; // where bubbles start to show in degrees
   const maxApprovalBubble = 0.12; // as ratio of diameter
   const minApprovalBubble = 0.07;
   const approverRadius = 0.25;
@@ -256,8 +254,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .attr("class", "average-guide")
       .attr("id", function(d,i) {return "average-guide" + i})
       .attr("transform", function (d) {
-        var sampleDegrees = -180 + approvalsRadialStart +
-          (approvalsRadialEnd - approvalsRadialStart) * (d.average / state.maxWait);
+        var sampleDegrees = -180 + state.approvalsRadialStart +
+          (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.average / state.maxWait);
         // console.log("sampleDegrees " + sampleDegrees + " " + state.common.waitToText(d.average));
         d.flipText = (sampleDegrees > 0);
         return "rotate(" + sampleDegrees + ")";
@@ -343,8 +341,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
           return outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap)
         })
         .attr("transform", function (d) {
-          var sampleDegrees = -180 + approvalsRadialStart +
-            (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / state.maxWait);
+          var sampleDegrees = -180 + state.approvalsRadialStart +
+            (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / state.maxWait);
           return "rotate(" + sampleDegrees + ")";
         });
 
@@ -468,8 +466,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
             return Math.max(valueDiameterScale(d.value) / 2, minimalBubbleSize / 2);
           })
           .attr("transform", function (d) {
-            var sampleDegrees = -180 + approvalsRadialStart +
-              (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / state.maxWait);
+            var sampleDegrees = -180 + state.approvalsRadialStart +
+              (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / state.maxWait);
             return "rotate(" + sampleDegrees + ")";
           });
 
@@ -493,13 +491,13 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
           .attr("x", function (d) {
             // calculate absolute position based on radius and angle
             var radius = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap)
-            var angle = -90 + approvalsRadialStart + (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / state.maxWait);
+            var angle = -90 + state.approvalsRadialStart + (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / state.maxWait);
             return Math.cos(state.common.toRadians(angle)) * radius;
           })
           .attr("y", function (d) {
             // calculate absolute position based on radius and angle
             var radius = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap)
-            var angle = -90 + approvalsRadialStart + (approvalsRadialEnd - approvalsRadialStart) * (d.waitTime / state.maxWait);
+            var angle = -90 + state.approvalsRadialStart + (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / state.maxWait);
             return Math.sin(state.common.toRadians(angle)) * radius;
           })
           .text(function (d) {
@@ -554,7 +552,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .outerRadius(outerRadius * clockColorRibbonRadius);
 
     for (var i = 0; i < 360; i++) {
-      var rgb = colorGenerator(i * state.maxWait / approvalsRadialEnd); // will generate red colors beyond range as necessary
+      var rgb = colorGenerator(i * state.maxWait / state.approvalsRadialEnd); // will generate red colors beyond range as necessary
       detailedGroup
         .append("svg:path")
         .attr("stroke", rgb)

@@ -127,7 +127,7 @@ function drawOverview(mainUnits) {
   });
 
   // inner bubble should not extend beyond minToMaxOuterBubbleRatio * outerRadiusFactor
-  const innerBubbleMaxRadius = Math.sqrt(minToMaxOuterBubbleRatio * outerRadiusFactor / Math.PI);
+  state.innerBubbleMaxRadius = Math.sqrt(minToMaxOuterBubbleRatio * outerRadiusFactor / Math.PI);
 
   // collect approval type
   var approvalTypeLabels = mainUnits.map(function(r) {return r.request;});
@@ -380,9 +380,9 @@ function drawOverview(mainUnits) {
     .style("mix-blend-mode", "multiply")
     .attr("r", function(d) {
       if (d.presentation == "currency")
-        return closedBubbleScale(Math.sqrt(d.totalValue)) * innerBubbleMaxRadius;
+        return closedBubbleScale(Math.sqrt(d.totalValue)) * state.innerBubbleMaxRadius;
       else
-        return (minApproverBubbleRatio + maxApproverBubbleRatio)/2 * innerBubbleMaxRadius;
+        return (minApproverBubbleRatio + maxApproverBubbleRatio)/2 * state.innerBubbleMaxRadius;
     })
     .on("click", handleClick)
     .on("mouseenter", function(d) {
@@ -480,6 +480,8 @@ function drawOverview(mainUnits) {
       d3.select(".submitterTooltip")
         .style("display","none");
     }
+    window.dispatchEvent(new CustomEvent("endConfigureState", { detail : {} }));
+    window.dispatchEvent(new CustomEvent("setNonZoomState", { detail : {} }));
 
     return any;
   }

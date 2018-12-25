@@ -94,6 +94,7 @@ function drawZoomWidget(drawCallback) {
     d3.selectAll(".detailed-group .sphere").transition().duration(200).style("opacity", 1);
     d3.selectAll(".detailed-group .bubble-guide").transition().duration(200).style("opacity", 1);
     d3.selectAll(".table-rows .data-row[data-zoom]").attr("data-zoom", null);
+    d3.select(".svg-container .zoom-widget-group").remove();
   });
 
   function zoomLevel(level) {

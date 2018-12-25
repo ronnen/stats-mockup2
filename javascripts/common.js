@@ -1,3 +1,6 @@
+state.approvalsRadialStart = 0; // where bubbles start to show in degrees
+state.approvalsRadialEnd = 300; // where bubbles start to show in degrees
+
 state.common.getUrlVars = function() {
   var vars = {};
   var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
@@ -23,6 +26,31 @@ state.common.arcSliceFull = d3.arc()
   .outerRadius(function (d) {
     return d.radius;
   });
+
+/*
+state.common.arcSliceOneWay = function(d, i) {
+  var a = state.common.arcSliceFull(d,i);
+  var myString = a.split(/[A-Z]/);
+  // console.log("arcSliceOneWay " + myString.join("\n"));
+  return "M" + myString[1] + "A" + myString[2]
+};
+*/
+
+state.common.arcSliceOneWay = function(d, i) {
+  // rX,rY rotation, arc, sweep, eX,eY
+
+  var radius = d.radius;
+  var fromY = -Math.cos(d.from) * radius,
+      fromX = Math.sin(d.from) * radius;
+  var toY = -Math.cos(d.to) * radius,
+      toX = Math.sin(d.to) * radius;
+
+  var largeArc = (Math.abs(d.to - d.from) <= Math.PI) ? "0" : "1";
+  // console.log("to: " + d.to + " from " + d.from + " largeArc " + largeArc);
+
+  return `M ${fromX},${fromY} A ${radius},${radius} 0 ${largeArc},1 ${toX},${toY}`
+
+};
 
 state.common.valueToDate = function(value) {
   // can take many parameters for formatting and loc.

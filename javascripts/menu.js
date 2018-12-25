@@ -162,6 +162,7 @@ function drawMenu(criteria) {
     var currentWaitRange = waitSlider.range();
 
     d3.select("svg .zoom-widget-group").remove();
+    window.dispatchEvent(new CustomEvent("endConfigureState", { detail : {} }));
     window.dispatchEvent(new CustomEvent("setNonZoomState", {detail: {}}));
 
     var typesFilter = [];
@@ -448,12 +449,22 @@ function drawMenu(criteria) {
     .on("click", openEditDialog);
 
   d3.select(".config-button")
+    .on("click", function() {
+      state.overviewParams.closeOpenFlowers();
+      state.overviewParams.runSimulation();
+      showConfigureView();
+    });
+
+/*
+  // via dialog
+  d3.select(".config-button")
     .on("click", function() {openConfigDialog(function() {
       state.overviewParams.closeOpenFlowers();
 
       drawOverview(mainUnits);
       state.overviewParams.runSimulation();
     })});
+*/
 
   d3.select(".show-benchmarks")
     .on("click", function() {showBenchmarks(function() {
