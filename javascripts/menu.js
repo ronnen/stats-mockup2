@@ -450,8 +450,9 @@ function drawMenu(criteria) {
 
   d3.select(".config-button")
     .on("click", function() {
-      state.overviewParams.closeOpenFlowers();
-      state.overviewParams.runSimulation();
+      // state.overviewParams.closeOpenFlowers();
+      // state.overviewParams.runSimulation();
+      d3.event.stopImmediatePropagation();
       showConfigureView();
     });
 

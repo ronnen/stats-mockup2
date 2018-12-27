@@ -627,6 +627,11 @@ body {
     display: block;
 }
 
+.shield.light.on {
+    background-color: #ffffff;
+    opacity: 0.6;
+}
+
 .shield.on.dark {
     opacity: 0.75;
 }
@@ -1124,6 +1129,7 @@ body.debug .view-json {
     display: none;
 }
 
+/*
 .main-units .configure-request-name {
     font-size: 24px;
     font-family: Avenir, sans-serif;
@@ -1131,22 +1137,24 @@ body.debug .view-json {
     pointer-events: none;
     fill: rgb(91,95,123);
 }
+*/
 
-.main-units .configure-path {
+.configure-group .configure-path {
     stroke: rgb(91,95,123);
     fill: transparent;
 }
 
-.main-units .configure-path-drag {
+.configure-group .configure-path-drag {
     fill: transparent;
+    /*pointer-events: none;*/
 }
 
-.main-units .configure-drag-handle {
+.configure-group .configure-drag-handle {
     stroke: white;
     fill: transparent;
     pointer-events: none;
 }
 
-.main-units .configure-drag-handle.active {
+.configure-group .configure-drag-handle.active {
     stroke-width: 2;
 }

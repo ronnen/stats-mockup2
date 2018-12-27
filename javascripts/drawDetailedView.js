@@ -2,7 +2,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
   // var height = parseInt(d3.select('.svg-container').style('height'));
   var height = window.innerHeight;
-  var runSimulation = drawOverviewParam.runSimulation;
+  // var runSimulation = drawOverviewParam.runSimulation;
   var stopSimulation = drawOverviewParam.stopSimulation;
 
   const circleStartRadius = 0.3;
@@ -353,7 +353,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
       enteredGroup
         .merge(localGroup)
-        .classed("hidden", function(d) {return d.hidden;});
+        .classed("hidden", function(d) {return d.hidden;})
+        .attr("stroke", function (d) {
+          return colorGenerator(d.waitTime);
+        })
     });
   }
 
@@ -507,7 +510,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         var a = spheres
           .merge(spheresSelection)
           .select(".approval-circle-foreground")
-          .classed("hidden", function(d) {return d.hidden});
+          .classed("hidden", function(d) {return d.hidden})
+          .attr("fill", function (d) {
+            return colorGenerator(d.waitTime);
+          });
       });
     }
 
@@ -551,16 +557,24 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .innerRadius(outerRadius * clockColorRibbonRadius)
       .outerRadius(outerRadius * clockColorRibbonRadius);
 
-    for (var i = 0; i < 360; i++) {
-      var rgb = colorGenerator(i * state.maxWait / state.approvalsRadialEnd); // will generate red colors beyond range as necessary
-      detailedGroup
-        .append("svg:path")
-        .attr("stroke", rgb)
-        .attr("stroke-width", 5)
-        // .attr("stroke-linejoin", "miter")
-        .attr("d", arcSlice())
-        .attr("transform", "rotate(" + i + ")");
-    }
+    var ribbonData = Array.from(new Array(360), (item, index) => index);
+
+    // to force refresh of ribbon colors
+    var ribbonSelection = d3.select(".detailed-group").selectAll(".ribbon-path")
+      .data(ribbonData);
+
+    var enteredRibbon = ribbonSelection
+      .enter()
+      .append("svg:path")
+      .attr("class", "ribbon-path")
+      .attr("stroke-width", 5)
+      .attr("d", arcSlice())
+      .attr("transform", function(d, i) {return "rotate(" + i + ")"});
+
+    enteredRibbon.merge(ribbonSelection)
+      .attr("stroke", function(d, i) {
+        return colorGenerator(i * state.maxWait / state.approvalsRadialEnd); // will generate red colors beyond range as necessary
+      });
   }
 
   function drawClockMotion() {
