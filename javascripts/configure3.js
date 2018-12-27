@@ -72,9 +72,9 @@ function showConfigureView() {
   configureSVG.append("filter")
     .attr("id", "dropshadow")
     .attr("x", "-20%")
-    .attr("y", "-200%")
+    .attr("y", "-250%")
     .attr("width", "140%")
-    .attr("height", "400%")
+    .attr("height", "500%")
     .html(`<feDropShadow dx="-3" dy="-3" stdDeviation="1" flood-color="#333333" flood-opacity="0.5" />`);
 
   var configureGroup = configureSVG
