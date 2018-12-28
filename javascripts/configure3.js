@@ -1,6 +1,5 @@
 function showConfigureView() {
   const configureRadiusMargin = 60;
-  var color = state.common.colorForWaitTime(0,100);  // leveraging same generator for 100 gradient colors
 
   const DRAG_HANDLE_COLOR = "rgb(74,77,93)";
 
@@ -53,6 +52,7 @@ function showConfigureView() {
   // d3.selectAll(".main-units").classed("configure-state", true);
   var selectedUnit = d3.select(".main-units.selected");
   if (!selectedUnit.size()) return;
+  var unitData = selectedUnit.datum();
 
   d3.select(".shield").classed("on light", true);
   simulation.stop();
@@ -79,7 +79,7 @@ function showConfigureView() {
 
   var configureGroup = configureSVG
     .selectAll(".configure-group")
-    .data([selectedUnit.datum()])
+    .data([unitData])
     .enter()
     .append("g")
     .attr("class", "configure-group")
@@ -91,6 +91,11 @@ function showConfigureView() {
 
   var colorGradientGrid = Array.from(new Array(100), (item, index) => index);
   var highWaitRadiansStep = state.common.toRadians(degressGenerator(state.maxWait))/100;
+  var color = state.common.colorForWaitTime(unitData.configLowWait,unitData.configHighWait);
+
+  var colorScale = d3.scaleLinear()
+    .domain([0,99])
+    .range([0, state.maxWait]);
 
   // add path from 0 degrees to drag handle
   configureGroup
@@ -101,8 +106,9 @@ function showConfigureView() {
     .attr("class", "configure-path")
     .attr("stroke-width", 30)
     .attr("stroke-linecap", "butt")
-    .style("fill", function(d,i) { return color(i); })
-    .style("stroke", function(d,i) { return color(i); })
+    .attr("data-index", function(d,i) {return i})
+    .style("fill", function(d,i) { return color(colorScale(i)); })
+    .style("stroke", function(d,i) { return color(colorScale(i)); })
     .attr("d", function(d,i) {
       var s = highWaitRadiansStep;
       return state.common.arcSliceOneWay({
@@ -116,7 +122,7 @@ function showConfigureView() {
     .append("svg:g")
     .attr("class", "configure-path-drag-group")
     .attr("transform", function(d) {
-      var midWait = (d.configHighWait - d.configLowWait)/2;
+      var midWait = (d.configHighWait + d.configLowWait)/2;
 
       return `rotate(${degressGenerator(midWait)})`
     })
@@ -137,8 +143,6 @@ function showConfigureView() {
     .attr('marker-mid', function(d,i){ return 'url(#marker_circle)' })
     .style("filter", "url(#dropshadow)")
     .attr("d", function(d) {
-      // var midWait = (d.configHighWait - d.configLowWait)/2;
-
       return state.common.arcSliceOneWay({
         radius: state.innerBubbleMaxRadius - configureRadiusMargin,
         from: state.common.toRadians(-20),
@@ -148,7 +152,7 @@ function showConfigureView() {
   var diffSampleDegrees;
 
   function dragstarted(d) {
-    var midWait = (d.configHighWait - d.configLowWait)/2;
+    var midWait = (d.configHighWait + d.configLowWait)/2;
     var relativeMouse = d3.mouse(this.parentNode);
     var newAngleDeg = (Math.atan2(relativeMouse[1],relativeMouse[0]) * 360 / (2* Math.PI) + 90)%360;
 
@@ -166,7 +170,28 @@ function showConfigureView() {
     configureGroup.select(".configure-path-drag-group")
       .attr("transform", `rotate(${newAngleDeg})`);
 
-    d.configHighWait = degressGenerator.invert(newAngleDeg) * 2 + d.configLowWait; // setting new high wait limit while dragging
+    var bellCenter = degressGenerator.invert(newAngleDeg);
+    if (state.maxWait - bellCenter > bellCenter - state.minWait) {
+      d.configLowWait = state.minWait;
+      d.configHighWait = bellCenter + (bellCenter - state.minWait);
+    }
+    else {
+      d.configLowWait = bellCenter - (state.maxWait - bellCenter);
+      d.configHighWait = state.maxWait;
+    }
+
+    var color = state.common.colorForWaitTime(unitData.configLowWait,unitData.configHighWait);
+
+    configureGroup
+      .selectAll(".configure-path")
+      .data(colorGradientGrid)
+      .style("stroke", function(d,i) {
+        return color(colorScale(i));
+      })
+      .style("fill", function(d,i) {
+        return color(colorScale(i));
+      });
+
   }
 
   function dragended(d) {
