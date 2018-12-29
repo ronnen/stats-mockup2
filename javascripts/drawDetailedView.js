@@ -161,6 +161,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.select("#average-guide" + index).classed("highlight", true);
       d3.select(".detailed-group .request-value")
         .text(state.common.typedValueToText(d.approver.value, mainObject.presentation));
+      var approverPercent = (100*d.approver.value/mainObject.totalValue).toFixed(0) + "%"
+      d3.select(".detailed-group .request-percent").text(approverPercent);
 
       d3.select(".table-rows").classed("approver-highlight", true);
       d3.selectAll(".table-rows .data-row.r" + requestIndex + "a" + index).classed("highlight", true);
@@ -174,6 +176,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.selectAll(".average-guide").classed("highlight", false);
       d3.select(".detailed-group .request-value")
         .text(state.common.typedValueToText(mainObject.totalValue, mainObject.presentation));
+      d3.select(".detailed-group .request-percent").text("");
 
       d3.select(".table-rows").classed("approver-highlight", false);
       d3.selectAll(".table-rows .data-row").classed("highlight", false);
@@ -376,6 +379,12 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     // default dataToShow is granular approvals
     // if dataToShow == ZOOM_DATA then show approver.zoomApprovals
 
+    // in case drawSpheres called in zoom state then force drawing of correct spheres
+    if (d3.select(".detailed-group").classed("zoom")) {
+      dataToShow = ZOOM_DATA;
+      classModifier = "zoom-";
+    }
+
     classModifier = classModifier || "";
     valueDiameterScale = valueDiameterScale || basicValueDiameterScale;
 
@@ -548,6 +557,21 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .text(function(d) {
         return state.common.typedValueToText(d.totalValue, d.presentation);
       });
+    detailedGroup
+      .append("text")
+      .attr("class", "request-percent")
+      .attr("text-anchor", "middle")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("dy", "2.3em")
+      .text("");
+
+/*
+    // to force refresh of percent
+    d3.select(".detailed-group").selectAll(".request-percent")
+      .data(ribbonData);
+*/
+
   }
 
   function drawColorfulRibbon() {
@@ -700,6 +724,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     d3.select(".detailed-group .center-circle-background").raise();
     d3.select(".detailed-group .request-name").raise();
     d3.select(".detailed-group .request-value").raise();
+    d3.select(".detailed-group .request-percent").raise();
 
     refreshTable(mainUnits); // update rows with zoom bucket data
   });

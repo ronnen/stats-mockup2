@@ -443,7 +443,7 @@ function drawOverview(mainUnits) {
 
       var enteredPercent = requestPercentSelection
         .enter()
-        .append("text")
+        .insert("text", ".request-value")
         .attr("class", "request-percent")
         .attr("text-anchor", "middle")
         .attr("dy", "2.3em");

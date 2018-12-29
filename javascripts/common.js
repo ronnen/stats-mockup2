@@ -158,11 +158,15 @@ state.common.showTooltip = function(dialogClass, anchorNode, position) {
 
   var dialog = d3.select("." + dialogClass).classed("on", true);
   var dialogRect = dialog.node().getBoundingClientRect();
+  dialog.select(".tip").classed("on", true);
 
   var left, top;
 
   if (position.relate == 'above') {
     top = anchorRect.top - dialogRect.height - (position.margin || 0);
+    dialog.select(".tip")
+      .style("left", dialogRect.width/2 + "px")
+      .style("top", dialogRect.height + "px");
   }
 
   switch (position.align) {
@@ -185,6 +189,7 @@ state.common.showTooltip = function(dialogClass, anchorNode, position) {
     .select(".close")
     .on("click", function(e) {
       dialog.classed("on", false);
+      dialog.select(".tip").classed("on", false);
       if (state.common.showTooltip.timer) {
         clearTimeout(state.common.showTooltip.timer);
         state.common.showTooltip.timer = null;
@@ -196,6 +201,7 @@ state.common.showTooltip = function(dialogClass, anchorNode, position) {
       }
       state.common.showTooltip.timer = setTimeout(function() {
         dialog.classed("on", false);
+        dialog.select(".tip").classed("on", false);
       }, 3000);
     });
 

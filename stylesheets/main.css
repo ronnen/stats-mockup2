@@ -1167,6 +1167,10 @@ body.debug .view-json {
     display: none;
 }
 
+.notice-dialog .tip {
+    display: none;
+}
+
 .notice-dialog.on {
     display: flex;
     width: 150px;
@@ -1177,4 +1181,15 @@ body.debug .view-json {
     background-color: mintcream;
     color: #222222;
     padding: 10px;
+}
+
+.notice-dialog.on .tip {
+    min-width: 10px;
+    min-height: 10px;
+    position: absolute;
+    transform: translate(-50%, -50%) rotate(45deg);
+    background-color: mintcream;
+}
+.notice-dialog.on .tip.on {
+    display: block; /* to allow calculation of container without tip */
 }
