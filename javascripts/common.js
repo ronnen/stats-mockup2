@@ -185,12 +185,17 @@ state.common.showTooltip = function(dialogClass, anchorNode, position) {
     .select(".close")
     .on("click", function(e) {
       dialog.classed("on", false);
-      dialog = null;
+      if (state.common.showTooltip.timer) {
+        clearTimeout(state.common.showTooltip.timer);
+        state.common.showTooltip.timer = null;
+      }
     })
     .call(function() {
-      setTimeout(function() {
-        if (dialog && dialog.node().parentNode)
-          dialog.classed("on", false);
+      if (state.common.showTooltip.timer) {
+        clearTimeout(state.common.showTooltip.timer);
+      }
+      state.common.showTooltip.timer = setTimeout(function() {
+        dialog.classed("on", false);
       }, 3000);
     });
 
