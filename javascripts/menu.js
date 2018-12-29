@@ -450,22 +450,15 @@ function drawMenu(criteria) {
 
   d3.select(".config-button")
     .on("click", function() {
-      // state.overviewParams.closeOpenFlowers();
-      // state.overviewParams.runSimulation();
       d3.event.stopImmediatePropagation();
+
+      if (!d3.select(".main-units.selected").size()) {
+        state.common.showTooltip("notice-dialog", this, {relate: "above", align: "center", margin: 10});
+        return;
+      }
+
       showConfigureView();
     });
-
-/*
-  // via dialog
-  d3.select(".config-button")
-    .on("click", function() {openConfigDialog(function() {
-      state.overviewParams.closeOpenFlowers();
-
-      drawOverview(mainUnits);
-      state.overviewParams.runSimulation();
-    })});
-*/
 
   d3.select(".show-benchmarks")
     .on("click", function() {showBenchmarks(function() {

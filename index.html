@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <link href="stylesheets/main.css" media="screen" rel="stylesheet" type="text/css"/>
-<link href="stylesheets/font-awesome-4.0.3.css" media="screen" rel="stylesheet" type="text/css"/>
+<!-- https://fontawesome.com/how-to-use/on-the-web/setup/hosting-font-awesome-yourself -->
+<link href="stylesheets/font-awesome/all.css" rel="stylesheet">
 <link href="stylesheets/d3RangeSlider.css" rel="stylesheet">
 <script src="javascripts/vendor/d3.v5.min.js"></script>
 <script src="javascripts/vendor/d3-ease.v1.min.js"></script>
@@ -18,9 +19,6 @@
 <script src="javascripts/menu.js"></script>
 <script src="javascripts/editData.js"></script>
 <script src="javascripts/dataTable.js"></script>
-<!--
-<script src="javascripts/configure.js"></script>
--->
 <script src="javascripts/configure3.js"></script>
 <script src="javascripts/benchmark.js"></script>
 <script>
@@ -35,6 +33,11 @@
     });
 </script>
 <body>
+<!--
+<i class="fas fa-user"></i>
+<i class="far fa-user"></i>
+<i class="fal fa-user"></i>
+-->
 <div class="svg-container"></div>
 <div class="table-container">
     <div class="table-resize">
@@ -209,6 +212,13 @@
         <div class="legend-item poor">Acceptable</div>
     </div>
     <div class="close">Close</div>
+</div>
+
+<div class="notice-dialog tooltip">
+    <div class="content">
+        Click an Approval to configure its thresholds
+    </div>
+    <i class="fas fa-times close"></i>
 </div>
 
 </body>

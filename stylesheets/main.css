@@ -1158,3 +1158,23 @@ body.debug .view-json {
 .configure-group .configure-drag-handle.active {
     stroke-width: 2;
 }
+
+.tooltip {
+    position: absolute;
+}
+
+.notice-dialog {
+    display: none;
+}
+
+.notice-dialog.on {
+    display: flex;
+    width: 150px;
+    height: auto;
+    justify-content: flex-start;
+    font-family: Avenir, sans-serif;
+    font-size: 12px;
+    background-color: mintcream;
+    color: #222222;
+    padding: 10px;
+}

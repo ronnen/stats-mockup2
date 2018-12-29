@@ -148,3 +148,50 @@ state.common.colorForWaitTime = function(minWaitTime, maxWaitTime) {
   };
 };
 
+state.common.showTooltip = function(dialogClass, anchorNode, position) {
+  d3.selectAll(".tooltip")
+    .classed("on", false);
+
+  if (!anchorNode) return;
+  var anchorRect = anchorNode.getBoundingClientRect();
+
+
+  var dialog = d3.select("." + dialogClass).classed("on", true);
+  var dialogRect = dialog.node().getBoundingClientRect();
+
+  var left, top;
+
+  if (position.relate == 'above') {
+    top = anchorRect.top - dialogRect.height - (position.margin || 0);
+  }
+
+  switch (position.align) {
+    case 'left':
+      left = anchorRect.left;
+      break;
+    case 'right':
+      left = anchorRect.right - dialogRect.width;
+      break;
+    case 'center':
+      left = (anchorRect.left + anchorRect.right) / 2 - dialogRect.width/2;
+      break;
+  }
+
+  dialog
+    .style("left", left + "px")
+    .style("top", top + "px");
+
+  dialog
+    .select(".close")
+    .on("click", function(e) {
+      dialog.classed("on", false);
+      dialog = null;
+    })
+    .call(function() {
+      setTimeout(function() {
+        if (dialog && dialog.node().parentNode)
+          dialog.classed("on", false);
+      }, 3000);
+    });
+
+};
