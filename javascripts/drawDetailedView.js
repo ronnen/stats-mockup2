@@ -11,7 +11,6 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   const maxApprovalBubble = 0.12; // as ratio of diameter
   const minApprovalBubble = 0.07;
   const approverRadius = 0.25;
-  const clockColorRibbonRadius = 0.3;
   const ZOOM_DATA = 1;
 
   var unitNode = selectedUnit.node();
@@ -588,8 +587,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     var arcSlice = d3.arc()
       .startAngle(state.common.toRadians(0))
       .endAngle(state.common.toRadians(2))
-      .innerRadius(outerRadius * clockColorRibbonRadius)
-      .outerRadius(outerRadius * clockColorRibbonRadius);
+      .innerRadius(outerRadius * state.clockColorRibbonRadius)
+      .outerRadius(outerRadius * state.clockColorRibbonRadius);
 
     var ribbonData = Array.from(new Array(360), (item, index) => index);
 

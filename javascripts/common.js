@@ -1,5 +1,6 @@
 state.approvalsRadialStart = 0; // where bubbles start to show in degrees
 state.approvalsRadialEnd = 300; // where bubbles start to show in degrees
+state.clockColorRibbonRadius = 0.3; // where to place ribbon relative to outer radius
 
 state.common.getUrlVars = function() {
   var vars = {};

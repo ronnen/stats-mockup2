@@ -54,6 +54,8 @@ function showConfigureView() {
   if (!selectedUnit.size()) return;
   var unitData = selectedUnit.datum();
 
+  var ribbonRadius = d3.select(".detailed-group .main-circle-background").datum().radius;
+
   d3.select(".shield").classed("on light", true);
   simulation.stop();
 
@@ -112,7 +114,7 @@ function showConfigureView() {
     .attr("d", function(d,i) {
       var s = highWaitRadiansStep;
       return state.common.arcSliceOneWay({
-        radius: state.innerBubbleMaxRadius - configureRadiusMargin,
+        radius: ribbonRadius * state.clockColorRibbonRadius,
         from: i * s,
         to:   (i+1) * s + (s/10) // some overlap
       });});
@@ -144,7 +146,7 @@ function showConfigureView() {
     .style("filter", "url(#dropshadow)")
     .attr("d", function(d) {
       return state.common.arcSliceOneWay({
-        radius: state.innerBubbleMaxRadius - configureRadiusMargin,
+        radius: ribbonRadius * state.clockColorRibbonRadius,
         from: state.common.toRadians(-20),
         to: state.common.toRadians(20)
       });});
