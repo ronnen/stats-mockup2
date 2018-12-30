@@ -86,22 +86,22 @@ function drawZoomWidget(drawCallback) {
   };
   window.addEventListener("tableStateChanged", state.zoomWidgetShouldMove);
 
-  window.addEventListener("setNonZoomState", function() {
+  window.addEventListener("setNonZoomState", function(event) {
     d3.select(".detailed-group").classed("zoom", false);
     d3.selectAll(".detailed-group .zoom-sphere").remove();
     d3.selectAll(".detailed-group .zoom-sphere-background").remove();
     d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
-    d3.selectAll(".detailed-group .sphere").transition().duration(200).style("opacity", 1);
-    d3.selectAll(".detailed-group .bubble-guide").transition().duration(200).style("opacity", 1);
+    d3.selectAll(".detailed-group .sphere").transition().duration(200).style("opacity", 1).style("opacity", null);
+    d3.selectAll(".detailed-group .bubble-guide").transition().duration(200).style("opacity", 1).style("opacity", null);
     d3.selectAll(".table-rows .data-row[data-zoom]").attr("data-zoom", null);
-    d3.select(".svg-container .zoom-widget-group").remove();
+    if (!event.detail || !event.detail.keepWidget) d3.select(".svg-container .zoom-widget-group").remove();
   });
 
   function zoomLevel(level) {
     level = Math.floor(level);
     if (!level) {
       // restore non-zoom classes
-      window.dispatchEvent(new CustomEvent("setNonZoomState", {detail: {}}));
+      window.dispatchEvent(new CustomEvent("setNonZoomState", {detail: {keepWidget: true}}));
       return;
     }
 

@@ -157,7 +157,9 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.select(this).classed("highlight", true);
       d3.select(".detailed-group").classed("approver-highlight", true);
       d3.selectAll("g.sphere"+index).classed("highlight", true);
+      d3.selectAll("g.zoom-sphere"+index).classed("highlight", true);
       d3.selectAll(".bubble-guide"+index).classed("highlight", true);
+      d3.selectAll(".zoom-bubble-guide"+index).classed("highlight", true);
       d3.select("#average-guide" + index).classed("highlight", true);
       d3.select(".detailed-group .request-value")
         .text(state.common.typedValueToText(d.approver.value, mainObject.presentation));
@@ -172,7 +174,9 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.select(this).classed("highlight", false);
       d3.select(".detailed-group").classed("approver-highlight", false);
       d3.selectAll(".bubble-guide").classed("highlight", false);
+      d3.selectAll(".zoom-bubble-guide").classed("highlight", false);
       d3.selectAll("g.sphere").classed("highlight", false);
+      d3.selectAll("g.zoom-sphere").classed("highlight", false);
       d3.selectAll(".average-guide").classed("highlight", false);
       d3.select(".detailed-group .request-value")
         .text(state.common.typedValueToText(mainObject.totalValue, mainObject.presentation));
@@ -352,7 +356,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       enteredGroup
         .transition()
         .duration(150)
-        .style("opacity", 1);
+        .style("opacity", 1)
+        .on("end", () => {
+          enteredGroup.style("opacity", null);
+        });
 
       enteredGroup
         .merge(localGroup)
@@ -486,7 +493,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         spheres
           .transition()
           .duration(150)
-          .style("opacity", 1);
+          .style("opacity", 1)
+          .on("end", () => {
+            spheres.style("opacity", null);
+          });
 
         if (!foreground) return;
 

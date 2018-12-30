@@ -109,22 +109,22 @@ body {
     font-weight: 800;
 }
 
-.detailed-group.approver-highlight .sphere {
+.detailed-group.approver-highlight .sphere, .detailed-group.approver-highlight .zoom-sphere {
     opacity: 0.2;
     transition: opacity 0.15s ease-in-out;
 }
 
-.detailed-group.approver-highlight .sphere.highlight {
+.detailed-group.approver-highlight .sphere.highlight, .detailed-group.approver-highlight .zoom-sphere.highlight {
     opacity: 1;
     transition: opacity 0.15s ease-in-out;
 }
 
-.detailed-group.approver-highlight .bubble-guide {
+.detailed-group.approver-highlight .bubble-guide, .detailed-group.approver-highlight .zoom-bubble-guide {
     opacity: 0.2;
     transition: opacity 0.15s ease-in-out;
 }
 
-.detailed-group.approver-highlight .bubble-guide.highlight {
+.detailed-group.approver-highlight .bubble-guide.highlight, .detailed-group.approver-highlight .zoom-bubble-guide.highlight {
     opacity: 1;
     transition: opacity 0.15s ease-in-out;
 }
