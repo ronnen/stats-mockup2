@@ -1,5 +1,4 @@
 function showConfigureView() {
-  const configureRadiusMargin = 60;
 
   const DRAG_HANDLE_COLOR = "rgb(74,77,93)";
 
@@ -106,7 +105,7 @@ function showConfigureView() {
     .enter()
     .append("svg:path")
     .attr("class", "configure-path")
-    .attr("stroke-width", 30)
+    .attr("stroke-width", 31)
     .attr("stroke-linecap", "butt")
     .attr("data-index", function(d,i) {return i})
     .style("fill", function(d,i) { return color(colorScale(i)); })

@@ -610,16 +610,32 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   }
 
   function drawColorfulRibbon() {
+/*
     var arcSlice = d3.arc()
       .startAngle(state.common.toRadians(0))
       .endAngle(state.common.toRadians(2))
       .innerRadius(outerRadius * state.clockColorRibbonRadius)
-      .outerRadius(outerRadius * state.clockColorRibbonRadius);
+      .outerRadius(outerRadius * state.clockColorRibbonRadius)(); // <=== already resolved to path
+*/
+
+    // based on my own arc
+    var arcSlice = state.common.arcSliceOneWay({
+      radius: outerRadius * state.clockColorRibbonRadius,
+      from: 0,
+      to:   state.common.toRadians(2) // some overlap
+    });
+
+
+    d3.select(".detailed-group").selectAll(".ribbon-group")
+      .data([1])
+      .enter()
+      .append("svg:g")
+      .attr("class", "ribbon-group");
 
     var ribbonData = Array.from(new Array(state.approvalsRadialEnd), (item, index) => index);
 
     // to force refresh of ribbon colors
-    var ribbonSelection = d3.select(".detailed-group").selectAll(".ribbon-path")
+    var ribbonSelection = d3.select(".ribbon-group").selectAll(".ribbon-path")
       .data(ribbonData);
 
     var enteredRibbon = ribbonSelection
@@ -627,7 +643,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .append("svg:path")
       .attr("class", "ribbon-path")
       .attr("stroke-width", 5)
-      .attr("d", arcSlice())
+      .attr("d", arcSlice)
       .attr("transform", function(d, i) {return "rotate(" + i + ")"});
 
     enteredRibbon.merge(ribbonSelection)
