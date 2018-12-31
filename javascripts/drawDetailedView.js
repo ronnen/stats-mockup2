@@ -590,7 +590,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .innerRadius(outerRadius * state.clockColorRibbonRadius)
       .outerRadius(outerRadius * state.clockColorRibbonRadius);
 
-    var ribbonData = Array.from(new Array(360), (item, index) => index);
+    var ribbonData = Array.from(new Array(state.approvalsRadialEnd), (item, index) => index);
 
     // to force refresh of ribbon colors
     var ribbonSelection = d3.select(".detailed-group").selectAll(".ribbon-path")
