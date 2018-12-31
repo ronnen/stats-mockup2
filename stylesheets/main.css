@@ -139,6 +139,26 @@ body {
     transition: opacity 0.15s ease-in-out;
 }
 
+.detailed-group.locked .sphere,
+.detailed-group.locked .zoom-sphere,
+.detailed-group.locked .bubble-guide,
+.detailed-group.locked .zoom-bubble-guide,
+.detailed-group.locked .approver-group {
+    opacity: 0.2;
+    transition: opacity 0.15s ease-in-out;
+    pointer-events: none;
+}
+
+.detailed-group.locked .sphere.locked,
+.detailed-group.locked .zoom-sphere.locked,
+.detailed-group.locked .bubble-guide.locked,
+.detailed-group.locked .zoom-bubble-guide.locked {
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out;
+    pointer-events: all;
+}
+
+
 /*
 .detailed-group.approver-highlight .average-guide {
     opacity: 0.2;
@@ -1163,17 +1183,18 @@ body.debug .view-json {
     position: absolute;
 }
 
-.notice-dialog {
+.tooltip .tip {
     display: none;
 }
 
-.notice-dialog .tip {
-    display: none;
+.tooltip.on .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 
-.notice-dialog.on {
+.tooltip.on {
     display: flex;
-    width: 150px;
     height: auto;
     justify-content: flex-start;
     font-family: Avenir, sans-serif;
@@ -1183,13 +1204,30 @@ body.debug .view-json {
     padding: 10px;
 }
 
-.notice-dialog.on .tip {
+.tooltip.on .tip {
     min-width: 10px;
     min-height: 10px;
     position: absolute;
     transform: translate(-50%, -50%) rotate(45deg);
     background-color: mintcream;
 }
-.notice-dialog.on .tip.on {
+.tooltip.on .tip.on {
     display: block; /* to allow calculation of container without tip */
 }
+
+.notice-dialog {
+    display: none;
+}
+
+.notice-dialog.on {
+    width: 150px;
+}
+
+.click-to-release {
+    display: none;
+}
+
+.click-to-release.on {
+    width: 160px;
+}
+

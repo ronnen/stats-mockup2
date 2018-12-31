@@ -203,7 +203,7 @@ state.common.showTooltip = function(dialogClass, anchorNode, position) {
       state.common.showTooltip.timer = setTimeout(function() {
         dialog.classed("on", false);
         dialog.select(".tip").classed("on", false);
-      }, 3000);
+      }, position.duration || 3000);
     });
 
 };

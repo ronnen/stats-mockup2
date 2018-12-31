@@ -64,6 +64,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     });
     d3.select(".submitterTooltip")
       .style("display","none");
+    d3.select(".table-rows").classed("approval-highlight", false);
+    d3.selectAll(".table-rows .data-row").classed("highlight", false);
 
     stopSimulation();
     window.dispatchEvent(new CustomEvent("drawOverviewByCriteria", {
@@ -377,8 +379,15 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     d3.selectAll(".bubble-guide").classed("highlight", false);
     d3.select(".detailed-group").classed("approval-highlight", false);
 
-    d3.select(".table-rows").classed("approval-highlight", false);
-    d3.selectAll(".table-rows .data-row").classed("highlight", false);
+    if (!d3.select(".detailed-group").classed("locked")) {
+      d3.select(".table-rows").classed("approval-highlight", false);
+      d3.selectAll(".table-rows .data-row").classed("highlight", false);
+    }
+  }
+
+  function releaseLockedState() {
+    d3.selectAll(".detailed-group .sphere, .detailed-group .zoom-sphere").classed("locked", false);
+    d3.select(".detailed-group").classed("locked", false);
   }
 
   function drawSpheres(dataToShow, classModifier, valueDiameterScale) {
@@ -393,6 +402,19 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
     classModifier = classModifier || "";
     valueDiameterScale = valueDiameterScale || basicValueDiameterScale;
+
+    function approvalClicked(d, i) {
+      d3.event.stopPropagation();
+      if (d3.select(this).classed("locked")) {
+        // release locked state
+        releaseLockedState();
+      }
+      else {
+        d3.select(this).classed("locked", true);
+        d3.select(".detailed-group").classed("locked", true);
+        state.common.showTooltip("click-to-release", this, {relate: "above", align: "center", margin: 10, duration: 2000});
+      }
+    }
 
     function approvalMouseEnter(d, i) {  // Add interactivity
 
@@ -421,9 +443,12 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         .attr("cy", currentApprovalCircle.attr("cy"))
         .attr("transform", currentApprovalCircle.attr("transform"))
         .attr("r", parseFloat(currentApprovalCircle.attr("r")) + 5)
-        .on("click", function() {
+/*
+        .on("click", function(d, i) {
           d3.event.stopPropagation();
+          approvalClicked.call(this, d, i);
         })
+*/
         .on("mouseleave", approvalMouseLeave);
 
       var rect = this.getBoundingClientRect();
@@ -501,7 +526,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
         // add listener
         spheres
-          .on("mouseenter", approvalMouseEnter);
+          .on("mouseenter", approvalMouseEnter)
+          .on("click", approvalClicked);
 
         // add label
         spheres
@@ -717,6 +743,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     var zoomValueDiameterScale = d3.scaleLinear()
       .domain([0, mainObject.zoomMaxValue])
       .range([0, maxApprovalBubble * outerRadius * 2]);
+
+    releaseLockedState();
 
     d3.selectAll(".detailed-group .zoom-sphere").remove();
     d3.selectAll(".detailed-group .zoom-sphere-background").remove();
