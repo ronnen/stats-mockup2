@@ -1231,3 +1231,39 @@ body.debug .view-json {
     width: 160px;
 }
 
+.mobile-menu-tab, .mobile-menu-close {
+    display: none;
+}
+
+@media (min-width: 320px) and (max-width: 480px) {
+    .menu-right {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        right: 1000px;
+    }
+
+    .mobile-menu-tab, .mobile-menu-close {
+        display: flex;
+        position: absolute;
+        top: 0;
+        right: -30px;
+        transition: right 0.5s ease-in-out;
+        width: 30px;
+        height: 30px;
+        justify-content: center;
+        align-items: center;
+        background-color: #030303;
+        color: white;
+        border-top-left-radius: 6px;
+        border-bottom-left-radius: 6px;
+    }
+    .mobile-menu-tab.on {
+        right: 0;
+    }
+
+    .mobile-menu-close.on {
+        right: 0;
+    }
+
+}

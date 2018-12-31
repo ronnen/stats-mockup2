@@ -78,6 +78,7 @@ function drawOverview(mainUnits) {
     }));
 
     refreshTable(mainUnits);
+    d3.select(".mobile-menu-tab").classed("on", true);
   }
 
   var width = parseInt(d3.select('.svg-container').style('width')),
