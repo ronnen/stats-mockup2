@@ -11,6 +11,8 @@ body {
     height: auto;
     /*position: relative;*/
     display: flex;
+    overflow: hidden;
+    width: 100%;
 }
 
 .svg-container {
@@ -1266,6 +1268,15 @@ body.debug .view-json {
         top: 0;
         right: 1000px;
     }
+
+    .table-container {
+        width: 100%;
+        right: 0;
+        overflow-x: auto;
+    }
+    .table-container .approvals-table {
+        width: 1000px;
+    }
 }
 
 /* iphone 6+, 6s+, 7+, 8+ */
@@ -1312,5 +1323,14 @@ body.debug .view-json {
         width: 100%;
         top: 0;
         right: 1000px;
+    }
+
+    .table-container {
+        width: 100%;
+        right: 0;
+        overflow-x: auto;
+    }
+    .table-container .approvals-table {
+        width: 1000px;
     }
 }

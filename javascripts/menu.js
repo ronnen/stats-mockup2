@@ -457,6 +457,7 @@ function drawMenu(criteria) {
         return;
       }
 
+      closeMenu();
       showConfigureView();
     });
 
@@ -465,18 +466,26 @@ function drawMenu(criteria) {
 
     })});
 
+  function showMenu() {
+    d3.select(".menu-right").style("right", 0);
+    d3.select(".mobile-menu-tab").classed("on", false);
+    d3.select(".mobile-menu-close").classed("on", true);
+  }
+
+  function closeMenu() {
+    d3.select(".menu-right").style("right", 1000 + "px");
+    d3.select(".mobile-menu-close").classed("on", false);
+    d3.select(".mobile-menu-tab").classed("on", true);
+  }
+
   d3.select(".mobile-menu-tab")
     .on("click", function() {
-      d3.select(".menu-right").style("right", 0);
-      d3.select(".mobile-menu-tab").classed("on", false);
-      d3.select(".mobile-menu-close").classed("on", true);
+      showMenu();
     });
 
   d3.select(".mobile-menu-close")
     .on("click", function() {
-      d3.select(".menu-right").style("right", 1000 + "px");
-      d3.select(".mobile-menu-close").classed("on", false);
-      d3.select(".mobile-menu-tab").classed("on", true);
+      closeMenu();
     })
 
 
