@@ -1290,6 +1290,15 @@ body.debug .view-json {
         top: 0;
         right: 1000px;
     }
+
+    .table-container {
+        width: 100%;
+        right: 0;
+        overflow-x: auto;
+    }
+    .table-container .approvals-table {
+        width: 1000px;
+    }
 }
 
 /* iphone X */
@@ -1303,16 +1312,82 @@ body.debug .view-json {
         top: 0;
         right: 1000px;
     }
+
+    .table-container {
+        width: 100%;
+        right: 0;
+        overflow-x: auto;
+    }
+    .table-container .approvals-table {
+        width: 1000px;
+    }
 }
 
 /* iphone XR */
-@media only screen and (min-device-width : 414px) and (max-device-height : 896px) and (-webkit-device-pixel-ratio : 2) { }
+@media only screen and (min-device-width : 414px) and (max-device-height : 896px) and (-webkit-device-pixel-ratio : 2) {
+    .mobile-menu-tab, .mobile-menu-close {
+        display: flex;
+    }
+    .menu-right {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        right: 1000px;
+    }
+
+    .table-container {
+        width: 100%;
+        right: 0;
+        overflow-x: auto;
+    }
+    .table-container .approvals-table {
+        width: 1000px;
+    }
+}
 
 /* iphone XS */
-@media only screen and (min-device-width : 375px) and (max-device-height : 812px) and (-webkit-device-pixel-ratio : 3) { }
+@media only screen and (min-device-width : 375px) and (max-device-height : 812px) and (-webkit-device-pixel-ratio : 3) {
+    .mobile-menu-tab, .mobile-menu-close {
+        display: flex;
+    }
+    .menu-right {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        right: 1000px;
+    }
+
+    .table-container {
+        width: 100%;
+        right: 0;
+        overflow-x: auto;
+    }
+    .table-container .approvals-table {
+        width: 1000px;
+    }
+}
 
 /* iphone XS Max */
-@media only screen and (min-device-width : 414px) and (max-device-height : 896px) and (-webkit-device-pixel-ratio : 3) { }
+@media only screen and (min-device-width : 414px) and (max-device-height : 896px) and (-webkit-device-pixel-ratio : 3) {
+    .mobile-menu-tab, .mobile-menu-close {
+        display: flex;
+    }
+    .menu-right {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        right: 1000px;
+    }
+
+    .table-container {
+        width: 100%;
+        right: 0;
+        overflow-x: auto;
+    }
+    .table-container .approvals-table {
+        width: 1000px;
+    }
+}
 
 @media (min-width: 320px) and (max-width: 480px) {
     .mobile-menu-tab, .mobile-menu-close {

@@ -238,6 +238,8 @@ function drawMenu(criteria) {
       return;
     }
 
+    closeMenu();
+
     var w = window,
       d = document,
       e = d.documentElement,
