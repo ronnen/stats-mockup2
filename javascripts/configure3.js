@@ -8,7 +8,7 @@ function showConfigureView() {
     var defs = svg.append('svg:defs');
 
     var data = [
-      { id: 0, name: 'circle', path: 'M 0, 0  m -5, 0  a 5,5 0 1,0 10,0  a 5,5 0 1,0 -10,0', viewbox: '-10 -10 20 20' }
+      { id: 0, name: 'circle', path: 'M 0, 0  m -5, 0  a 5,5 0 1,0 10,0  a 5,5 0 1,0 -10,0', viewbox: '-12 -12 24 24' }
       , { id: 1, name: 'square', path: 'M 0,0 m -5,-5 L 5,-5 L 5,5 L -5,5 Z', viewbox: '-5 -5 10 10' }
       , { id: 2, name: 'arrow', path: 'M 0,0 m -4,-5 L 4,0 L -4,5 Z', viewbox: '-15 -15 30 30' }
       , { id: 3, name: 'arrow_rev', orient: "auto-start-reverse", path: 'M 0,0 m -4,-5 L 4,0 L -4,5 Z', viewbox: '-15 -15 30 30' }
@@ -32,30 +32,32 @@ function showConfigureView() {
       .attr('fill', function(d,i) { return DRAG_HANDLE_COLOR});
 
     window.addEventListener("endConfigureState", function() {
-      d3.select(".shield").classed("on light", false);
+      d3.select("body").classed("fixed", false);
+      d3.select(".shield").classed("on light", false).on("click", null);
       d3.selectAll(".configure-svg").remove();
     });
 
     state.showConfigureViewShown = true;
   }
 
-  if (state.configureShieldListener) window.removeEventListener("click", state.configureShieldListener);
+  d3.select(".shield").on("click", null);
   state.configureShieldListener = function(event) {
     window.dispatchEvent(new CustomEvent("endConfigureState", { detail: {}}));
-    window.removeEventListener("click", state.configureShieldListener);
+    d3.select(".shield").on("click", null);
     state.configureShieldListener = null;
     drawDetailedView(selectedUnit, state.overviewParams);
   };
-  window.addEventListener("click", state.configureShieldListener);
 
-  // d3.selectAll(".main-units").classed("configure-state", true);
   var selectedUnit = d3.select(".main-units.selected");
   if (!selectedUnit.size()) return;
   var unitData = selectedUnit.datum();
 
   var ribbonRadius = d3.select(".detailed-group .main-circle-background").datum().radius;
 
-  d3.select(".shield").classed("on light", true);
+  d3.select(".shield").classed("on light", true)
+    .on("click", state.configureShieldListener);
+  d3.select("body").classed("fixed", true);
+
   simulation.stop();
 
   var mainSVGRect = selectedUnit.node().getBoundingClientRect();
@@ -68,7 +70,8 @@ function showConfigureView() {
     .attr("width", mainSVGRect.width)
     .attr("height", mainSVGRect.height)
     .attr("class","configure-svg")
-    .style("position", "fixed");
+    .style("position", "fixed")
+    .on("click", state.configureShieldListener);
 
   configureSVG.append("filter")
     .attr("id", "dropshadow")
@@ -137,7 +140,7 @@ function showConfigureView() {
     .append("svg:path")
     .attr("class", "configure-path-drag")
     .attr("stroke", DRAG_HANDLE_COLOR)
-    .attr("stroke-width", 10)
+    .attr("stroke-width", 8)
     .attr("stroke-linecap", "butt")
     .attr('marker-end', function(d,i){ return 'url(#marker_arrow)' })
     .attr('marker-start', function(d,i){ return 'url(#marker_arrow_rev)' })

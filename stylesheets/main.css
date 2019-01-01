@@ -9,10 +9,14 @@ html
 
 body {
     height: auto;
-    /*position: relative;*/
+    position: relative;
     display: flex;
     overflow: hidden;
     width: 100%;
+}
+
+body.fixed {
+    position: fixed;
 }
 
 .svg-container {
@@ -1259,6 +1263,15 @@ body.debug .view-json {
 
 /* iphone 6, 6s, 7, 8 */
 @media only screen and (min-device-width: 375px) and (max-device-height: 667px) and (-webkit-device-pixel-ratio: 2) {
+    html {
+        overflow-x: hidden;
+    }
+    body {
+        position: relative;
+        overflow-x: hidden;
+        -webkit-box-sizing: border-box;
+    }
+
     .mobile-menu-tab, .mobile-menu-close {
         display: flex;
     }
@@ -1281,6 +1294,10 @@ body.debug .view-json {
 
 /* iphone 6+, 6s+, 7+, 8+ */
 @media only screen and (min-device-width: 414px) and (max-device-height: 736px) and (-webkit-device-pixel-ratio: 3) {
+    body {
+        position: relative;
+    }
+
     .mobile-menu-tab, .mobile-menu-close {
         display: flex;
     }
@@ -1303,6 +1320,10 @@ body.debug .view-json {
 
 /* iphone X */
 @media only screen and (min-device-width: 375px) and (max-device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+    body {
+        position: relative;
+    }
+
     .mobile-menu-tab, .mobile-menu-close {
         display: flex;
     }
@@ -1325,6 +1346,10 @@ body.debug .view-json {
 
 /* iphone XR */
 @media only screen and (min-device-width : 414px) and (max-device-height : 896px) and (-webkit-device-pixel-ratio : 2) {
+    body {
+        position: relative;
+    }
+
     .mobile-menu-tab, .mobile-menu-close {
         display: flex;
     }
@@ -1347,6 +1372,10 @@ body.debug .view-json {
 
 /* iphone XS */
 @media only screen and (min-device-width : 375px) and (max-device-height : 812px) and (-webkit-device-pixel-ratio : 3) {
+    body {
+        position: relative;
+    }
+
     .mobile-menu-tab, .mobile-menu-close {
         display: flex;
     }
@@ -1369,6 +1398,10 @@ body.debug .view-json {
 
 /* iphone XS Max */
 @media only screen and (min-device-width : 414px) and (max-device-height : 896px) and (-webkit-device-pixel-ratio : 3) {
+    body {
+        position: relative;
+    }
+
     .mobile-menu-tab, .mobile-menu-close {
         display: flex;
     }
@@ -1390,6 +1423,10 @@ body.debug .view-json {
 }
 
 @media (min-width: 320px) and (max-width: 480px) {
+    body {
+        position: relative;
+    }
+
     .mobile-menu-tab, .mobile-menu-close {
         display: flex;
     }
