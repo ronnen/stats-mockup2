@@ -1286,6 +1286,7 @@ body.debug .view-json {
         width: 100%;
         right: 0;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .table-container .approvals-table {
         width: 1000px;
@@ -1312,6 +1313,7 @@ body.debug .view-json {
         width: 100%;
         right: 0;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .table-container .approvals-table {
         width: 1000px;
@@ -1338,6 +1340,7 @@ body.debug .view-json {
         width: 100%;
         right: 0;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .table-container .approvals-table {
         width: 1000px;
@@ -1364,6 +1367,7 @@ body.debug .view-json {
         width: 100%;
         right: 0;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .table-container .approvals-table {
         width: 1000px;
@@ -1390,6 +1394,7 @@ body.debug .view-json {
         width: 100%;
         right: 0;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .table-container .approvals-table {
         width: 1000px;
@@ -1416,6 +1421,7 @@ body.debug .view-json {
         width: 100%;
         right: 0;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .table-container .approvals-table {
         width: 1000px;
@@ -1441,6 +1447,7 @@ body.debug .view-json {
         width: 100%;
         right: 0;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .table-container .approvals-table {
         width: 1000px;
