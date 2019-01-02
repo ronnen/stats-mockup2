@@ -143,6 +143,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .enter()
       .append("svg:g")
       .attr("class", "approver-group")
+      .attr("id", function(d,i) {return "a" + i})
       .on("mouseenter", approverMouseEnter)
       .on("mouseleave", approverMouseLeave);
 
@@ -383,6 +384,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .style("display","none");
     d3.selectAll(".sphere").classed("highlight", false);
     d3.selectAll(".bubble-guide").classed("highlight", false);
+    d3.selectAll(".approver-group").classed("highlight", false);
     d3.select(".detailed-group").classed("approval-highlight", false);
 
     if (!d3.select(".detailed-group").classed("locked")) {
@@ -454,6 +456,9 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         d3.select(".table-rows").selectAll(`.data-row[data-zoom=${d.zoomBucket}]`).classed("highlight", true);
       else
         d3.select("#r" + requestIndex + sphereID).classed("highlight", true); // r4a3b5 (request 4, approver 3, approval 5)
+
+      var approverIndex = parseInt(sphereID.substring(1));
+      d3.select("#a" + approverIndex).classed("highlight", true); // .approver-group of specific approver
 
       d3.select(this).on("mouseleave", approvalMouseLeave);
 

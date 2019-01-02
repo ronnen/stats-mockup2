@@ -135,12 +135,20 @@ body.fixed {
     transition: opacity 0.15s ease-in-out;
 }
 
-.detailed-group.approval-highlight .sphere, .detailed-group.approval-highlight .bubble-guide {
+.detailed-group.approval-highlight .sphere,
+.detailed-group.approval-highlight .bubble-guide,
+.detailed-group.approval-highlight .zoom-sphere,
+.detailed-group.approval-highlight .zoom-bubble-guide
+{
     opacity: 0.2;
     transition: opacity 0.15s ease-in-out;
 }
 
-.detailed-group.approval-highlight .sphere.highlight, .detailed-group.approval-highlight .bubble-guide.highlight {
+.detailed-group.approval-highlight .sphere.highlight,
+.detailed-group.approval-highlight .bubble-guide.highlight,
+.detailed-group.approval-highlight .zoom-sphere.highlight,
+.detailed-group.approval-highlight .zoom-bubble-guide.highlight
+{
     opacity: 1;
     transition: opacity 0.15s ease-in-out;
 }
