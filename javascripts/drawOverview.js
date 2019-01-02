@@ -156,6 +156,15 @@ function drawOverview(mainUnits) {
 
   }
 
+  function passEventControl() {
+    var detailedGroup = d3.select(".main-units.selected .detailed-group.locked");
+    if (detailedGroup.size()) {
+      detailedGroup.on("click").call(detailedGroup.node()); // set the right this
+      return true;
+    }
+    return false;
+  }
+
   function onFreshData() {
     d3.select("svg").remove();
 
@@ -164,6 +173,8 @@ function drawOverview(mainUnits) {
       .attr("height", height)
       .on("click", function() {
         d3.event.stopPropagation();
+
+        if (passEventControl()) return;
 
         if (closeOpenFlowers()) {
           simulation.stop();

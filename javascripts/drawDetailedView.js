@@ -56,6 +56,12 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   }
 
   function handleFlowerClick(d, i) {
+    if (d3.select(this).classed("locked")) {
+      d3.event.stopPropagation();
+      releaseLockedState();
+      return;
+    }
+
     d3.select(this).remove();
     d3.selectAll(".main-units").classed("selected", false).each(function(d) {
       d.selected = false;
@@ -372,7 +378,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   }
 
   function approvalMouseLeave() {
-    d3.selectAll(".approval-halo").remove();
+    // d3.selectAll(".approval-halo").remove();
     d3.select(".submitterTooltip")
       .style("display","none");
     d3.selectAll(".sphere").classed("highlight", false);
@@ -386,6 +392,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   }
 
   function releaseLockedState() {
+    d3.selectAll(".approval-halo").remove();
     d3.selectAll(".detailed-group .sphere, .detailed-group .zoom-sphere").classed("locked", false);
     d3.select(".detailed-group").classed("locked", false);
   }
@@ -405,6 +412,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
     function approvalClicked(d, i) {
       d3.event.stopPropagation();
+      d3.selectAll(".approval-halo").remove();
       if (d3.select(this).classed("locked")) {
         // release locked state
         releaseLockedState();
@@ -412,6 +420,17 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       else {
         d3.select(this).classed("locked", true);
         d3.select(".detailed-group").classed("locked", true);
+        var currentApprovalCircle = d3.select(this).select(".approval-circle-foreground");
+
+        d3.select(this)
+          .append("circle")
+          .attr("class", "approval-halo")
+          .attr("cx", currentApprovalCircle.attr("cx"))
+          .attr("cy", currentApprovalCircle.attr("cy"))
+          .attr("transform", currentApprovalCircle.attr("transform"))
+          .attr("r", parseFloat(currentApprovalCircle.attr("r")) + 5)
+          .on("mouseleave", approvalMouseLeave);
+
         state.common.showTooltip("click-to-release", this, {relate: "above", align: "center", margin: 10, duration: 2000});
       }
     }
@@ -436,20 +455,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       else
         d3.select("#r" + requestIndex + sphereID).classed("highlight", true); // r4a3b5 (request 4, approver 3, approval 5)
 
-      d3.select(this)
-        .append("circle")
-        .attr("class", "approval-halo")
-        .attr("cx", currentApprovalCircle.attr("cx"))
-        .attr("cy", currentApprovalCircle.attr("cy"))
-        .attr("transform", currentApprovalCircle.attr("transform"))
-        .attr("r", parseFloat(currentApprovalCircle.attr("r")) + 5)
-/*
-        .on("click", function(d, i) {
-          d3.event.stopPropagation();
-          approvalClicked.call(this, d, i);
-        })
-*/
-        .on("mouseleave", approvalMouseLeave);
+      d3.select(this).on("mouseleave", approvalMouseLeave);
 
       var rect = this.getBoundingClientRect();
 
