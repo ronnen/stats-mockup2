@@ -41,6 +41,9 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     .on("click", handleFlowerClick)
     .on("mouseleave", approvalMouseLeave);
 
+  detailedGroup.merge(detailedGroupBase)
+    .classed("zoom", state.criteria.clusterLevel > 0);
+
   function drawMainCircularShape() {
     // draws main grey circular shape
     detailedGroup.selectAll("circle")
@@ -311,10 +314,19 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   }
 
   function drawSpheresGuidelines(dataToShow, classModifier) {
+    // moving the cluster widget it is unnecessary to pass params to this function
     // draw static base guideline
-    classModifier = classModifier || "";
+    // classModifier = classModifier || "";
+    if (state.criteria.clusterLevel) {
+      dataToShow = ZOOM_DATA;
+      classModifier = "zoom-";
+    }
+    else {
+      dataToShow = false;
+      classModifier = "";
+    }
 
-    if (!dataToShow) {
+    // if (!dataToShow) {
       detailedGroup
         .append("svg:line")
         .attr("class", "circular-marker")
@@ -325,7 +337,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         .attr("x2", 0)
         .attr("y2", outerRadius - identityMargin)
         .attr("transform", "rotate(180)");
-    }
+    // }
 
     // first drawing guide lines
     subUnits.forEach(function (t, index) {
@@ -337,7 +349,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
       var enteredGroup = localGroup
         .enter()
-        .insert("svg:line", ".sphere-background")
+        .insert("svg:line", ".ribbon-group")
         .style("opacity", 0)
         .attr("class", function(d) {return className + " " + className + index + (d.hidden ? " hidden" : "")})
         .attr("id", function(d,i) {
@@ -397,20 +409,40 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     d3.selectAll(".approval-halo").remove();
     d3.selectAll(".detailed-group .sphere, .detailed-group .zoom-sphere").classed("locked", false);
     d3.select(".detailed-group").classed("locked", false);
+    d3.select(".table-container").style("height",null).classed("on", false);
   }
 
-  function drawSpheres(dataToShow, classModifier, valueDiameterScale) {
+  function drawSpheres(dataToShow, classModifier /*, valueDiameterScale*/) {
     // default dataToShow is granular approvals
     // if dataToShow == ZOOM_DATA then show approver.zoomApprovals
 
     // in case drawSpheres called in zoom state then force drawing of correct spheres
+/*
     if (d3.select(".detailed-group").classed("zoom")) {
       dataToShow = ZOOM_DATA;
       classModifier = "zoom-";
     }
 
     classModifier = classModifier || "";
-    valueDiameterScale = valueDiameterScale || basicValueDiameterScale;
+*/
+
+    var zoomValueDiameterScale;
+
+    if (state.criteria.clusterLevel) {
+      dataToShow = ZOOM_DATA;
+      classModifier = "zoom-";
+
+      zoomValueDiameterScale = d3.scaleLinear()
+        .domain([0, mainObject.zoomMaxValue])
+        .range([0, maxApprovalBubble * outerRadius * 2]);
+
+    }
+    else {
+      dataToShow = false;
+      classModifier = "";
+    }
+
+    var valueDiameterScale = zoomValueDiameterScale || basicValueDiameterScale;
 
     function approvalClicked(d, i) {
       d3.event.stopPropagation();
@@ -420,6 +452,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         releaseLockedState();
       }
       else {
+        var sphereID = d3.select(this).attr("id"); //e.g.  a3b8 will be matched with guide a3g8
         d3.select(this).classed("locked", true);
         d3.select(".detailed-group").classed("locked", true);
         var currentApprovalCircle = d3.select(this).select(".approval-circle-foreground");
@@ -434,6 +467,19 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
           .on("mouseleave", approvalMouseLeave);
 
         state.common.showTooltip("click-to-release", this, {relate: "above", align: "center", margin: 10, duration: 2000});
+
+        refreshTable(mainUnits);
+        d3.select(".table-rows").classed("approval-highlight", true);
+        d3.selectAll(".table-rows .data-row").classed("highlight", false); // in case mouseLeave was not fired
+
+        // if in zoom state we highlight according to rows according to zoomBucket, otherwise use sphere ID
+        if (dataToShow == ZOOM_DATA && d.zoomBucket)
+          d3.select(".table-rows").selectAll(`.data-row[data-zoom=${d.zoomBucket}]`).classed("highlight", true);
+        else
+          d3.select("#r" + requestIndex + sphereID).classed("highlight", true); // r4a3b5 (request 4, approver 3, approval 5)
+
+        d3.select(".table-container").classed("on", true);
+
       }
     }
 
@@ -448,6 +494,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.select("#" + sphereID.replace("b","g")).classed("highlight", true);
       d3.select(".detailed-group").classed("approval-highlight", true);
 
+/*
       d3.select(".table-rows").classed("approval-highlight", true);
       d3.selectAll(".table-rows .data-row").classed("highlight", false); // in case mouseLeave was not fired
 
@@ -456,6 +503,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         d3.select(".table-rows").selectAll(`.data-row[data-zoom=${d.zoomBucket}]`).classed("highlight", true);
       else
         d3.select("#r" + requestIndex + sphereID).classed("highlight", true); // r4a3b5 (request 4, approver 3, approval 5)
+*/
 
       var approverIndex = parseInt(sphereID.substring(1));
       d3.select("#a" + approverIndex).classed("highlight", true); // .approver-group of specific approver
@@ -766,36 +814,59 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   drawAverageDelayMarkers();
   drawCenterSphere();
 
-  drawZoomWidget(function() {
-    var zoomValueDiameterScale = d3.scaleLinear()
-      .domain([0, mainObject.zoomMaxValue])
-      .range([0, maxApprovalBubble * outerRadius * 2]);
-
-    releaseLockedState();
-
-    d3.selectAll(".detailed-group .zoom-sphere").remove();
-    d3.selectAll(".detailed-group .zoom-sphere-background").remove();
-    d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
-
-    d3.selectAll(".detailed-group .sphere").style("opacity", 0);
-    d3.selectAll(".detailed-group .bubble-guide").style("opacity", 0);
-
-    d3.select(".detailed-group").classed("zoom", true);
-    drawSpheresGuidelines(ZOOM_DATA, "zoom-");
-    drawSpheres(ZOOM_DATA, "zoom-", zoomValueDiameterScale);
-
+  if (state.criteria.clusterLevel > 0) {
     d3.selectAll(".average-guide").raise();
     d3.select(".detailed-group .center-circle-background").raise();
     d3.select(".detailed-group .request-name").raise();
     d3.select(".detailed-group .request-value").raise();
     d3.select(".detailed-group .request-percent").raise();
+  }
 
-    refreshTable(mainUnits); // update rows with zoom bucket data
-  });
+  /*
+    drawZoomWidget(function() {
+      var zoomValueDiameterScale = d3.scaleLinear()
+        .domain([0, mainObject.zoomMaxValue])
+        .range([0, maxApprovalBubble * outerRadius * 2]);
+
+      releaseLockedState();
+
+      d3.selectAll(".detailed-group .zoom-sphere").remove();
+      d3.selectAll(".detailed-group .zoom-sphere-background").remove();
+      d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
+
+      d3.selectAll(".detailed-group .sphere").style("opacity", 0);
+      d3.selectAll(".detailed-group .bubble-guide").style("opacity", 0);
+
+      d3.select(".detailed-group").classed("zoom", true);
+      drawSpheresGuidelines(ZOOM_DATA, "zoom-");
+      drawSpheres(ZOOM_DATA, "zoom-", zoomValueDiameterScale);
+
+      d3.selectAll(".average-guide").raise();
+      d3.select(".detailed-group .center-circle-background").raise();
+      d3.select(".detailed-group .request-name").raise();
+      d3.select(".detailed-group .request-value").raise();
+      d3.select(".detailed-group .request-percent").raise();
+
+      refreshTable(mainUnits); // update rows with zoom bucket data
+    });
+  */
 
   if (state.firstTimeDrawDetailedView) {
     state.firstTimeDrawDetailedView = !state.firstTimeDrawDetailedView;
     drawClockMotion();
+
+    window.addEventListener("setNonZoomState", function(event) {
+      console.log("setNonZoomState: check if this is necessary");
+      d3.select(".detailed-group").classed("zoom", false);
+      d3.selectAll(".detailed-group .zoom-sphere").remove();
+      d3.selectAll(".detailed-group .zoom-sphere-background").remove();
+      d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
+      d3.selectAll(".detailed-group .sphere").transition().duration(200).style("opacity", 1).style("opacity", null);
+      d3.selectAll(".detailed-group .bubble-guide").transition().duration(200).style("opacity", 1).style("opacity", null);
+      d3.selectAll(".table-rows .data-row[data-zoom]").attr("data-zoom", null);
+      if (!event.detail || !event.detail.keepWidget) d3.select(".svg-container .zoom-widget-group").remove();
+    });
+
   }
 
   // console.log("done");

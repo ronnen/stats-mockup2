@@ -39,6 +39,7 @@
     var ticks = null;
     var displayFormat = null;
     var fill = null;
+    var strokeLinecap = 'round';
 
     var listeners = d3Dispatch.dispatch('onchange', 'start', 'end', 'drag');
 
@@ -141,7 +142,7 @@
         .attr(x + '1', scale.range()[0] - SLIDER_END_PADDING)
         .attr('stroke', '#bbb')
         .attr('stroke-width', 6)
-        .attr('stroke-linecap', 'round');
+        .attr('stroke-linecap', strokeLinecap);
 
       sliderEnter
         .append('line')
@@ -149,7 +150,7 @@
         .attr(x + '1', scale.range()[0] - SLIDER_END_PADDING)
         .attr('stroke', '#eee')
         .attr('stroke-width', 4)
-        .attr('stroke-linecap', 'round');
+        .attr('stroke-linecap', strokeLinecap);
 
       if (fill) {
         sliderEnter
@@ -158,7 +159,7 @@
           .attr(x + '1', scale.range()[0] - SLIDER_END_PADDING)
           .attr('stroke', fill)
           .attr('stroke-width', 4)
-          .attr('stroke-linecap', 'round');
+          .attr('stroke-linecap', strokeLinecap);
       }
 
       sliderEnter
@@ -434,6 +435,12 @@
     slider.ticks = function(_) {
       if (!arguments.length) return ticks;
       ticks = _;
+      return slider;
+    };
+
+    slider.strokeLinecap = function(_) {
+      if (!arguments.length) return strokeLinecap;
+      strokeLinecap = _;
       return slider;
     };
 

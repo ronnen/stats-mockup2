@@ -5,10 +5,12 @@ function drawMenu(criteria) {
   var timeRangeMin = criteria.timeRangeMin || 0, timeRangeMax = criteria.timeRangeMax || 100;
   var waitTimeMin = criteria.waitTimeMin || 0, waitTimeMax = criteria.waitTimeMax || 100000000;
   var amountMin = criteria.amountMin || 0, amountMax = criteria.amountMax || 100000000;
+  var clusterLevel = criteria.clusterLevel || 0;
 
   var amountFilterState = false;
   var timeFilterState = true;
   var waitFilterState = true;
+  var clusterFilterState = true;
 
   function setTimeRangeLabels() {
     d3.select("#time-range-filter .label-left").text(!timeFilterState ? "START DATE" : state.common.valueToDate(timeRangeMin));
@@ -25,11 +27,21 @@ function drawMenu(criteria) {
     d3.select("#wait-time-filter .label-right").text(!waitFilterState ? "LONGEST" : state.common.waitToText(waitTimeMax));
   }
 
+  function setClusterLabels() {
+    d3.select("#cluster-filter .label-left").text(!clusterFilterState ? "GRANULAR" : "");
+    d3.select("#cluster-filter .label-right").text(!clusterFilterState ? "CLUSTERED" : "");
+    d3.select("#cluster-filter .label-middle").text(!clusterFilterState ? "" : state.common.clusterLevelToText(clusterLevel));
+  }
+
   setTimeRangeLabels();
   setAmountLabels();
   setWaitTimeLabels();
+  setClusterLabels();
 
   d3.selectAll(".stats-slider").html(null);
+  d3.select("#cluster-filter .stats-slider") // special case for special slider
+    .append("div")
+    .attr("class","slider-container");
 
   var approvalSwitchContainer = d3.select("#approval-type-switches");
   approvalSwitchContainer.html(null);
@@ -117,7 +129,40 @@ function drawMenu(criteria) {
     drawOverviewByCriteria();
   });
 
-  // waitSlider.range(waitTimeMin,waitTimeMax);
+  // cluster filter
+  d3.select("#cluster-filter").classed("on", clusterFilterState);
+
+  d3.select("#cluster-filter .switch-container")
+    .on("click", clusterSliderClick);
+
+  function clusterSliderClick() {
+    d3.select("#cluster-filter").classed("on", !clusterFilterState);
+    clusterFilterState = !clusterFilterState;
+    setClusterLabels();
+    drawOverviewByCriteria(); // TODO check if necessary or do something less disruptive
+  }
+
+  var sliderWidth = d3.select("#cluster-filter .filter-header").node().getBoundingClientRect().width;
+
+  var clusterSlider = d3.sliderHorizontal()
+    .min(0)
+    .max(state.ZOOM_LEVELS)
+    .width(sliderWidth - 20)
+    .step(1)
+    .default(0)
+    .handle('M 0, 0 m -8, 0 a 8,8 0 1,0 16,0 a 8,8 0 1,0 -16,0')
+    .strokeLinecap('square')
+    .on('onchange', val => {
+      state.criteria.clusterLevel = clusterLevel = val;
+      setClusterLabels();
+      drawDetailedViewByZoomLevel();
+    });
+
+  d3.select("#cluster-filter .stats-slider .slider-container")
+    .append("svg")
+    .attr("height", 40)
+    .attr("class", "cluster-filter-svg")
+    .call(clusterSlider);
 
   // approval type filters
   d3.selectAll("#approval-type-switches .switch-container")
@@ -153,6 +198,37 @@ function drawMenu(criteria) {
   state.drawOverviewListener = drawOverviewByCriteriaHandler;
   window.addEventListener("drawOverviewByCriteria", state.drawOverviewListener);
 
+  function drawDetailedViewByZoomLevel() {
+    var currentClusterValue = clusterSlider.value();
+
+    if (d3.select(".main-units.selected").size()) {
+      state.overviewParams = drawOverview(mainUnits);
+      var selectedNode = d3.select(".main-units.selected");
+      if (!selectedNode.size()) return;
+
+      state.dataFunc.zoomLevel(selectedNode.datum(), currentClusterValue); // will create the necessary bucketed data
+
+      // consider moving to drawDetailedView
+      d3.selectAll(".detailed-group .zoom-sphere").remove();
+      d3.selectAll(".detailed-group .zoom-sphere-background").remove();
+      d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
+
+      if (currentClusterValue > 0) {
+        d3.selectAll(".detailed-group .sphere").style("opacity", 0);
+        d3.selectAll(".detailed-group .bubble-guide").style("opacity", 0);
+
+        d3.select(".detailed-group").classed("zoom", true);
+      }
+
+      drawDetailedView(selectedNode, state.overviewParams);
+
+      if (currentClusterValue > 0) {
+        refreshTable(mainUnits); // update rows with zoom bucket data
+      }
+    }
+
+  }
+
   function drawOverviewByCriteria(params) {
     // either refreshes the whole svg based on current criteria. or
     // refreshes just the open flower (selected unit) from criteria applied to a fresh copy of unit
@@ -171,23 +247,29 @@ function drawMenu(criteria) {
         if (d3.select(this).classed("on")) typesFilter.push(d3.select(this).attr("data-type-filter"));
       });
 
-    var newCriteria = {
+    state.criteria = {
       timeRangeMin: timeFilterState ? currentTimeRange.begin : null,
       timeRangeMax: timeFilterState ? currentTimeRange.end : null,
       amountMin: amountFilterState ? currentAmountRange.begin : null,
       amountMax: amountFilterState ? currentAmountRange.end : null,
       waitTimeMin: waitFilterState ? currentWaitRange.begin : null,
       waitTimeMax: waitFilterState ? currentWaitRange.end : null,
+      clusterLevel: clusterFilterState ? clusterSlider.value() : null, // null should be similar to 0 zoom level
 
       typesFilter: typesFilter
     };
 
-    filterDataByCriteria(newCriteria);
+    state.dataFunc.filterDataByCriteria(state.criteria);
 
     // if one flower is open then update only its content
     if (d3.select(".main-units.selected").size() || (params && params.selectedNode)) {
+
       state.overviewParams = drawOverview(mainUnits);
       var selectedNode = d3.select(".main-units.selected");
+
+      var currentClusterValue = clusterSlider.value();
+      if (currentClusterValue > 0) state.dataFunc.zoomLevel(selectedNode.datum(), currentClusterValue); // will refresh the bucketed data (hidden spheres) based on new criteria
+
       if (selectedNode.size()) drawDetailedView(selectedNode, state.overviewParams);
       state.overviewParams.centerSelected();
 

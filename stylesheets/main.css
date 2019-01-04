@@ -415,7 +415,7 @@ body.fixed {
     color: #a0a0a0;
 }
 
-.label-left, .label-right {
+.label-left, .label-right, .label-middle {
     font-family: Verdana, sans-serif;
     font-size: 12px;
 }
@@ -424,6 +424,12 @@ body.fixed {
 }
 
 .label-right {
+}
+
+.label-middle {
+    display: flex;
+    justify-content: center;
+    flex: 1;
 }
 
 .stats-slider {
@@ -458,6 +464,69 @@ body.fixed {
     transform: translate(0%,-50%);
     margin-top: 0;
     background: none;
+}
+
+/* new cluster filter -- replacing zoom widget */
+
+.cluster-filter-svg {
+    position: relative;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 100%;
+    transform: translate(0px,-16px);
+}
+
+#cluster-filter .stats-slider {
+    /*
+    margin-top: 10px;
+    height: 22px;
+    */
+}
+
+#cluster-filter .slider-container {
+    background: rgb(56, 60, 77);
+    position: relative;
+    height: 5px;
+    min-width: 20px;
+}
+
+#cluster-filter.on .slider-container {
+    background: transparent;
+    position: relative;
+    height: 5px;
+    min-width: 20px;
+}
+
+.cluster-filter-svg .slider {
+    cursor: pointer;
+    transform: translate(10px,20px);
+}
+/*
+#cluster-filter .stats-slider .slider {
+    visibility:
+}
+*/
+
+.cluster-filter-svg .axis {
+    display: none;
+}
+
+.cluster-filter-svg .slider .parameter-value path {
+    fill: rgb(143,158,239);
+    stroke: transparent;
+}
+
+.cluster-filter-svg .slider .parameter-value text {
+    display: none;
+}
+
+.cluster-filter-svg .slider .track {
+    stroke-width: 5;
+    stroke: rgb(88,92,122);
+}
+.cluster-filter-svg .slider .track-inset {
+    stroke: transparent;
 }
 
 .actions-container {
@@ -787,14 +856,15 @@ body.debug .view-json {
     bottom: 0;
     left: 0;
     right: 250px;
-    height: 200px;
     background-color: rgb(74,77,93);
-    display: none;
     flex-direction: column;
+    display: flex;
+    height: 0;
+    transition: height 0.2s ease-in-out;
 }
 
 .table-container.on {
-    display: flex;
+    height: 200px;
 }
 
 .table-resize {
@@ -802,7 +872,11 @@ body.debug .view-json {
     background-color: rgb(54,58,75);
     width: 100%;
     cursor: pointer;
-    /*position: relative;*/
+    visibility: hidden;
+}
+
+.table-container.on .table-resize {
+    visibility: visible;
 }
 
 .center-table {
@@ -841,6 +915,7 @@ body.debug .view-json {
 }
 
 #table-toggle-container {
+    display: none; /* decided to show/hide table automatically upon lock of sphere */
     height: 35px;
     border-top: solid 1px rgb(60,64,81);
 }

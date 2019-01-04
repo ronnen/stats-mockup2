@@ -140,10 +140,14 @@ var state = {
   GREEN_COLOR: "rgb(88,141,26)",
   RED_COLOR: "rgb(234,49,49)",
 
+  ZOOM_LEVELS: 3,
+
   common: {}, // common functions
+  dataFunc: {}, // data manipulation functions
+  criteria: {},
 };
 
-function calculateTotalValues(originalData) {
+state.dataFunc.calculateTotalValues = function(originalData) {
   originalData.forEach(function(request) {
     var stats = request.approvers.reduce(function(c, approver) {
       // [count, value, waitTime]
@@ -175,9 +179,9 @@ function calculateTotalValues(originalData) {
 
   });
 
-}
+};
 
-function filterDataByCriteria(criteria) {
+state.dataFunc.filterDataByCriteria = function(criteria) {
   // criteria {totalValueMin, totalValueMax, waitTimeMin, waitTimeMax, typesFilter}
 
   // hide approvals that are outside wait time range
@@ -216,6 +220,55 @@ function filterDataByCriteria(criteria) {
   });
 
   return mainUnits;
-}
+};
+
+state.dataFunc.zoomLevel = function(request, level) {
+  level = Math.floor(level);
+  if (!level) {
+    // restore non-zoom classes
+    window.dispatchEvent(new CustomEvent("setNonZoomState", {detail: {keepWidget: true}}));
+    return;
+  }
+
+  const levelGranularity = [1, 24, 24*7, 24*30]; // hours, days, weeks, months (30 days actually)
+  var upperRoundedLimit = Math.ceil(state.maxWait / levelGranularity[level]) * levelGranularity[level];
+  var buckets = upperRoundedLimit / levelGranularity[level];
+
+  // level = state.ZOOM_LEVELS +1 - level;  // for convenience
+
+  var bucketing = d3.scaleLinear()
+    .domain([0, upperRoundedLimit])
+    .range([0, buckets]);
+
+  request.approvers.forEach((approver, approverIndex) => {
+    var data = [];
+
+    approver.approvals.forEach(approval => {
+      var bucketedIndex = Math.min(Math.floor(bucketing(approval.waitTime)), buckets-1);
+      if (!data[bucketedIndex]) data[bucketedIndex] = {waitTime: 0, value: 0, count: 0, hidden: 0};
+      data[bucketedIndex].waitTime += approval.waitTime;
+      data[bucketedIndex].value += approval.value;
+      data[bucketedIndex].hidden += approval.hidden ? 1 : 0;
+      data[bucketedIndex].count ++;
+      approval.zoomBucket = "a" + approverIndex + "b" + bucketedIndex;
+      data[bucketedIndex].zoomBucket = "a" + approverIndex + "b" + bucketedIndex; // to keep track of which approvals belongs to each bucket
+    });
+
+    data = data.filter(t => t !== undefined);
+    data.forEach(a => {
+      a.waitTime = a.waitTime / a.count;
+      a.presentation = request.presentation;
+      a.hidden = a.hidden / a.count > 0.5; // if majority is hidden then we consider it hidden as well
+      a.submitter = a.count + " request(s)";
+    });
+    approver.zoomApprovals = data;
+  });
+
+  request.zoomMaxValue = d3.max(state.common.filterNonHidden(request.approvers).map(function(v) {
+    return d3.max(v.zoomApprovals, function(a) {return a.value})
+  }));
+
+};
+
 
 

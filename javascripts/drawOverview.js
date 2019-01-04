@@ -3,7 +3,7 @@ var simulation;
 
 function drawOverview(mainUnits) {
   if (state.freshDataLoaded) {
-    calculateTotalValues(mainUnits);
+    state.dataFunc.calculateTotalValues(mainUnits);
 
     state.maxCount = d3.max(mainUnits.map(function(v) {
       return v.totalCount;
@@ -77,6 +77,8 @@ function drawOverview(mainUnits) {
       });
     }));
 
+    state.clusterValue = 0;
+
     refreshTable(mainUnits);
     d3.select(".mobile-menu-tab").classed("on", true);
   }
@@ -143,6 +145,7 @@ function drawOverview(mainUnits) {
       waitTimeMax: state.maxWait,
       amountMin: state.minValue,
       amountMax: state.maxValue,
+      clusterValue: state.clusterValue,
       approvalTypes: approvalTypeLabels,
 
       getSimulation: function() {return simulation;}
@@ -166,7 +169,7 @@ function drawOverview(mainUnits) {
   }
 
   function onFreshData() {
-    d3.select("svg").remove();
+    d3.select(".svg-container svg").remove();
 
     svg = d3.select(".svg-container").append("svg")
       .attr("width", width)
@@ -491,6 +494,7 @@ function drawOverview(mainUnits) {
       });
       d3.select(".submitterTooltip")
         .style("display","none");
+      d3.select(".table-container").style("height",null).classed("on", false); // should be part of releaseLockedState
     }
     window.dispatchEvent(new CustomEvent("endConfigureState", { detail : {} }));
     window.dispatchEvent(new CustomEvent("setNonZoomState", { detail : {} }));

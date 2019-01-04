@@ -3,7 +3,7 @@ function drawZoomWidget(drawCallback) {
 
   const ZOOM_LEVELS = 9;
 
-  var zoomWidget = d3.select("svg .zoom-widget-group");
+  var zoomWidget = d3.select(".svg-container svg .zoom-widget-group");
   if (zoomWidget.size()) {
     return;
   }
@@ -20,13 +20,13 @@ function drawZoomWidget(drawCallback) {
     .default(0)
     .handle('M 0, 0 m -8, 0 a 8,8 0 1,0 16,0 a 8,8 0 1,0 -16,0')
     .on('onchange', val => {
-      zoomLevel(val);
+      state.dataFunc.zoomLevel(val);
     });
 
-  var width = parseInt(d3.select('svg').attr('width')),
-      height = parseInt(d3.select('svg').attr('height'));
+  var width = parseInt(d3.select('.svg-container svg').attr('width')),
+      height = parseInt(d3.select('.svg-container svg').attr('height'));
 
-  var group1 = d3.select("svg")
+  var group1 = d3.select(".svg-container svg")
     .append("g")
     .attr("class","zoom-widget-group")
     .attr("transform", `translate(${width-250},${state.tableToggleState ? 70 : height-100})`)
@@ -86,6 +86,7 @@ function drawZoomWidget(drawCallback) {
   };
   window.addEventListener("tableStateChanged", state.zoomWidgetShouldMove);
 
+/*
   window.addEventListener("setNonZoomState", function(event) {
     d3.select(".detailed-group").classed("zoom", false);
     d3.selectAll(".detailed-group .zoom-sphere").remove();
@@ -96,6 +97,7 @@ function drawZoomWidget(drawCallback) {
     d3.selectAll(".table-rows .data-row[data-zoom]").attr("data-zoom", null);
     if (!event.detail || !event.detail.keepWidget) d3.select(".svg-container .zoom-widget-group").remove();
   });
+*/
 
   function zoomLevel(level) {
     level = Math.floor(level);

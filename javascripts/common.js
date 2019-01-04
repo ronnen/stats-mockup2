@@ -99,6 +99,21 @@ state.common.waitToText = function(value) {
   return waitText;
 };
 
+state.common.clusterLevelToText = function(value) {
+  switch (value) {
+    case 0:
+      return "HOURS";
+    case 1:
+      return "DAYS";
+    case 2:
+      return "WEEKS";
+    case 3:
+      return "MONTHS";
+    default:
+      return "HOURS";
+  }
+};
+
 state.common.getTranslation = function(transform) {
   // Create a dummy g for calculation purposes only. This will never
   // be appended to the DOM and will be discarded once this function
