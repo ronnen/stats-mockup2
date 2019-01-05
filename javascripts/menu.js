@@ -306,9 +306,8 @@ function drawMenu(criteria) {
     d3.event.stopPropagation();
 
     if (state.legendToggle) {
-      d3.select(window).on("click",null);
       d3.selectAll('.legend-svg').remove();
-      d3.select(".shield").classed("on dark", false);
+      d3.select(".shield").classed("on dark", false).on("click", null);
       d3.select(".mainObjectLegend")
         .style("display","none");
       d3.select(".bigDiameterLegend")
@@ -417,7 +416,7 @@ function drawMenu(criteria) {
         .outerRadius(outerRadius - identityMargin);
 
       d3.selectAll('.legend-svg').remove(); // just to make sure
-      d3.select(".shield").classed("on dark", true);
+      d3.select(".shield").classed("on dark", true).on("click",legendClickEvent);
 
       var mainSVGRect = svg.node().getBoundingClientRect();
 
@@ -520,7 +519,6 @@ function drawMenu(criteria) {
 
       }
 
-      d3.select(window).on("click",legendClickEvent);
       window.removeEventListener("flowerOpenAtCenter", showLegend);
 
       state.legendToggle = !state.legendToggle;

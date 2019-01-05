@@ -189,6 +189,10 @@ body.fixed {
     transition: opacity 0.15s ease-in-out;
 }
 
+.legend-svg {
+    pointer-events: none;
+}
+
 .dark-legend {
 }
 

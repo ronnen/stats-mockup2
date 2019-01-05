@@ -59,12 +59,13 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   }
 
   function handleFlowerClick(d, i) {
+    d3.event.stopPropagation();
+
     if (d3.select(this).classed("locked")) {
-      d3.event.stopPropagation();
       releaseLockedState();
-      return;
     }
 
+/*
     d3.select(this).remove();
     d3.selectAll(".main-units").classed("selected", false).each(function(d) {
       d.selected = false;
@@ -80,7 +81,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     window.dispatchEvent(new CustomEvent("drawOverviewByCriteria", {
       detail: {  }
     }));
-    
+*/
+
   }
 
   function drawCircularMarkers() {
