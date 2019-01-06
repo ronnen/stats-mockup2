@@ -544,9 +544,19 @@ function drawMenu(criteria) {
     });
 
   d3.select(".show-benchmarks")
-    .on("click", function() {showBenchmarks(function() {
+    .on("click", function() {
+      closeMenu();
+      showBenchmarks(function() {
 
-    })});
+      })
+    });
+
+  if (!state.endBenchmarkStateListener) {
+    state.endBenchmarkStateListener = function(event) {
+      showMenu();
+    };
+    window.addEventListener("endBenchmarkState", state.endBenchmarkStateListener);
+  }
 
   function showMenu() {
     d3.select(".menu-right").style("right", 0);
@@ -562,6 +572,7 @@ function drawMenu(criteria) {
 
   d3.select(".mobile-menu-tab")
     .on("click", function() {
+      window.dispatchEvent(new CustomEvent("mobileMenuOpen", { detail: {}}));
       showMenu();
     });
 

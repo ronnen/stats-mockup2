@@ -94,6 +94,7 @@ function openEditDialog() {
 
   d3.select(".shield").classed("on", true);
   d3.select(".loadDataDialog").classed("on", true);
+  d3.select("body").classed("dialog-on", true);
 
   var editor = ace.edit("editor", {
     mode: "ace/mode/text",
@@ -109,6 +110,7 @@ function openEditDialog() {
   d3.select(".cancel-edit").on("click", function() {
     d3.select(".shield").classed("on", false);
     d3.select(".loadDataDialog").classed("on", false);
+    d3.select("body").classed("dialog-on", false);
   });
 
   d3.select(".load-edit").on("click", function() {
@@ -116,6 +118,7 @@ function openEditDialog() {
 
     d3.select(".shield").classed("on", false);
     d3.select(".loadDataDialog").classed("on", false);
+    d3.select("body").classed("dialog-on", false);
 
     drawOverview(mainUnits);
 

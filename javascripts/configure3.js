@@ -37,6 +37,10 @@ function showConfigureView() {
       d3.selectAll(".configure-svg").remove();
     });
 
+    window.addEventListener("mobileMenuOpen", function() {
+      window.dispatchEvent(new CustomEvent("endConfigureState", { detail: {}}));
+    });
+
     state.showConfigureViewShown = true;
   }
 
@@ -121,7 +125,6 @@ function showConfigureView() {
         to:   (i+1) * s + (s/10) // some overlap
       });});
 
-
   var handleGroup = configureGroup
     .append("svg:g")
     .attr("class", "configure-path-drag-group")
@@ -153,6 +156,32 @@ function showConfigureView() {
         to: state.common.toRadians(20)
       });});
 
+  var sphereCord = -(ribbonRadius * state.clockColorRibbonRadius + 42);
+
+  var configureSphere = handleGroup
+    .append("svg:g")
+    .attr("class","configure-sphere")
+    .attr("transform", `translate(0,${sphereCord})`);  // translate(0,-140) rotate(-126)
+
+  configureSphere
+    .append("circle")
+    .attr("class","configure-sphere-circle")
+    .attr("cx",0)
+    .attr("cy",0)
+    .attr("r", 23)
+    .style("fill", function(d) {
+      var midWait = (d.configHighWait + d.configLowWait)/2;
+      return color(midWait);
+    });
+
+  configureSphere
+    .append("text")
+    .attr("class","configure-sphere-text")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("dy","0.5em")
+    .style("text-anchor","middle");
+
   var diffSampleDegrees;
 
   function dragstarted(d) {
@@ -161,6 +190,13 @@ function showConfigureView() {
     var newAngleDeg = (Math.atan2(relativeMouse[1],relativeMouse[0]) * 360 / (2* Math.PI) + 90)%360;
 
     diffSampleDegrees = (720 + newAngleDeg - degressGenerator(midWait))%360;
+
+    configureGroup.select(".configure-sphere")
+      .classed("on", true)
+      .attr("transform", `translate(0,${sphereCord}) rotate(${-newAngleDeg})`);  // translate(0,-140) rotate(-126)
+
+    configureGroup.select(".configure-sphere-text")
+      .text(state.common.waitToText(midWait));
   }
 
   function dragged(d) {
@@ -196,10 +232,18 @@ function showConfigureView() {
         return color(colorScale(i));
       });
 
+    configureGroup.select(".configure-sphere")
+      .attr("transform", `translate(0,${sphereCord}) rotate(${-newAngleDeg})`);  // translate(0,-140) rotate(-126)
+
+    configureGroup.select(".configure-sphere-text")
+      .text(state.common.waitToText(bellCenter));
   }
 
   function dragended(d) {
     // already updated configHighWait in dragged()
+    configureGroup.select(".configure-sphere")
+      .classed("on", false);
+
   }
 
   // look at https://bl.ocks.org/mbostock/4163057 for comprehensive example of gradient along stroke

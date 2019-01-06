@@ -76,8 +76,12 @@ state.common.valueToText = function(value) {
 state.common.typedValueToText = function(value, type) {
   if (type == "currency")
     return state.common.valueToText(value);
-  else
-    return value + " " + type;
+  else {
+    // ugly way to deduce singular from plural (as I don't get it from the data feed)
+    var typeSingularOrPlural = (value == 1 && type.length > 1 && type.slice(-1) == "s")
+      ? type.slice(0,-1) : type;
+    return value + " " + typeSingularOrPlural;
+  }
 };
 
 state.common.typedValueToTextShort = function(value, type) {

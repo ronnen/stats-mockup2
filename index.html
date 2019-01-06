@@ -63,85 +63,88 @@
     </div>
 </div>
 <div class="menu-right">
-    <div class="actions-container">
-        <div class="legend-button">Legend</div>
-        <div class="load-data">Load Data</div>
-    </div>
-    <div id="table-toggle-container">
-        <div class="table-toggle">
-            <div class="stats-filter-title">Tabular View</div>
-            <div class="switch-container">
-                <div class="switch-handle"></div>
+    <div class="menu-right-scrollable">
+        <div class="actions-container">
+            <div class="legend-button">Legend</div>
+            <div class="load-data">Load Data</div>
+        </div>
+        <div id="table-toggle-container">
+            <div class="table-toggle">
+                <div class="stats-filter-title">Tabular View</div>
+                <div class="switch-container">
+                    <div class="switch-handle"></div>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="time-range-filter" class="stats-filter on">
-        <div class="filter-header">
-            <div class="stats-filter-title">Time Range</div>
-            <div class="switch-container">
-                <div class="switch-handle"></div>
+        <div id="time-range-filter" class="stats-filter on">
+            <div class="filter-header">
+                <div class="stats-filter-title">Time Range</div>
+                <div class="switch-container">
+                    <div class="switch-handle"></div>
+                </div>
+            </div>
+            <div class="stats-slider"></div>
+            <div class="labels">
+                <div class="label-left">START DATE</div>
+                <div class="label-right">END DATE</div>
             </div>
         </div>
-        <div class="stats-slider"></div>
-        <div class="labels">
-            <div class="label-left">START DATE</div>
-            <div class="label-right">END DATE</div>
-        </div>
-    </div>
-    <div id="amount-filter" class="stats-filter">
-        <div class="filter-header">
-            <div class="stats-filter-title">Amount</div>
-            <div class="switch-container">
-                <div class="switch-handle"></div>
+        <div id="amount-filter" class="stats-filter">
+            <div class="filter-header">
+                <div class="stats-filter-title">Amount</div>
+                <div class="switch-container">
+                    <div class="switch-handle"></div>
+                </div>
+            </div>
+            <div class="stats-slider"></div>
+            <div class="labels">
+                <div class="label-left">$ 0</div>
+                <div class="label-right">$ 5M</div>
             </div>
         </div>
-        <div class="stats-slider"></div>
-        <div class="labels">
-            <div class="label-left">$ 0</div>
-            <div class="label-right">$ 5M</div>
-        </div>
-    </div>
-    <div id="wait-time-filter" class="stats-filter on">
-        <div class="filter-header">
-            <div class="stats-filter-title">Wait time</div>
-            <div class="switch-container">
-                <div class="switch-handle"></div>
+        <div id="wait-time-filter" class="stats-filter on">
+            <div class="filter-header">
+                <div class="stats-filter-title">Wait time</div>
+                <div class="switch-container">
+                    <div class="switch-handle"></div>
+                </div>
+            </div>
+            <div class="stats-slider"></div>
+            <div class="labels">
+                <div class="label-left">5 HOURS</div>
+                <div class="label-right">54 DAYS</div>
+            </div>
+            <div class="config-container">
+                <div class="config-button">Configure</div>
             </div>
         </div>
-        <div class="stats-slider"></div>
-        <div class="labels">
-            <div class="label-left">5 HOURS</div>
-            <div class="label-right">54 DAYS</div>
-        </div>
-        <div class="config-container">
-            <div class="config-button">Configure</div>
-        </div>
-    </div>
-    <div id="cluster-filter" class="stats-filter on">
-        <div class="filter-header">
-            <div class="stats-filter-title">Cluster</div>
-            <div class="switch-container">
-                <div class="switch-handle"></div>
+        <div id="cluster-filter" class="stats-filter on">
+            <div class="filter-header">
+                <div class="stats-filter-title">Cluster</div>
+                <div class="switch-container">
+                    <div class="switch-handle"></div>
+                </div>
+            </div>
+            <div class="stats-slider"></div>
+            <div class="labels">
+                <div class="label-left">Granular</div>
+                <div class="label-middle"></div>
+                <div class="label-right">Clustered</div>
             </div>
         </div>
-        <div class="stats-slider"></div>
-        <div class="labels">
-            <div class="label-left">Granular</div>
-            <div class="label-middle"></div>
-            <div class="label-right">Clustered</div>
+        <div id="approval-type-switches">
+        </div>
+        <div id="custom-filter" class="custom-filter">
+            <div class="custom-filter-container">
+                <div class="filter-option">Custom Filter</div>
+                <div class="open-filter fa fa-angle-down"></div>
+            </div>
+        </div>
+        <div id="show-benchmarks-container">
+            <div class="show-benchmarks">Related Benchmarks</div>
         </div>
     </div>
-    <div id="approval-type-switches">
-    </div>
-    <div id="custom-filter" class="custom-filter">
-        <div class="custom-filter-container">
-            <div class="filter-option">Custom Filter</div>
-            <div class="open-filter fa fa-angle-down"></div>
-        </div>
-    </div>
-    <div id="show-benchmarks-container">
-        <div class="show-benchmarks">Related Benchmarks</div>
-    </div>
+
 </div>
 
 <div id="type-filter-template" class="type-filter on">
@@ -186,7 +189,7 @@
 
 <div class="shield"></div>
 
-<div class="loadDataDialog">
+<div class="dialog loadDataDialog">
     <div class="dialog-wrapper">
         <div id="editor" class="editor"></div>
         <div class="editor-actions">
@@ -209,7 +212,7 @@
     </div>
 </div>
 
-<div class="configureDialog">
+<div class="dialog configureDialog">
     <div class="dialog-wrapper">
         <div class="config-content"></div>
         <div class="config-actions">
@@ -219,14 +222,14 @@
     </div>
 </div>
 
-<div class="benchmark-dialog">
-    <div class="benchmark-rows"></div>
+<div class="dialog benchmark-dialog">
     <div class="legend">
         <div class="legend-item best">Best in class</div>
         <div class="legend-item median">Median</div>
         <div class="legend-item poor">Acceptable</div>
     </div>
     <div class="close">Close</div>
+    <div class="benchmark-rows"></div>
 </div>
 
 <div class="notice-dialog tooltip">

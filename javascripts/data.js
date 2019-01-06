@@ -259,7 +259,7 @@ state.dataFunc.zoomLevel = function(request, level) {
       a.waitTime = a.waitTime / a.count;
       a.presentation = request.presentation;
       a.hidden = a.hidden / a.count > 0.5; // if majority is hidden then we consider it hidden as well
-      a.submitter = a.count + " request(s)";
+      a.submitter = a.count + (a.count == 1 ? " request" : " requests");
     });
     approver.zoomApprovals = data;
   });

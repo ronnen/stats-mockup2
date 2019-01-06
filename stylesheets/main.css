@@ -8,7 +8,7 @@ html
 }
 
 body {
-    height: auto;
+    height: 100%;
     position: relative;
     display: flex;
     overflow: hidden;
@@ -283,6 +283,14 @@ body.fixed {
 .menu-right {
     width: 250px;
     background-color: rgb(74,77,93);
+    display: flex;
+    /*height: auto;*/
+    height: 100%;
+}
+
+.menu-right-scrollable {
+    width: 100%;
+    overflow: scroll;
 }
 
 .slider {
@@ -984,7 +992,8 @@ body.debug .view-json {
 }
 
 .caption-row .caption {
-    color: coral;
+    color: white;
+    font-weight: bolder;
 }
 
 .table-rows .data-row.hidden {
@@ -1003,7 +1012,7 @@ body.debug .view-json {
 .table-rows.approval-highlight .data-row.highlight {
     /*background-color: mintcream;*/
     display: flex;
-    color: orange;
+    color: whitesmoke;
 }
 
 /* zoom-widget */
@@ -1073,11 +1082,13 @@ body.debug .view-json {
 .benchmark-dialog.on {
     display: flex;
     flex: 1;
+    flex-direction: column;
+    align-items: center;
 }
 
 .benchmark-dialog .close {
     position: absolute;
-    top: 244px;
+    top: 275px;
     width: 114px;
     left: 40px;
     font-family: Verdana, sans-serif;
@@ -1094,13 +1105,15 @@ body.debug .view-json {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    margin-bottom: 30px;
 }
 
 .benchmark-rows {
     display: flex;
     flex: 1;
     flex-direction: column;
-    justify-content: space-around;
+    /*justify-content: space-around;*/
+    justify-content: flex-start;
     align-items: center;
 }
 
@@ -1141,7 +1154,8 @@ body.debug .view-json {
     margin: 2px 5px 5px 2px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    /*justify-content: center;*/
+    text-align: center;
 }
 
 .benchmark-tile svg {
@@ -1202,6 +1216,8 @@ body.debug .view-json {
     left: 40px;
     width: 118px;
     height: 105px;
+    margin-top: 30px; /* for mobile rendering */
+    margin-bottom: 10px; /* for mobile rendering */
     justify-content: space-between;
     background-color: rgb(54,58,75);
     border-radius: 3px;
@@ -1270,6 +1286,28 @@ body.debug .view-json {
 
 .configure-group .configure-drag-handle.active {
     stroke-width: 2;
+}
+
+.configure-group .configure-sphere {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.configure-group .configure-sphere.on {
+    opacity: 1;
+}
+
+.configure-group .configure-sphere-circle {
+    stroke: transparent;
+}
+
+.configure-group .configure-sphere-text {
+    font-family: Avenir, sans-serif;
+    font-size: 9px;
+    font-weight: bold;
+    fill: rgb(74, 77, 93);
+    stroke: transparent;
+    pointer-events: none;
 }
 
 .tooltip {
@@ -1346,6 +1384,10 @@ body.debug .view-json {
 
 .mobile-menu-close.on {
     right: 0;
+}
+
+body.dialog-on .mobile-menu-tab, body.dialog-on .mobile-menu-close {
+    display: none;
 }
 
 /* iphone 6, 6s, 7, 8 */
@@ -1539,4 +1581,28 @@ body.debug .view-json {
     .table-container .approvals-table {
         width: 1000px;
     }
+
+    .benchmark-dialog {
+        overflow: scroll;
+    }
+    .benchmark-dialog .legend, .benchmark-dialog .close {
+        position: initial;
+    }
+    .benchmark-dialog .close {
+        flex: 0 0 40px;
+    }
+    .benchmark-row {
+        flex: 0 0 250px;
+    }
+    .benchmark-row:first-child {
+        margin-top: 0;
+    }
+    .benchmark-tile:first-child {
+        margin-left: 5px;
+    }
+    .benchmark-tile {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
 }

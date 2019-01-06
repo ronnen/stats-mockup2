@@ -1,13 +1,16 @@
 function showBenchmarks() {
   d3.select(".shield").classed("on darkest", true);
   d3.select(".benchmark-dialog").classed("on", true);
+  d3.select("body").classed("dialog-on", true);
   d3.select(".benchmark-rows").html(null);
 
   d3.select(".benchmark-dialog .close").on("click", () => {
     // console.log("close clicked");
     d3.select(".benchmark-dialog .legend").classed("on", false);
     d3.select(".benchmark-dialog").classed("on", false);
+    d3.select("body").classed("dialog-on", false);
     d3.select(".shield").classed("on darkest", false);
+    window.dispatchEvent(new CustomEvent("endBenchmarkState", { detail : {} }));
   });
 
   var benchmarkData = [
@@ -41,13 +44,14 @@ function showBenchmarks() {
     },
   ];
 
-  const gaugesInRow = 2;
   const markersMargin = 45;
 
 /*
   var width = window.innerWidth,
       height = window.innerHeight;
 */
+
+  var gaugesInRow = (window.innerWidth < 500) ? 1 : 2;
 
   var rowsData = new Array(Math.ceil(benchmarkData.length/gaugesInRow));
   rowsData = rowsData.map((a,i) => i);
@@ -96,7 +100,7 @@ function showBenchmarks() {
     .attr("class","bm-group")
     .attr("transform", `translate(${svgSide/2},${svgSide/2})`);
 
-  var mainR = svgSide / 2 - markersMargin;  // some margin between circle and border
+  var mainR = Math.max(svgSide / 2 - markersMargin, 10);  // some margin between circle and border
 
   mainGroups
     .append("circle")
@@ -216,7 +220,7 @@ function showBenchmarks() {
     mainGroups
       .append("circle")
       .attr("class", "bm-center-circle")
-      .attr("r", Math.min(40, mainR - 30));
+      .attr("r", Math.max(Math.min(40, mainR - 30), 10) );
 
     mainGroups
       .append("text")
