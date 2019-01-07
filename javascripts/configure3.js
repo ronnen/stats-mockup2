@@ -2,9 +2,7 @@ function showConfigureView() {
 
   const DRAG_HANDLE_COLOR = "rgb(74,77,93)";
 
-  if (!state.showConfigureViewShown) {
-    var svg = d3.select(".svg-container svg");
-
+  function addSpecialMarkers(svg) {
     var defs = svg.append('svg:defs');
 
     var data = [
@@ -30,6 +28,10 @@ function showConfigureView() {
       .append('svg:path')
       .attr('d', function(d){ return d.path })
       .attr('fill', function(d,i) { return DRAG_HANDLE_COLOR});
+  }
+
+  if (!state.showConfigureViewShown) {
+    var svg = d3.select(".svg-container svg");
 
     window.addEventListener("endConfigureState", function() {
       d3.select("body").classed("fixed", false);
@@ -76,6 +78,8 @@ function showConfigureView() {
     .attr("class","configure-svg")
     .style("position", "fixed")
     .on("click", state.configureShieldListener);
+
+  addSpecialMarkers(configureSVG);
 
   configureSVG.append("filter")
     .attr("id", "dropshadow")

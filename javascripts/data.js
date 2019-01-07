@@ -177,6 +177,10 @@ state.dataFunc.calculateTotalValues = function(originalData) {
       return d3.max(v.approvals, function(a) {return a.value})
     }));
 
+    request.selected = false; // for cases when a reset is required
+    delete request.fx;
+    delete request.fy;
+
   });
 
 };

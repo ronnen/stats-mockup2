@@ -216,7 +216,7 @@ function drawOverview(mainUnits) {
       .force("y", forceY)
       .force('collision', d3.forceCollide().radius(function(d, index) {
         if (d.selected) {
-          console.log("simulation caught selected mainUnit");
+          // console.log("simulation caught selected mainUnit");
         }
         return (d.selected ? blownUpRadius : d.outerRadius) + 10; // d.radius
       }))

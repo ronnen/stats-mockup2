@@ -858,7 +858,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     drawClockMotion();
 
     window.addEventListener("setNonZoomState", function(event) {
-      console.log("setNonZoomState: check if this is necessary");
+      // console.log("setNonZoomState: check if this is necessary");
       d3.select(".detailed-group").classed("zoom", false);
       d3.selectAll(".detailed-group .zoom-sphere").remove();
       d3.selectAll(".detailed-group .zoom-sphere-background").remove();
@@ -867,6 +867,11 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.selectAll(".detailed-group .bubble-guide").transition().duration(200).style("opacity", 1).style("opacity", null);
       d3.selectAll(".table-rows .data-row[data-zoom]").attr("data-zoom", null);
       if (!event.detail || !event.detail.keepWidget) d3.select(".svg-container .zoom-widget-group").remove();
+    });
+
+    window.addEventListener("windowResize", function(event) {
+      releaseLockedState();
+      d3.select(".svg-container svg").remove();
     });
 
   }

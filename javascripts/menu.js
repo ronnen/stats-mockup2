@@ -579,7 +579,23 @@ function drawMenu(criteria) {
   d3.select(".mobile-menu-close")
     .on("click", function() {
       closeMenu();
-    })
+    });
+
+  // at some point worth considering a better event management framework to notify all components of events like resize
+  if (!state.windowResizeListener) {
+    state.windowResizeListener = function(event) {
+      // console.log("resize event intercepted");
+      clearTimeout(state.resizeTimeout);
+      state.resizeTimeout = setTimeout(function() {
+        console.log("ACTUAL resize");
+        window.dispatchEvent(new CustomEvent("endConfigureState", { detail : {} }));
+        window.dispatchEvent(new CustomEvent("windowResize", { detail : {} }));
+        state.freshDataLoaded = true; // ugly but force svg creation
+        drawOverview(mainUnits);
+      }, 1000);
+    };
+    window.addEventListener("resize", state.windowResizeListener);
+  }
 
 
 }

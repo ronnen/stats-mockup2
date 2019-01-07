@@ -290,7 +290,6 @@
       }
 
       function dragended() {
-        console.log("dragended");
         d3Selection.select(this).classed('active', false);
         var pos = identityClamped(
           orientation === bottom || orientation === top ? d3Selection.event.x : d3Selection.event.y
