@@ -554,6 +554,11 @@ function drawOverview(mainUnits) {
 
   }
 
+  // rewrite to avoid multiple listeners
+  window.addEventListener("windowResize", function(event) {
+    d3.select(".svg-container svg").remove();
+  });
+
   return {
     stopSimulation: simulation.stop,
     runSimulation: runSimulation,
