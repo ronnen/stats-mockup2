@@ -287,6 +287,8 @@ function drawOverview(mainUnits) {
   }
 
   function dragstarted(d) {
+    state.noInteraction = false;
+
     d3.select(".submitterTooltip")
       .style("display","none");
 
@@ -554,10 +556,13 @@ function drawOverview(mainUnits) {
 
   }
 
-  // rewrite to avoid multiple listeners
-  window.addEventListener("windowResize", function(event) {
-    d3.select(".svg-container svg").remove();
-  });
+  if (!drawOverview.windowResizeListener) {
+    drawOverview.windowResizeListener = function(event) {
+      d3.select(".svg-container svg").remove();
+    };
+
+    window.addEventListener("windowResize", drawOverview.windowResizeListener);
+  }
 
   return {
     stopSimulation: simulation.stop,

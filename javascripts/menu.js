@@ -199,6 +199,8 @@ function drawMenu(criteria) {
   window.addEventListener("drawOverviewByCriteria", state.drawOverviewListener);
 
   function drawDetailedViewByZoomLevel() {
+    state.noInteraction = false;
+
     var currentClusterValue = clusterSlider.value();
 
     if (d3.select(".main-units.selected").size()) {
@@ -230,6 +232,8 @@ function drawMenu(criteria) {
   }
 
   function drawOverviewByCriteria(params) {
+    state.noInteraction = false;
+
     // either refreshes the whole svg based on current criteria. or
     // refreshes just the open flower (selected unit) from criteria applied to a fresh copy of unit
     var currentTimeRange = timeSlider.range();
@@ -595,6 +599,26 @@ function drawMenu(criteria) {
       }, 1000);
     };
     window.addEventListener("resize", state.windowResizeListener);
+  }
+
+  if (state.noInteraction) {
+    window.addEventListener("openLargestUnit", function() {
+      var units = d3.selectAll(".main-units"), largestUnitIndex = -1;
+
+      for (var i=0;i<mainUnits.length;i++) {
+        if (largestUnitIndex < 0 || mainUnits[i].outerRadius > mainUnits[largestUnitIndex].outerRadius) {
+          largestUnitIndex = i;
+        }
+      }
+
+      var largestUnit = d3.selectAll(".main-units").filter(function(d, i) {
+        return i == largestUnitIndex;
+      });
+
+      largestUnit.datum().selected = true;
+      window.dispatchEvent(new CustomEvent("drawOverviewByCriteria", { detail : {selectedNode: largestUnit.node()} }));
+
+    });
   }
 
 
