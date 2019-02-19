@@ -287,7 +287,7 @@ function drawOverview(mainUnits) {
   }
 
   function dragstarted(d) {
-    state.noInteraction = false;
+    // state.noInteraction = false;
 
     d3.select(".submitterTooltip")
       .style("display","none");

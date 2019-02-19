@@ -136,7 +136,7 @@ var state = {
   tableToggleState: false,
   drawOverviewListener: null,
   firstTimeDrawDetailedView: true,
-  noInteraction: true, // was any widget interacted? used to automate first bubble open if nothing has happened
+  // noInteraction: true, // was any widget interacted? used to automate first bubble open if nothing has happened
 
   GREEN_COLOR: "rgb(88,141,26)",
   RED_COLOR: "rgb(234,49,49)",
@@ -274,14 +274,6 @@ state.dataFunc.zoomLevel = function(request, level) {
   }));
 
 };
-
-setTimeout(function() {
-  if (state.noInteraction) {
-    // console.log("open flower after no activity");
-    window.dispatchEvent(new CustomEvent("openLargestUnit", { detail : {} }));
-    state.noInteraction = false;
-  }
-}, 3000);
 
 
 

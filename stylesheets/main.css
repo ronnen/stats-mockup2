@@ -1390,6 +1390,171 @@ body.dialog-on .mobile-menu-tab, body.dialog-on .mobile-menu-close {
     display: none;
 }
 
+.blobs{
+    filter:url('#goo');
+    position:absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+}
+
+.blobs.hidden {
+    display: none;
+}
+
+@keyframes blob-left-top-anim{
+    0%{
+        transform:scale(1.1) translate(0,0);
+    }
+    33%{
+        transform:scale(0.9) translate(-79px,0);
+    }
+    62%{
+        transform:scale(0.7) translate(-79px,-79px);
+
+    }
+    94%{
+        transform:scale(1.1) translate(0,0);
+    }
+}
+
+@keyframes blob-right-top-anim{
+    0%{
+        transform:scale(1.1) translate(0,0);
+    }
+    33%{
+        transform:scale(0.9) translate(79px,0);
+    }
+    64%{
+        transform:scale(0.7) translate(79px,-79px);
+    }
+    96%{
+        transform:scale(1.1) translate(0,0);
+    }
+}
+@keyframes blob-left-bottom-anim{
+    0%{
+        transform:scale(1.1) translate(0,0);
+    }
+    33%{
+        transform:scale(0.9) translate(-79px,0);
+    }
+    66%{
+        transform:scale(0.7) translate(-79px,79px);
+    }
+    98%{
+        transform:scale(1.1) translate(0,0);
+    }
+}
+
+@keyframes blob-right-bottom-anim{
+    0%{
+        transform:scale(1.1) translate(0,0);
+    }
+    33%{
+        transform:scale(0.9) translate(79px,0);
+    }
+    68%{
+        transform:scale(0.7) translate(79px,79px);
+    }
+    100%{
+        transform:scale(1.1) translate(0,0);
+    }
+}
+
+.blob {
+    position: absolute;
+    /*background: #e97b7a;*/
+    background: rgb(74,77,93);
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    left: 50%;
+    top: 50%;
+    width: 120px;
+    height: 120px;
+    line-height: 20px;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    font-family: Avenir, sans-serif;
+    border-radius: 100%;
+    margin-top: -50px;
+    margin-left: -50px;
+    animation: blob-left-top-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 4s infinite;
+}
+
+.blob:nth-child(2){
+     animation-name:blob-right-top-anim;
+}
+.blob:nth-child(3){
+     animation-name:blob-left-bottom-anim;
+}
+.blob:nth-child(4){
+     animation-name:blob-right-bottom-anim;
+}
+
+@keyframes blob-left-top-closing-anim{
+    0%{
+        transform:scale(0.9) translate(-79px,-79px);
+    }
+    50%{
+        transform:scale(1.1) translate(0,0);
+    }
+    94%{
+        transform:scale(0.01) translate(0,0);
+    }
+}
+@keyframes blob-right-top-closing-anim{
+    0%{
+        transform:scale(0.9) translate(79px,-79px);
+    }
+    50%{
+        transform:scale(1.1) translate(0,0);
+    }
+    94%{
+        transform:scale(0.01) translate(0,0);
+    }
+}
+@keyframes blob-left-bottom-closing-anim{
+    0%{
+        transform:scale(0.9) translate(-79px,79px);
+    }
+    50%{
+        transform:scale(1.1) translate(0,0);
+    }
+    94%{
+        transform:scale(0.01) translate(0,0);
+    }
+}
+@keyframes blob-right-bottom-closing-anim{
+    0%{
+        transform:scale(0.9) translate(79px,79px);
+    }
+    50%{
+        transform:scale(1.1) translate(0,0);
+    }
+    94%{
+        transform:scale(0.01) translate(0,0);
+    }
+}
+
+.blob.closing{
+    animation: blob-left-top-closing-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 2s 1;
+}
+.blob.closing:nth-child(2){
+    animation-name:blob-right-top-closing-anim;
+}
+.blob.closing:nth-child(3){
+    animation-name:blob-left-bottom-closing-anim;
+}
+.blob.closing:nth-child(4){
+    animation-name:blob-right-bottom-closing-anim;
+}
+
+
 /* iphone 6, 6s, 7, 8 */
 @media only screen and (min-device-width: 375px) and (max-device-height: 667px) and (-webkit-device-pixel-ratio: 2) {
     body {
