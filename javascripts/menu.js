@@ -604,11 +604,12 @@ function drawMenu(criteria) {
   d3.select(".blobs")
     .on("click", function() {
       d3.select(this).selectAll(".blob").classed("closing",true);
-      // should find an elegant way to listen to animation end
       var $this = this;
-      setTimeout(function() {
+
+      d3.select("#blobWithID").on("animationend", function() {
+        console.log("here here");
         d3.select($this).classed("hidden",true);
-      }, 1700);
+      })
     });
 
   /*

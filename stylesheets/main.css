@@ -1503,7 +1503,7 @@ body.dialog-on .mobile-menu-tab, body.dialog-on .mobile-menu-close {
     50%{
         transform:scale(1.1) translate(0,0);
     }
-    94%{
+    100%{
         transform:scale(0.01) translate(0,0);
     }
 }
@@ -1514,7 +1514,7 @@ body.dialog-on .mobile-menu-tab, body.dialog-on .mobile-menu-close {
     50%{
         transform:scale(1.1) translate(0,0);
     }
-    94%{
+    100%{
         transform:scale(0.01) translate(0,0);
     }
 }
@@ -1525,7 +1525,7 @@ body.dialog-on .mobile-menu-tab, body.dialog-on .mobile-menu-close {
     50%{
         transform:scale(1.1) translate(0,0);
     }
-    94%{
+    100%{
         transform:scale(0.01) translate(0,0);
     }
 }
@@ -1536,13 +1536,13 @@ body.dialog-on .mobile-menu-tab, body.dialog-on .mobile-menu-close {
     50%{
         transform:scale(1.1) translate(0,0);
     }
-    94%{
+    100%{
         transform:scale(0.01) translate(0,0);
     }
 }
 
 .blob.closing{
-    animation: blob-left-top-closing-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 2s 1;
+    animation: blob-left-top-closing-anim cubic-bezier(0.770, 0.000, 0.175, 1.000) 2s 1 forwards;
 }
 .blob.closing:nth-child(2){
     animation-name:blob-right-top-closing-anim;
