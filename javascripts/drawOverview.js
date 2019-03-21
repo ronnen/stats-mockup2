@@ -512,6 +512,7 @@ function drawOverview(mainUnits) {
     closeOpenFlowers();
 
     d.selected = true; // approver marked as selected
+    d.startApproverIndex = 0;
     simulation.stop();
     window.dispatchEvent(new CustomEvent("drawOverviewByCriteria", { detail : {selectedNode: this.parentNode} }));
 

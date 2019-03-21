@@ -142,6 +142,10 @@ var state = {
   RED_COLOR: "rgb(234,49,49)",
 
   ZOOM_LEVELS: 3,
+  MAX_APPROVERS: 10, // chunk size of how many approvers to show in an open flower
+
+  BY_VALUE: 1, // approvers sorted by value
+  BY_COUNT: 2, // approvers sorted by count of approvals
 
   common: {}, // common functions
   dataFunc: {}, // data manipulation functions
@@ -168,6 +172,20 @@ state.dataFunc.calculateTotalValues = function(originalData) {
       if (a.approverName < b.approverName) return 1;
       return 0;
     });
+
+    request.approversByValue = request.approvers.slice(0).sort(function(a,b) {
+      if (a.value < b.value) return 1;
+      if (a.value > b.value) return -1;
+      return 0;
+    });
+
+    request.approversByCount = request.approvers.slice(0).sort(function(a,b) {
+      if (a.count < b.count) return 1;
+      if (a.count > b.count) return -1;
+      return 0;
+    });
+
+    request.startApproverIndex = 0; // the current index of approver to show
 
     request.totalCount = stats[0];
     request.visibleValue = request.totalValue = stats[1];

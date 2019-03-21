@@ -24,7 +24,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
   // compute center and radius
   var outerRadius = Math.max(mainObject.outerRadius, zoomInDiameterFactor/2 * height);
-  const circleMarkersGap = (circleEndRadius - circleStartRadius) / (state.common.countNonHidden(mainObject.approvers) + 1);
+  const circleMarkersGap = (circleEndRadius - circleStartRadius) / (Math.min(state.common.countNonHidden(mainObject.approvers), state.MAX_APPROVERS) + 1);
 
   var colorGenerator = state.common.colorForWaitTime(mainObject.configLowWait, mainObject.configHighWait);
 
@@ -177,7 +177,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.select(".detailed-group .request-value")
         .text(state.common.typedValueToText(d.approver.value, mainObject.presentation));
       var approverPercent = (100*d.approver.value/mainObject.totalValue).toFixed(0) + "%"
-      d3.select(".detailed-group .request-percent").text(approverPercent);
+      d3.select(".detailed-group .detailed-request-percent").text(approverPercent);
 
       d3.select(".table-rows").classed("approver-highlight", true);
       d3.selectAll(".table-rows .data-row.r" + requestIndex + "a" + index).classed("highlight", true);
@@ -193,7 +193,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.selectAll(".average-guide").classed("highlight", false);
       d3.select(".detailed-group .request-value")
         .text(state.common.typedValueToText(mainObject.totalValue, mainObject.presentation));
-      d3.select(".detailed-group .request-percent").text("");
+      d3.select(".detailed-group .detailed-request-percent").text("");
 
       d3.select(".table-rows").classed("approver-highlight", false);
       d3.selectAll(".table-rows .data-row").classed("highlight", false);
@@ -250,7 +250,22 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   }
 
   // subUnits denote all the visible approvers
-  var subUnits = state.common.filterNonHidden(mainObject.approvers);
+  // TODO check for potential troubles
+  // var subUnits = state.common.filterNonHidden(mainObject.approvers);
+
+  var sortedApprovers;
+  switch (state.approversSortType) {
+    case state.BY_VALUE:
+      sortedApprovers = mainObject.approversByValue;
+      break;
+    case state.BY_COUNT:
+      sortedApprovers = mainObject.approversByCount;
+      break;
+    default:
+      sortedApprovers = mainObject.approvers;
+  }
+
+  var subUnits = sortedApprovers.slice(mainObject.startApproverIndex, mainObject.startApproverIndex + state.MAX_APPROVERS);
 
 /*
   var maxValue = d3.max(subUnits.map(function(v) {
@@ -629,13 +644,17 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   function drawCenterSphere() {
     // draws center darker sphere
 
-    detailedGroup
+    var centerSphere = detailedGroup
+      .append("svg:g")
+      .attr("class", "center-sphere");
+
+    centerSphere
       .append("circle")
       .attr("cx", 0)
       .attr("cy", 0)
       .attr("r", approverRadius * outerRadius)
       .attr("class", "center center-circle-background");
-    detailedGroup
+    centerSphere
       .append("text")
       .attr("class", "request-name")
       .attr("text-anchor", "middle")
@@ -643,7 +662,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .attr("y", 0)
       .attr("dy", -5)
       .text(mainObject.request);
-    detailedGroup
+    centerSphere
       .append("text")
       .attr("class", "request-value")
       .attr("text-anchor", "middle")
@@ -653,20 +672,94 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .text(function(d) {
         return state.common.typedValueToText(d.totalValue, d.presentation);
       });
-    detailedGroup
+    centerSphere
       .append("text")
-      .attr("class", "request-percent")
+      .attr("class", "detailed-request-percent")
       .attr("text-anchor", "middle")
       .attr("x", 0)
       .attr("y", 0)
       .attr("dy", "2.3em")
       .text("");
 
-/*
-    // to force refresh of percent
-    d3.select(".detailed-group").selectAll(".request-percent")
-      .data(ribbonData);
-*/
+    if (mainObject.approvers.length <= state.MAX_APPROVERS) {
+      return;
+    }
+
+    // background for the label
+    centerSphere
+      .append("svg:path")
+      .attr("id", "chunk-label")
+      // .attr("class", "approver-name-label-background background-stroke")
+      .attr("fill", "transparent")
+      .attr("stroke-width", 0)
+      .attr("d",  function(d) {
+        return state.common.arcSliceFull({
+          radius: approverRadius * outerRadius - 13,
+          to: state.common.toRadians(30),
+          from: state.common.toRadians(-90)
+        });
+      });
+
+    centerSphere
+      .append("text")
+      .attr("class", "approvers-chunk")
+      .attr("dy", 3)
+      .append("textPath") //append a textPath to the text element
+      .attr("xlink:href", "#chunk-label") //place the ID of the path here
+      .style("text-anchor","middle") //place the text halfway on the arc
+      .attr("startOffset", "24%")
+      .text(function(d) {
+        var start = mainObject.startApproverIndex + 1,
+          end = Math.min(mainObject.startApproverIndex + state.MAX_APPROVERS, mainObject.approvers.length);
+        return `Showing ${start}-${end}`;
+        // return `Showing 100-200`;
+      });
+
+    var nextChunkGroup = centerSphere
+      .append("svg:g")
+      .attr("transform", `rotate(185) translate(0,${approverRadius * outerRadius - 13})`);
+
+    nextChunkGroup
+      .append("circle")
+      .attr("cx", 0)
+      .attr("cy", 0)
+      .attr("r", 8)
+      .attr("class", "next-approvers-chunk")
+      .on("mousedown", function() {
+        d3.event.stopPropagation();
+        if (mainObject.startApproverIndex + state.MAX_APPROVERS < mainObject.approvers.length) {
+          mainObject.startApproverIndex += state.MAX_APPROVERS;
+          window.dispatchEvent(new CustomEvent("drawApproversChunk", { detail : {} }));
+        }
+      });
+
+    nextChunkGroup
+      .append("svg:path")
+      .attr("d", "M 3,5 L -5,0 L 3,-5 Z")
+      .attr("class", "next-prev-marker");
+
+    var prevChunkGroup = centerSphere
+      .append("svg:g")
+      .attr("transform", `rotate(110) translate(0,${approverRadius * outerRadius - 13})`);
+
+    prevChunkGroup
+      .append("circle")
+      .attr("cx", 0)
+      .attr("cy", 0)
+      .attr("r", 8)
+      .attr("class", "prev-approvers-chunk")
+      .on("mousedown", function() {
+        d3.event.stopPropagation();
+        if (mainObject.startApproverIndex > 0) {
+          mainObject.startApproverIndex -= state.MAX_APPROVERS;
+          window.dispatchEvent(new CustomEvent("drawApproversChunk", { detail : {} }));
+        }
+      });
+
+    prevChunkGroup
+      .append("svg:path")
+      .attr("d", "M -3,-5 L 5,0 L -3,5 Z")
+      .attr("class", "next-prev-marker");
 
   }
 
@@ -818,40 +911,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
   if (state.criteria.clusterLevel > 0) {
     d3.selectAll(".average-guide").raise();
-    d3.select(".detailed-group .center-circle-background").raise();
-    d3.select(".detailed-group .request-name").raise();
-    d3.select(".detailed-group .request-value").raise();
-    d3.select(".detailed-group .request-percent").raise();
+    d3.select(".detailed-group .center-sphere").raise();
   }
-
-  /*
-    drawZoomWidget(function() {
-      var zoomValueDiameterScale = d3.scaleLinear()
-        .domain([0, mainObject.zoomMaxValue])
-        .range([0, maxApprovalBubble * outerRadius * 2]);
-
-      releaseLockedState();
-
-      d3.selectAll(".detailed-group .zoom-sphere").remove();
-      d3.selectAll(".detailed-group .zoom-sphere-background").remove();
-      d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
-
-      d3.selectAll(".detailed-group .sphere").style("opacity", 0);
-      d3.selectAll(".detailed-group .bubble-guide").style("opacity", 0);
-
-      d3.select(".detailed-group").classed("zoom", true);
-      drawSpheresGuidelines(ZOOM_DATA, "zoom-");
-      drawSpheres(ZOOM_DATA, "zoom-", zoomValueDiameterScale);
-
-      d3.selectAll(".average-guide").raise();
-      d3.select(".detailed-group .center-circle-background").raise();
-      d3.select(".detailed-group .request-name").raise();
-      d3.select(".detailed-group .request-value").raise();
-      d3.select(".detailed-group .request-percent").raise();
-
-      refreshTable(mainUnits); // update rows with zoom bucket data
-    });
-  */
 
   if (state.firstTimeDrawDetailedView) {
     state.firstTimeDrawDetailedView = !state.firstTimeDrawDetailedView;

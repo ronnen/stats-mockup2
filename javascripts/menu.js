@@ -178,6 +178,31 @@ function drawMenu(criteria) {
     drawOverviewByCriteria(event.detail);
   }
 
+  // sort type filter
+
+  // initial state
+  state.approversSortType = state.BY_VALUE;
+  d3.select("#approver-sort-order .sort-toggle.sort-by-value").classed("on", true);
+
+  d3.selectAll("#approver-sort-order .sort-toggle")
+    .on("click", approversSortTypeClick);
+
+  function approversSortTypeClick() {
+    if (d3.select(this).classed("on")) return;
+
+    d3.selectAll("#approver-sort-order .sort-toggle").classed("on", false);
+    d3.select(this).classed("on", true);
+    if (d3.select(this).classed("sort-by-value"))
+      state.approversSortType = state.BY_VALUE;
+    else if (d3.select(this).classed("sort-by-count"))
+      state.approversSortType = state.BY_COUNT;
+
+    if (d3.select(".main-units.selected").size()) {
+      d3.select(".main-units.selected").datum().startApproverIndex = 0;
+      window.dispatchEvent(new CustomEvent("drawApproversChunk", { detail : {} }));
+    }
+  }
+
   // Table Toggle
 
   d3.select("#table-toggle-container .switch-container")
@@ -197,6 +222,14 @@ function drawMenu(criteria) {
   if (state.drawOverviewListener) window.removeEventListener("drawOverviewByCriteria" , state.drawOverviewListener);
   state.drawOverviewListener = drawOverviewByCriteriaHandler;
   window.addEventListener("drawOverviewByCriteria", state.drawOverviewListener);
+
+  if (state.drawApproversChunkListener) window.removeEventListener("drawApproversChunk", state.drawApproversChunkListener);
+  state.drawApproversChunkListener = function() {
+    var selectedNode = d3.select(".main-units.selected");
+    d3.selectAll('.detailed-group').remove();
+    drawDetailedView(selectedNode, state.overviewParams);
+  };
+  window.addEventListener("drawApproversChunk", state.drawApproversChunkListener);
 
   function drawDetailedViewByZoomLevel() {
     // state.noInteraction = false;
@@ -366,7 +399,6 @@ function drawMenu(criteria) {
       closedUnit.datum().selected = true;
       window.addEventListener("flowerOpenAtCenter", showLegend);
       window.dispatchEvent(new CustomEvent("drawOverviewByCriteria", { detail : {selectedNode: closedUnit.node()} }));
-      return;
     }
     else {
       showLegend();
