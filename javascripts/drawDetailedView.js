@@ -714,7 +714,6 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         var start = mainObject.startApproverIndex + 1,
           end = Math.min(mainObject.startApproverIndex + state.MAX_APPROVERS, mainObject.approvers.length);
         return `Showing ${start}-${end}`;
-        // return `Showing 100-200`;
       });
 
     var nextChunkGroup = centerSphere

@@ -175,6 +175,31 @@ function drawMenu(criteria) {
   }
 
   function drawOverviewByCriteriaHandler(event) {
+    // console.log("drawOverviewByCriteriaHandler");
+    if (event.detail.selectedNode) {
+      var selectedUnit = d3.select(event.detail.selectedNode).datum();
+      if (selectedUnit.selected) {
+        // set initial clustering if there are too many nodes
+        switch (state.approversSortType) {
+          case state.BY_VALUE:
+            if (selectedUnit.firstByValueChunkCount > 100) {
+              state.criteria.clusterLevel = 1;
+              clusterSlider.value(state.criteria.clusterLevel);
+              setClusterLabels();
+            }
+            break;
+          case state.BY_COUNT:
+            if (selectedUnit.firstByCountChunkCount > 100) {
+              state.criteria.clusterLevel = 1;
+              clusterSlider.value(state.criteria.clusterLevel);
+              setClusterLabels();
+            }
+            break;
+          default:
+
+        }
+      }
+    }
     drawOverviewByCriteria(event.detail);
   }
 

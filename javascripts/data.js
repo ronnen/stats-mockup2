@@ -178,12 +178,20 @@ state.dataFunc.calculateTotalValues = function(originalData) {
       if (a.value > b.value) return -1;
       return 0;
     });
+    request.firstByValueChunkCount = request.approversByValue.slice(0,Math.min(request.approversByValue.length, state.MAX_APPROVERS))
+      .reduce(function(c, approver) {
+        return c + approver.approvals.length;
+      }, 0);
 
     request.approversByCount = request.approvers.slice(0).sort(function(a,b) {
       if (a.count < b.count) return 1;
       if (a.count > b.count) return -1;
       return 0;
     });
+    request.firstByCountChunkCount = request.approversByCount.slice(0,Math.min(request.approversByCount.length, state.MAX_APPROVERS))
+      .reduce(function(c, approver) {
+        return c + approver.approvals.length;
+      }, 0);
 
     request.startApproverIndex = 0; // the current index of approver to show
 
