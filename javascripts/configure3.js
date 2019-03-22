@@ -98,16 +98,16 @@ function showConfigureView() {
     .attr("transform", `translate(${mainSVGRect.width/2},${mainSVGRect.height/2})`);
 
   var degressGenerator = d3.scaleLinear()
-    .domain([0,state.maxWait])
+    .domain([0,unitData.maxWait])
     .range([state.approvalsRadialStart,state.approvalsRadialEnd]);
 
   var colorGradientGrid = Array.from(new Array(100), (item, index) => index);
-  var highWaitRadiansStep = state.common.toRadians(degressGenerator(state.maxWait))/100;
+  var highWaitRadiansStep = state.common.toRadians(degressGenerator(unitData.maxWait))/100;
   var color = state.common.colorForWaitTime(unitData.configLowWait,unitData.configHighWait);
 
   var colorScale = d3.scaleLinear()
     .domain([0,99])
-    .range([0, state.maxWait]);
+    .range([0, unitData.maxWait]);
 
   // add path from 0 degrees to drag handle
   configureGroup
@@ -215,13 +215,13 @@ function showConfigureView() {
       .attr("transform", `rotate(${newAngleDeg})`);
 
     var bellCenter = degressGenerator.invert(newAngleDeg);
-    if (state.maxWait - bellCenter > bellCenter - state.minWait) {
+    if (unitData.maxWait - bellCenter > bellCenter - state.minWait) {
       d.configLowWait = state.minWait;
       d.configHighWait = bellCenter + (bellCenter - state.minWait);
     }
     else {
-      d.configLowWait = bellCenter - (state.maxWait - bellCenter);
-      d.configHighWait = state.maxWait;
+      d.configLowWait = bellCenter - (unitData.maxWait - bellCenter);
+      d.configHighWait = unitData.maxWait;
     }
 
     var color = state.common.colorForWaitTime(unitData.configLowWait,unitData.configHighWait);

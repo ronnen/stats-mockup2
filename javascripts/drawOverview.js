@@ -29,7 +29,6 @@ function drawOverview(mainUnits) {
         });
       });
     }));
-    // state.configHighWait = state.maxWait;
 
     state.minWait = d3.min(mainUnits.map(function(v) {
       return d3.min(v.approvers, function(approver) {
@@ -38,11 +37,12 @@ function drawOverview(mainUnits) {
         });
       });
     }));
-    // state.configLowWait = state.minWait;
 
     mainUnits.forEach(function(request) {
-      request.configLowWait = state.minWait;
-      request.configHighWait = state.maxWait;
+      // request.configLowWait = state.minWait;
+      // request.configHighWait = state.maxWait;
+      request.configLowWait = request.minWait;
+      request.configHighWait = request.maxWait;
     });
 
     state.maxValue = d3.max(mainUnits.map(function(v) {

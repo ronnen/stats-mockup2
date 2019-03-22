@@ -21,7 +21,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   }
 
   d3.select(unitNode).raise();
-
+  
   // compute center and radius
   var outerRadius = Math.max(mainObject.outerRadius, zoomInDiameterFactor/2 * height);
   const circleMarkersGap = (circleEndRadius - circleStartRadius) / (Math.min(state.common.countNonHidden(mainObject.approvers), state.MAX_APPROVERS) + 1);
@@ -273,10 +273,12 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   }));
 */
 
+  var densityFactor = mainObject.approvers.length > 5 ? 0.6 : 1;
+
   // values translated between 0 and diameter of
   var basicValueDiameterScale = d3.scaleLinear()
     .domain([0, mainObject.maxValue])
-    .range([0, maxApprovalBubble * outerRadius * 2]);
+    .range([0, densityFactor * maxApprovalBubble * outerRadius * 2]);
   const minimalBubbleSize = minApprovalBubble * outerRadius * 2;
 
   function drawAverageDelayMarkers() {
@@ -290,7 +292,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .attr("id", function(d,i) {return "average-guide" + i})
       .attr("transform", function (d) {
         var sampleDegrees = -180 + state.approvalsRadialStart +
-          (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.average / state.maxWait);
+          (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.average / mainObject.maxWait);
         // console.log("sampleDegrees " + sampleDegrees + " " + state.common.waitToText(d.average));
         d.flipText = (sampleDegrees > 0);
         return "rotate(" + sampleDegrees + ")";
@@ -386,7 +388,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         })
         .attr("transform", function (d) {
           var sampleDegrees = -180 + state.approvalsRadialStart +
-            (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / state.maxWait);
+            (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / mainObject.maxWait);
           return "rotate(" + sampleDegrees + ")";
         });
 
@@ -451,7 +453,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
       zoomValueDiameterScale = d3.scaleLinear()
         .domain([0, mainObject.zoomMaxValue])
-        .range([0, maxApprovalBubble * outerRadius * 2]);
+        .range([0, densityFactor * maxApprovalBubble * outerRadius * 2]);
 
     }
     else {
@@ -586,7 +588,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
           })
           .attr("transform", function (d) {
             var sampleDegrees = -180 + state.approvalsRadialStart +
-              (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / state.maxWait);
+              (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / mainObject.maxWait);
             return "rotate(" + sampleDegrees + ")";
           });
 
@@ -614,13 +616,13 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
           .attr("x", function (d) {
             // calculate absolute position based on radius and angle
             var radius = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap)
-            var angle = -90 + state.approvalsRadialStart + (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / state.maxWait);
+            var angle = -90 + state.approvalsRadialStart + (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / mainObject.maxWait);
             return Math.cos(state.common.toRadians(angle)) * radius;
           })
           .attr("y", function (d) {
             // calculate absolute position based on radius and angle
             var radius = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap)
-            var angle = -90 + state.approvalsRadialStart + (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / state.maxWait);
+            var angle = -90 + state.approvalsRadialStart + (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.waitTime / mainObject.maxWait);
             return Math.sin(state.common.toRadians(angle)) * radius;
           })
           .text(function (d) {
@@ -717,7 +719,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
     var nextChunkGroup = centerSphere
       .append("svg:g")
-      .attr("transform", `rotate(185) translate(0,${approverRadius * outerRadius - 13})`);
+      .attr("transform", `rotate(190) translate(0,${approverRadius * outerRadius - 13})`);
 
     nextChunkGroup
       .append("circle")
@@ -740,7 +742,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
     var prevChunkGroup = centerSphere
       .append("svg:g")
-      .attr("transform", `rotate(110) translate(0,${approverRadius * outerRadius - 13})`);
+      .attr("transform", `rotate(105) translate(0,${approverRadius * outerRadius - 13})`);
 
     prevChunkGroup
       .append("circle")
@@ -802,7 +804,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
     enteredRibbon.merge(ribbonSelection)
       .attr("stroke", function(d, i) {
-        return colorGenerator(i * state.maxWait / state.approvalsRadialEnd); // will generate red colors beyond range as necessary
+        return colorGenerator(i * mainObject.maxWait / state.approvalsRadialEnd); // will generate red colors beyond range as necessary
       });
   }
 

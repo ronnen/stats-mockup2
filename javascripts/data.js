@@ -195,6 +195,12 @@ state.dataFunc.calculateTotalValues = function(originalData) {
     request.maxValue = d3.max(state.common.filterNonHidden(request.approvers).map(function(v) {
       return d3.max(v.approvals, function(a) {return a.value})
     }));
+    request.maxWait = d3.max(request.approvers.map(function(v) {
+      return d3.max(v.approvals, function(a) {return a.waitTime})
+    }));
+    request.minWait = d3.min(request.approvers.map(function(v) {
+      return d3.min(v.approvals, function(a) {return a.waitTime})
+    }));
 
     request.selected = false; // for cases when a reset is required
     delete request.fx;
