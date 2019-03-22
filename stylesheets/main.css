@@ -1026,31 +1026,37 @@ body.debug .view-json {
 .caption-row .request, .data-row .request {
     display: flex;
     flex: 0 150px;
+    overflow: hidden;
 }
 
 .caption-row .time, .data-row .time {
     display: flex;
     flex: 0 150px;
+    overflow: hidden;
 }
 
 .caption-row .approver, .data-row .approver {
     display: flex;
     flex: 0 180px;
+    overflow: hidden;
 }
 
 .caption-row .submitter, .data-row .submitter {
     display: flex;
     flex: 0 200px;
+    overflow: hidden;
 }
 
 .caption-row .value, .data-row .value {
     display: flex;
     flex: 0 170px;
     padding-right: 30px;
+    overflow: hidden;
 }
 
 .data-row .value {
     justify-content: flex-end;
+    overflow: hidden;
 }
 
 .caption-row .table-wait-time, .data-row .table-wait-time {

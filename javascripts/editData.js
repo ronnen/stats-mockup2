@@ -20,12 +20,23 @@ function parseCSV(csvString) {
       .rangeRound([Date.now()-60*864e5, Date.now()-864e5]); // dates in the last 2 months or so
 */
 
+    var re = /,/gi;
+
     results.data.forEach(function(row) {
       var request = requests[row.request] = requests[row.request] || {};
       var approver = request[row.approver] = request[row.approver] || [];
+
+/*
+      if (row.value == "3380.08") {
+        console.log(row.value);
+      }
+*/
+
       approver.push({
         submitter: row.submitter,
-        value: parseFloat(row.value),
+        value: parseFloat(row.value.replace(re,"")),
+        reportedValue: parseFloat(row.reportedValue.replace(re,"")),
+        currency: row.currency,
         waitTime: parseFloat(row.waitTime),
         presentation: row.presentation,
         approverDept: row.approverDept,
@@ -72,7 +83,7 @@ function openEditDialog() {
   function flattenJSON(units) {
     var result =
       "# Enter CSV data with the following structure to replace the current view\n" +
-      "approverDept,approver,request,presentation,submitter,value,waitTime,time\n";
+      "approverDept,approver,request,presentation,submitter,value,reportedValue,currency,waitTime,time\n";
     units.forEach(function(unit) {
       unit.approvers.forEach(function(approver) {
         approver.approvals.forEach(function(approval) {
@@ -83,6 +94,8 @@ function openEditDialog() {
             "\"" + approval.presentation + "\"," +
             "\"" + approval.submitter + "\"," +
             approval.value + "," +
+            approval.reportedValue + "," +
+            "\"" + approval.currency + "\"," +
             approval.waitTime + "," +
             "\"" + state.common.valueToDate(approval.time) + "\"\n";
         });

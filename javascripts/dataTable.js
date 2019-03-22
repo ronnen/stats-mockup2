@@ -53,7 +53,7 @@ function refreshTable(mainUnits) {
       enteredDataRows
         .append("div")
         .attr("class", "value data")
-        .text(function(d) {return state.common.typedValueToTextShort(d.value, d.presentation)});
+        .text(function(d) {return state.common.typedValueToTextShort(d.reportedValue || d.value, d.presentation)});
       enteredDataRows
         .append("div")
         .attr("class", "table-wait-time data")

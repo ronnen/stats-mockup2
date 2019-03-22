@@ -22,6 +22,7 @@
 <script src="javascripts/dataTable.js"></script>
 <script src="javascripts/configure3.js"></script>
 <script src="javascripts/benchmark.js"></script>
+<script src="javascripts/ratesapi.js"></script>
 <script>
     var debugMode = false;
     const FADE_HIDDEN = true;
@@ -30,6 +31,8 @@
         debugMode = state.common.getUrlVars()["debug"];
         if (debugMode) d3.select("body").classed("debug", true);
         // console.log(parseInt(d3.select('.svg-container').style('height')));
+        refreshCurrencyRates();
+
         state.overviewParams = drawOverview(parseCSV(CSVData));
     });
 </script>
@@ -199,7 +202,7 @@
     <div class="submitter-content">
         <div class="submitter-name"></div>
         <div class="wait-time"></div>
-        <div class="misc">Prompt</div>
+        <div class="misc"></div>
     </div>
 </div>
 

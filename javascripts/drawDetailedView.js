@@ -538,6 +538,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
       d3.select(".submitter-content .submitter-name").text(d.submitter);
       d3.select(".submitter-content .wait-time").text("Waiting " + state.common.waitToText(d.waitTime));
+      d3.select(".submitter-content .misc").text(state.common.smartValueToText(d));
     }
 
     function drawBackgroundOrForeground(foreground) {

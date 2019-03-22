@@ -58,7 +58,7 @@ state.common.valueToDate = function(value) {
   return (new Date(value)).toLocaleDateString('en-US',{ year: 'numeric', month: 'short', day: 'numeric' });
 };
 
-state.common.valueToText = function(value) {
+state.common.valueToText = function(value, object) {
   var totalValueText;
   if (value > 1000000) {
     totalValueText = (value/1000000).toFixed(1) + "M";
@@ -67,9 +67,13 @@ state.common.valueToText = function(value) {
     totalValueText = (value/1000).toFixed(0) + "K";
   }
   else {
-    totalValueText = value.toFixed(0);
+    try {
+      totalValueText = value.toFixed(0);
+    } catch(e) {
+      console.log("error parsing value");
+    }
   }
-  
+
   return "$" + totalValueText;
 };
 
@@ -84,11 +88,27 @@ state.common.typedValueToText = function(value, type) {
   }
 };
 
-state.common.typedValueToTextShort = function(value, type) {
+state.common.typedValueToTextShort = function(value, type, object) {
   if (type == "currency")
-    return state.common.valueToText(value);
+    return state.common.valueToText(value, object);
   else
     return value;
+};
+
+state.common.smartValueToText = function(object) {
+  if (object.presentation == "currency") {
+    var str;
+    if (object.reportedValue !== undefined) {
+      str = new Intl.NumberFormat('us-US', { style: 'currency', currency: object.currency }).format(object.reportedValue);
+    }
+    else {
+      str = new Intl.NumberFormat('us-US', { style: 'currency', currency: 'USD' }).format(object.value);
+    }
+    return "Total Value: " + str;
+  }
+  else {
+    return "Total Value: " + object.value;
+  }
 };
 
 state.common.waitToText = function(value) {
