@@ -58,7 +58,7 @@ function refreshTable(mainUnits) {
         .append("div")
         .attr("class", "table-wait-time data")
         .text(function(d) {
-          return state.common.waitToText(d.waitTime)
+          return state.common.waitDaysHoursToText(d.waitTime)
         });
 
 

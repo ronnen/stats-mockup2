@@ -123,6 +123,11 @@ state.common.waitToText = function(value) {
   return waitText;
 };
 
+state.common.waitDaysHoursToText = function(value) {
+  var days = Math.floor(value/24), hours = Math.round(value%24);
+  return `${days}d:${hours}h`;
+};
+
 state.common.clusterLevelToText = function(value) {
   switch (value) {
     case 0:

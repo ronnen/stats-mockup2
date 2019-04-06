@@ -322,7 +322,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         return outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap);
       })
       .text(function (d) {
-        return state.common.waitToText(d.average);
+        return state.common.waitDaysHoursToText(d.average);
       })
       .attr("transform", function (d, index) {
         var radius = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap);
@@ -537,7 +537,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         .style("top", (rect.y + rect.height/2) + "px");
 
       d3.select(".submitter-content .submitter-name").text(d.submitter);
-      d3.select(".submitter-content .wait-time").text("Waiting " + state.common.waitToText(d.waitTime));
+      d3.select(".submitter-content .wait-time").text("Waiting " + state.common.waitDaysHoursToText(d.waitTime));
       d3.select(".submitter-content .misc").text(state.common.smartValueToText(d));
     }
 
