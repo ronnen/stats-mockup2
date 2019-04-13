@@ -227,6 +227,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
     }
   }
 
+
   function drawSpheres(dataToShow, classModifier) {
     var valueDiameterScale = basicValueDiameterScale;
     dataToShow = false;
