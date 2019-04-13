@@ -24,15 +24,15 @@ function refreshTable(mainUnits) {
   var selectedRequestIndex = mainUnits.findIndex(function(r) {return r.selected});
 
   mainUnits.forEach(function(request, requestIndex) {
-    request.approvers.forEach(function(approver, approverIndex) {
-      var dataRows = tableRows.selectAll(".data-row.r" + requestIndex + "a" + approverIndex)
+    request.approvers.forEach(function(approver/*, approverIndex*/) {
+      var dataRows = tableRows.selectAll(".data-row.r" + requestIndex + "a" + approver.approverIndex)
         .data(approver.approvals/*, function(d, i) {return [requestIndex, approverIndex, i]}*/);
 
       var enteredDataRows = dataRows
         .enter()
         .append("div")
-        .attr("id", function(d,i) {return "r" + requestIndex + "a" + approverIndex + "b" + i})  // r4a3b5 (request 4, approver 3, approval 5)
-        .attr("class", "data-row " + "r" + requestIndex + "a" + approverIndex); // r2a3 (request 2, approver 3)
+        .attr("id", function(d,i) {return "r" + requestIndex + "a" + approver.approverIndex + "b" + i})  // r4a3b5 (request 4, approver 3, approval 5)
+        .attr("class", "data-row " + "r" + requestIndex + "a" + approver.approverIndex); // r2a3 (request 2, approver 3)
 
       enteredDataRows
         .append("div")

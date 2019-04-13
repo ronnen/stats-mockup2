@@ -65,24 +65,6 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       releaseLockedState();
     }
 
-/*
-    d3.select(this).remove();
-    d3.selectAll(".main-units").classed("selected", false).each(function(d) {
-      d.selected = false;
-      d.fx = null;
-      d.fy = null;
-    });
-    d3.select(".submitterTooltip")
-      .style("display","none");
-    d3.select(".table-rows").classed("approval-highlight", false);
-    d3.selectAll(".table-rows .data-row").classed("highlight", false);
-
-    stopSimulation();
-    window.dispatchEvent(new CustomEvent("drawOverviewByCriteria", {
-      detail: {  }
-    }));
-*/
-
   }
 
   function drawCircularMarkers() {
@@ -148,7 +130,9 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .enter()
       .append("svg:g")
       .attr("class", "approver-group")
-      .attr("id", function(d,i) {return "a" + i})
+      .attr("id", function(d,i) {
+        return "a" + d.approver.approverIndex
+      })
       .on("mouseenter", approverMouseEnter)
       .on("mouseleave", approverMouseLeave);
 
@@ -166,7 +150,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         to: 2*Math.PI
       })});
 
-    function approverMouseEnter(d, index) {
+    function approverMouseEnter(d) {
+      var index = d.approver.approverIndex;
       d3.select(this).classed("highlight", true);
       d3.select(".detailed-group").classed("approver-highlight", true);
       d3.selectAll("g.sphere"+index).classed("highlight", true);
@@ -545,19 +530,21 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       // now drawing spheres
       subUnits.forEach(function (t, index) {
 
+        var approverIndex = (dataToShow == ZOOM_DATA) ? index : t.approverIndex;
+
         // var x = detailedGroup;
         var approvals = dataToShow == ZOOM_DATA ? t.zoomApprovals : t.approvals;
         var className = classModifier + (foreground ? "sphere" : "sphere-background");
         // due to general update pattern detailedGroup might be empty so selecting explicitly
-        var spheresSelection = d3.select(".detailed-group").selectAll("g." + className + index)
+        var spheresSelection = d3.select(".detailed-group").selectAll("g." + className + approverIndex)
           .data(state.common.filterNonHidden(approvals), function(d,i) {return i;});
 
         var spheres = spheresSelection
           .enter()
           .append("svg:g")
-          .attr("class", className + " " + className + index)
+          .attr("class", className + " " + className + approverIndex)
           .attr("id", function(d,i) {
-            return foreground ? ("a" + index + "b" + i) : null; // a [approver index] b [approval index]
+            return foreground ? ("a" + approverIndex + "b" + i) : null; // a [approver index] b [approval index]
           });
 
         // the first iteration will create an opaque background to hide background

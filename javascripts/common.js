@@ -143,6 +143,22 @@ state.common.clusterLevelToText = function(value) {
   }
 };
 
+state.common.sigmaToText = function(value, object) {
+  if (object && object.presentation == "currency") {
+    var str = new Intl.NumberFormat('us-US', { style: 'currency', currency: 'USD' }).format(value);
+    if (value > 10) {
+      str = str.replace(/\.[0-9]+$/, "");
+    }
+    return str;
+  }
+  else {
+    if (value > 10)
+      return value.toFixed(0);
+    else
+      return value.toFixed(2);
+  }
+};
+
 state.common.getTranslation = function(transform) {
   // Create a dummy g for calculation purposes only. This will never
   // be appended to the DOM and will be discarded once this function
@@ -186,6 +202,28 @@ state.common.colorForWaitTime = function(minWaitTime, maxWaitTime) {
 
   return function(waitTime) {
     var colorPoint = linearScale(waitTime);
+    if (colorPoint < 0) return state.GREEN_COLOR;
+    if (colorPoint >= 2) return state.RED_COLOR;
+
+    return ribbonInterpolate[Math.floor(colorPoint)](colorPoint % 1);
+  };
+};
+
+state.common.colorForSigma = function(sigmaRange) {
+  var linearScale = d3.scaleLinear()
+    .domain([0, sigmaRange])
+    .range([0, 2]);
+
+  // for better gradient I divide the spectrum to 3 sections of colors
+
+  var ribbonInterpolate = [
+    d3.interpolateHcl(state.GREEN_COLOR, "rgb(201,193,12)"),
+    d3.interpolateHcl("rgb(201,193,12)", state.RED_COLOR),
+    d3.interpolateHcl(state.RED_COLOR, "rgb(184,17,24)")
+  ];
+
+  return function(sigma) {
+    var colorPoint = linearScale(sigma);
     if (colorPoint < 0) return state.GREEN_COLOR;
     if (colorPoint >= 2) return state.RED_COLOR;
 

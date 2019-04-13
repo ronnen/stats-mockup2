@@ -574,11 +574,11 @@ body.fixed {
 }
 
 /* sort menu */
-.stats-filter.approvers-sort-order {
+.stats-filter.small-toggles-container {
     height: 80px;
 }
 
-.approvers-sort-order .toggles {
+.small-toggles-container .toggles {
     display: flex;
     height: 20px;
     justify-content: space-around;
@@ -586,24 +586,24 @@ body.fixed {
     top: 20px;
 }
 
-.approvers-sort-order .toggles .sort-toggle {
+.small-toggles-container .toggles .sort-toggle {
     display: flex;
     justify-content: center;
     cursor: pointer;
 }
 
-.approvers-sort-order .toggles .sort-toggle .sort-bubble {
+.small-toggles-container .toggles .sort-toggle .sort-bubble {
     height: 15px;
     width: 15px;
     border-radius: 7px;
     background: rgb(137,139,149);
 }
 
-.approvers-sort-order .toggles .sort-toggle.on .sort-bubble {
+.small-toggles-container .toggles .sort-toggle.on .sort-bubble {
     background: rgb(143,158,239);
 }
 
-.approvers-sort-order .toggles .sort-toggle .sort-label {
+.small-toggles-container .toggles .sort-toggle .sort-label {
     margin-right: 5px;
     color: #a0a0a0;
 }
@@ -1976,4 +1976,18 @@ body.dialog-on .mobile-menu-tab, body.dialog-on .mobile-menu-close {
         margin-right: 5px;
     }
 
+}
+
+.sigma-slice-label {
+    font-family: Verdana, sans-serif;
+    font-size: 12px;
+    stroke: transparent;
+    fill: white;
+}
+
+#anomalies-view .filter-header {
+    margin-bottom: 20px;
+}
+#value-anomaly .stats-filter-title {
+    color: #a0a0a0;
 }

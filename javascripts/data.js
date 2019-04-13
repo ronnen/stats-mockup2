@@ -95,7 +95,7 @@ Finance,Stacy Hoolahan,Purchase,currency,Julian Morelli,28491.96,28491.96,USD,52
 Finance,Stacy Hoolahan,Purchase,currency,Reto Wettstein,146398.98,146398.98,USD,52.46,"Dec 3, 2018"\n\
 Finance,Stacy Hoolahan,Purchase,currency,Hector Gallo De Diego,200419.15,200419.15,USD,55.42,"Nov 14, 2018"\n\
 Finance,Stacy Hoolahan,Purchase,currency,Sharansh Srivastava,263631.13,263631.13,USD,61.14,"Dec 16, 2018"\n\
-Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,202030.27,202030.27,USD,65.03,"Nov 6, 2018"\n\
+Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,472030.27,472030.27,USD,65.03,"Nov 6, 2018"\n\
 Finance,Stacy Hoolahan,Purchase,currency,Germano Bertoldo,99097.11,99097.11,USD,70.12,"Oct 29, 2018"\n\
 Finance,Stacy Hoolahan,Purchase,currency,Kumaresan MS,45194.44,45194.44,USD,74.09,"Nov 15, 2018"\n\
 Finance,Stacy Hoolahan,Purchase,currency,Fernando Tezanos Pinto,189659.04,189659.04,USD,77.17,"Nov 13, 2018"\n\
@@ -110,7 +110,7 @@ Finance,Stacy Hoolahan,Purchase,currency,Salvador Espino,180350.75,180350.75,USD
 Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,132966.74,132966.74,USD,116.11,"Oct 27, 2018"\n\
 Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,96810.51,96810.51,USD,116.45,"Dec 12, 2018"\n\
 Finance,Stacy Hoolahan,Purchase,currency,TopApp Regression1,109088.45,109088.45,USD,119.05,"Oct 31, 2018"\n\
-Finance,Stacy Hoolahan,Purchase,currency,Willem Geyer,233392.06,233392.06,USD,126.3,"Nov 5, 2018"\n\
+Finance,Chris McCoy,Purchase,currency,Willem Geyer,357392.06,357392.06,USD,126.3,"Nov 5, 2018"\n\
 Finance,Stacy Hoolahan,Purchase,currency,Mary Bowler,168423.24,168423.24,USD,130.4,"Dec 12, 2018"\n\
 Finance,Stacy Hoolahan,Purchase,currency,Mitja Lavri,49027,49027,USD,137.35,"Dec 17, 2018"\n\
 Finance,Stacy Hoolahan,Purchase,currency,Juan Perena,251263.58,251263.58,USD,148.21,"Dec 12, 2018"\n\
@@ -158,8 +158,10 @@ var state = {
   ZOOM_LEVELS: 3,
   MAX_APPROVERS: 10, // chunk size of how many approvers to show in an open flower
 
-  BY_VALUE: 1, // approvers sorted by value
+  BY_VALUE: 1, // approvers sorted by value / or anomaly view by value
   BY_COUNT: 2, // approvers sorted by count of approvals
+
+  BY_TIME: 5, // anomaly view by time
 
   common: {}, // common functions
   dataFunc: {}, // data manipulation functions
@@ -168,9 +170,11 @@ var state = {
 
 state.dataFunc.calculateTotalValues = function(originalData) {
   originalData.forEach(function(request) {
-    var stats = request.approvers.reduce(function(c, approver) {
+    var stats = request.approvers.reduce(function(c, approver, approverIndex) {
+      approver.approverIndex = approverIndex; // sticky index to sustain sorting
       // [count, value, waitTime]
       var reduced = approver.approvals.reduce(function(c, approval) {
+        approval.approverIndex = approverIndex;
           return [c[0] + 1, c[1] + approval.value, c[2] + approval.waitTime];
         }, [0, 0, 0]);
 
@@ -321,5 +325,39 @@ state.dataFunc.zoomLevel = function(request, level) {
 
 };
 
+state.dataFunc.sigma = function(request) {
+  if (request.totalCount <= 0) {
+    console.error("sigma: totalCount error " + request.totalCount);
+    return;
+  }
+  request.meanValue = request.totalValue/request.totalCount;
 
+  var sumSqrs = request.approvers.reduce(function(c, approver) {
+    var reduced = approver.approvals.reduce(function(c, approval) {
+      return c + Math.pow(approval.value - request.meanValue, 2);
+    }, 0);
+
+    return c + reduced;
+  }, 0);
+
+  request.sigma = Math.sqrt(sumSqrs/request.totalCount);
+  request.maxAbsoluteDev = 0;
+  request.above3sigma = 0;
+  var sigmaX3 = 3*request.sigma;
+
+  request.approvers.forEach((approver, approverIndex) => {
+
+    approver.approvals.forEach(approval => {
+
+      approval.sigmaDev = approval.value - request.meanValue;
+      if (Math.abs(approval.sigmaDev) > request.maxAbsoluteDev) {
+        request.maxAbsoluteDev = Math.abs(approval.sigmaDev);
+      }
+      if (Math.abs(approval.sigmaDev) > sigmaX3) {
+        request.above3sigma ++;
+      }
+    });
+  });
+
+};
 

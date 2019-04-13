@@ -17,6 +17,7 @@
 <!--script src="javascripts/drawZoomWidget.js"></script-->
 <script src="javascripts/drawOverview.js"></script>
 <script src="javascripts/drawDetailedView.js"></script>
+<script src="javascripts/drawValueAnomaliesView.js"></script>
 <script src="javascripts/menu.js"></script>
 <script src="javascripts/editData.js"></script>
 <script src="javascripts/dataTable.js"></script>
@@ -136,7 +137,7 @@
                 <div class="label-right">Clustered</div>
             </div>
         </div>
-        <div id="approver-sort-order" class="stats-filter approvers-sort-order">
+        <div id="approver-sort-order" class="stats-filter small-toggles-container approvers-sort-order">
             <div class="filter-header">
                 <div class="stats-filter-title">Approvers Sort Order</div>
             </div>
@@ -148,6 +149,17 @@
                 <div class="sort-toggle sort-by-count">
                     <div class="sort-label">COUNT</div>
                     <div class="sort-bubble"></div>
+                </div>
+            </div>
+        </div>
+        <div id="anomalies-view" class="stats-filter small-toggles-container anomalies-view">
+            <div class="filter-header">
+                <div class="stats-filter-title">Anomalies Detection</div>
+            </div>
+            <div id="value-anomaly" class="type-filter">
+                <div class="stats-filter-title">VALUE ANOMALY</div>
+                <div class="switch-container">
+                    <div class="switch-handle"></div>
                 </div>
             </div>
         </div>

@@ -11,6 +11,7 @@ function drawMenu(criteria) {
   var timeFilterState = true;
   var waitFilterState = true;
   var clusterFilterState = true;
+  var valueAnomalyState = false;
 
   function setTimeRangeLabels() {
     d3.select("#time-range-filter .label-left").text(!timeFilterState ? "START DATE" : state.common.valueToDate(timeRangeMin));
@@ -31,6 +32,12 @@ function drawMenu(criteria) {
     d3.select("#cluster-filter .label-left").text(!clusterFilterState ? "GRANULAR" : "");
     d3.select("#cluster-filter .label-right").text(!clusterFilterState ? "CLUSTERED" : "");
     d3.select("#cluster-filter .label-middle").text(!clusterFilterState ? "" : state.common.clusterLevelToText(clusterLevel));
+    if (clusterFilterState && clusterLevel > 0 && valueAnomalyState) {
+      // reset anomaly state -> cannot go together
+      valueAnomalyState = false;
+      d3.select("#value-anomaly").classed("on", valueAnomalyState);
+      d3.selectAll('.detailed-group').remove();
+    }
   }
 
   setTimeRangeLabels();
@@ -228,6 +235,24 @@ function drawMenu(criteria) {
     }
   }
 
+  // anomalies view
+  d3.select("#value-anomaly").classed("on", valueAnomalyState);
+
+  d3.select("#value-anomaly .switch-container")
+    .on("click", valueAnomalyClick);
+
+  function valueAnomalyClick() {
+    d3.select("#value-anomaly").classed("on", !valueAnomalyState);
+    valueAnomalyState = !valueAnomalyState;
+    if (valueAnomalyState) {
+      // cannot coexist with clustering
+      state.criteria.clusterLevel = 0;
+      clusterSlider.value(state.criteria.clusterLevel);
+      setClusterLabels();
+    }
+    drawOverviewByCriteria();
+  }
+
   // Table Toggle
 
   d3.select("#table-toggle-container .switch-container")
@@ -248,6 +273,7 @@ function drawMenu(criteria) {
   state.drawOverviewListener = drawOverviewByCriteriaHandler;
   window.addEventListener("drawOverviewByCriteria", state.drawOverviewListener);
 
+  // drawApproversChunk handler
   if (state.drawApproversChunkListener) window.removeEventListener("drawApproversChunk", state.drawApproversChunkListener);
   state.drawApproversChunkListener = function() {
     var selectedNode = d3.select(".main-units.selected");
@@ -332,7 +358,15 @@ function drawMenu(criteria) {
       var currentClusterValue = clusterSlider.value();
       if (currentClusterValue > 0) state.dataFunc.zoomLevel(selectedNode.datum(), currentClusterValue); // will refresh the bucketed data (hidden spheres) based on new criteria
 
-      if (selectedNode.size()) drawDetailedView(selectedNode, state.overviewParams);
+      if (selectedNode.size()) {
+        d3.selectAll('.detailed-group').remove();
+        if (valueAnomalyState) {
+          drawValueAnomaliesView(selectedNode, state.overviewParams);
+        }
+        else {
+          drawDetailedView(selectedNode, state.overviewParams);
+        }
+      }
       state.overviewParams.centerSelected();
 
       if (state.tableToggleState) {
