@@ -123,6 +123,13 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
 
   }
 
+  const SliceBackgroundColor = [
+    '#00634480',
+    '#B6C61A80',
+    '#D8A80080',
+    '#BD3B1B80'
+  ];
+
   function drawSigmaSlices() {
     var sliceCount = mainObject.sigma <= 0 ? 1 : Math.ceil(mainObject.maxAbsoluteDev / mainObject.sigma);
     var sliceDegrees = (state.approvalsRadialEnd - state.approvalsRadialStart)/sliceCount;
@@ -138,7 +145,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
       .enter()
       .append("svg:path")
       .attr("class", "sigma-slice")
-      .attr("fill", function(d) {return d%2 ? "#d8d8d8" : "#c8c8c8"})
+      .attr("fill", function(d,i) {return SliceBackgroundColor[Math.min(i,SliceBackgroundColor.length-1)]})
       .attr("stroke-width", 0)
       .attr("d",  function(d) {
         var arc = d3.arc()
