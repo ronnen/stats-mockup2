@@ -27,6 +27,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
   if (mainObject.sigma === undefined) state.dataFunc.sigma(mainObject);
 
   var sigmaRange = mainObject.sigma <= 0 ? 1 : Math.ceil(mainObject.maxAbsoluteDev / mainObject.sigma) * mainObject.sigma;
+  // var sigmaRange = mainObject.sigma <= 0 ? 1 : Math.ceil(Math.min(mainObject.maxAbsoluteDev / mainObject.sigma,4)) * mainObject.sigma;
 
   var colorGenerator = state.common.colorForSigma(sigmaRange);
 
@@ -43,7 +44,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
     .enter();
 
   detailedGroup = detailedGroup.append("svg:g")
-    .attr("class", "detailed-group")
+    .attr("class", "detailed-group value-anomaly")
     .on("click", handleFlowerClick)
     .on("mouseleave", approvalMouseLeave);
 
@@ -121,6 +122,70 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
       .attr("startOffset", "24%")
       .text(circularMarkerLabel);
 
+    // approvers' circular markers (approval labels)
+
+    var circularGroups = detailedGroup.selectAll("g.approver-group")
+      .data(subUnits.map(function(d, i) {
+        var radius = outerRadius * (circleStartRadius + (i+1)*circleMarkersGap);
+        return {
+          approver: d,
+          radius: radius
+        };
+      }))
+      .enter()
+      .append("svg:g")
+      .attr("class", "approver-group")
+      .attr("id", function(d,i) {
+        return "a" + d.approver.approverIndex
+      });
+
+    circularGroups
+      .append("svg:path")
+      .attr("class", "circular-marker")
+      .attr("fill", "transparent")
+      .attr("stroke-width", function(d) {
+        return 1;
+      })
+      .attr("stroke-linejoin", "round")
+      .attr("d", function(d) {return state.common.arcSliceFull({
+        radius: d.radius,
+        from: 0,
+        to: 2*Math.PI
+      })});
+
+    // background for the label
+    circularGroups
+      .append("svg:path")
+      .attr("id", function(d, i) {
+        return "approverID" + i;
+      })
+      .attr("class", "approver-name-label-background background-stroke")
+      .attr("fill", "transparent")
+      .attr("stroke-width", 1)
+      .attr("d",  function(d) {
+        var gap = estimateAngleGapForText(d.radius, d.approver.approverName);
+        return state.common.arcSliceFull({
+          radius: d.radius,
+          to: state.common.toRadians(-30) + gap/2,
+          from: state.common.toRadians(-30) - gap/2
+        });
+      });
+
+    circularGroups
+      .append("text")
+      .attr("class", "approver-name-label")
+      .attr("dy", 3)
+      .append("textPath") //append a textPath to the text element
+      .attr("xlink:href", function(d,i) {
+        return "#approverID" + i
+      }) //place the ID of the path here
+      .style("text-anchor","middle") //place the text halfway on the arc
+      // .attr("startOffset", "79%") // this will show the invert text
+      .attr("startOffset", "24%")
+      .text(function(d) {
+        return d.approver.approverName;
+      });
+
   }
 
   const SliceBackgroundColor = [
@@ -130,15 +195,15 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
     '#BD3B1B80'
   ];
 
-  function drawSigmaSlices() {
-    var sliceCount = mainObject.sigma <= 0 ? 1 : Math.ceil(mainObject.maxAbsoluteDev / mainObject.sigma);
-    var sliceDegrees = (state.approvalsRadialEnd - state.approvalsRadialStart)/sliceCount;
+  var sliceCount = mainObject.sigma <= 0 ? 1 : Math.ceil(mainObject.maxAbsoluteDev / mainObject.sigma);
+  var sliceDegrees = (state.approvalsRadialEnd - state.approvalsRadialStart)/sliceCount;
 
-    var sliceArr = [];
-    for (var i=0;i<sliceCount;i++) {
-      sliceArr[i] = i;
-    }
+  var sliceArr = [];
+  for (var i=0;i<sliceCount;i++) {
+    sliceArr[i] = i;
+  }
 
+  function drawSigmaSlicesOuter() {
     detailedGroup
       .selectAll(".sigma-slice")
       .data(sliceArr)
@@ -156,6 +221,9 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
         return arc();
       });
 
+  }
+
+  function drawSigmaSlicesInner() {
     detailedGroup
       .selectAll(".sigma-slice-label-bg")
       .data(sliceArr)
@@ -213,6 +281,64 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
   const minimalBubbleSize = minApprovalBubble * outerRadius * 2;
 
   // TODO some code repeat itself from drawDetailedView - need to optimize
+
+  function drawSpheresGuidelines(dataToShow, classModifier) {
+    dataToShow = false;
+    classModifier = "";
+
+    subUnits.forEach(function (t, index) {
+      var approverIndex = (dataToShow == ZOOM_DATA) ? index : t.approverIndex;
+
+      var approvals = dataToShow == ZOOM_DATA ? t.zoomApprovals : t.approvals;
+      var className = classModifier + "bubble-guide";
+
+      var localGroup = d3.select(".detailed-group").selectAll("line." + className + approverIndex)
+        .data(state.common.filterNonHidden(approvals, true), function(d,i) {return i;});
+
+      var enteredGroup = localGroup
+        .enter()
+        // .insert("svg:line", ".ribbon-group")
+        .append("svg:line")
+        .style("opacity", 0)
+        .attr("class", function(d) {return className + " " + className + approverIndex + (d.hidden ? " hidden" : "")})
+        .attr("id", function(d,i) {
+          return "a" + approverIndex + "g" + i; // a [approver index] g [approval index]
+        })
+        .attr("fill", "transparent")
+        // .attr("stroke", "black")
+        .attr("stroke", function (d) {
+          return colorGenerator(Math.abs(d.sigmaDev));
+        })
+        .attr("stroke-width", 1)
+        .attr("x1", 0)
+        .attr("y1", 0)
+        .attr("x2", 0)
+        .attr("y2", function (d) {
+          return outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap)
+        })
+        .attr("transform", function (d) {
+          var sampleDegrees = -180 + state.approvalsRadialStart +
+            (state.approvalsRadialEnd - state.approvalsRadialStart) * (Math.abs(d.sigmaDev) / sigmaRange);
+          return "rotate(" + sampleDegrees + ")";
+        });
+
+      enteredGroup
+        .transition()
+        .duration(150)
+        .style("opacity", 1)
+        .on("end", () => {
+          enteredGroup.style("opacity", null);
+        });
+
+      enteredGroup
+        .merge(localGroup)
+        .classed("hidden", function(d) {return d.hidden;})
+        .attr("stroke", function (d) {
+          return colorGenerator(Math.abs(d.sigmaDev));
+        })
+    });
+  }
+
   function releaseLockedState() {
     d3.selectAll(".approval-halo").remove();
     d3.selectAll(".detailed-group .sphere, .detailed-group .zoom-sphere").classed("locked", false);
@@ -225,7 +351,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
       .style("display","none");
     d3.selectAll(".sphere").classed("highlight", false);
     d3.selectAll(".bubble-guide").classed("highlight", false);
-    // d3.selectAll(".approver-group").classed("highlight", false);
+    d3.selectAll(".approver-group").classed("highlight", false);
     d3.select(".detailed-group").classed("approval-highlight", false);
 
     if (!d3.select(".detailed-group").classed("locked")) {
@@ -458,7 +584,9 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
 
   drawMainCircularShape();
   drawCircularMarkers();
-  drawSigmaSlices();
+  drawSigmaSlicesOuter();
+  drawSpheresGuidelines();
+  drawSigmaSlicesInner();
   drawSpheres();
   drawCenterSphere();
 

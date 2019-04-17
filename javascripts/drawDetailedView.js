@@ -345,19 +345,21 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
     // first drawing guide lines
     subUnits.forEach(function (t, index) {
+      var approverIndex = (dataToShow == ZOOM_DATA) ? index : t.approverIndex;
+
       var approvals = dataToShow == ZOOM_DATA ? t.zoomApprovals : t.approvals;
       var className = classModifier + "bubble-guide";
 
-      var localGroup = d3.select(".detailed-group").selectAll("line." + className + index)
+      var localGroup = d3.select(".detailed-group").selectAll("line." + className + approverIndex)
         .data(state.common.filterNonHidden(approvals), function(d,i) {return i;});
 
       var enteredGroup = localGroup
         .enter()
         .insert("svg:line", ".ribbon-group")
         .style("opacity", 0)
-        .attr("class", function(d) {return className + " " + className + index + (d.hidden ? " hidden" : "")})
+        .attr("class", function(d) {return className + " " + className + approverIndex + (d.hidden ? " hidden" : "")})
         .attr("id", function(d,i) {
-          return "a" + index + "g" + i; // a [approver index] g [approval index]
+          return "a" + approverIndex + "g" + i; // a [approver index] g [approval index]
         })
         .attr("fill", "transparent")
         // .attr("stroke", "black")

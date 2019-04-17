@@ -33,6 +33,7 @@ function parseCSV(csvString) {
 */
 
       approver.push({
+        approvalId: row.approvalId,
         submitter: row.submitter,
         value: parseFloat(row.value.replace(re,"")),
         reportedValue: parseFloat(row.reportedValue.replace(re,"")),
@@ -40,7 +41,12 @@ function parseCSV(csvString) {
         waitTime: parseFloat(row.waitTime),
         presentation: row.presentation,
         approverDept: row.approverDept,
-        time: (new Date(row.time)).getTime()
+        time: (new Date(row.time)).getTime(),
+        itemCategory: row.itemCategory,
+        itemIndex: row.itemIndex,
+        itemValue: row.itemValue,
+        itemCurrency: row.itemCurrency,
+        itemValueUSD: row.itemValueUSD
         // time: timeGenerator(Math.random())
       });
     });
@@ -83,11 +89,12 @@ function openEditDialog() {
   function flattenJSON(units) {
     var result =
       "# Enter CSV data with the following structure to replace the current view\n" +
-      "approverDept,approver,request,presentation,submitter,value,reportedValue,currency,waitTime,time\n";
+      "approvalId,approverDept,approver,request,presentation,submitter,value,reportedValue,currency,waitTime,time,itemCategory,itemIndex,itemValue,itemCurrency,itemValueUSD\n";
     units.forEach(function(unit) {
       unit.approvers.forEach(function(approver) {
         approver.approvals.forEach(function(approval) {
           result +=
+            "\"" + approval.approvalId + "\"," +
             "\"" + approval.approverDept + "\"," +
             "\"" + approver.approverName + "\"," +
             "\"" + unit.request + "\"," +
@@ -97,7 +104,12 @@ function openEditDialog() {
             approval.reportedValue + "," +
             "\"" + approval.currency + "\"," +
             approval.waitTime + "," +
-            "\"" + state.common.valueToDate(approval.time) + "\"\n";
+            "\"" + state.common.valueToDate(approval.time) + "\"," +
+            "\"" + approval.itemCategory + "\"," +
+            "\"" + approval.itemIndex + "\"," +
+            approval.itemValue + "," +
+            "\"" + approval.itemCurrency + "\"," +
+            approval.itemValueUSD + "\n";
         });
       });
     });

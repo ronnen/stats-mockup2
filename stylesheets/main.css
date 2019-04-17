@@ -29,6 +29,7 @@ body.fixed {
 
 .background-stroke {
     stroke: rgb(233,233,234);
+    stroke-width: 3;
 }
 
 .center-circle-background {
@@ -273,6 +274,22 @@ body.fixed {
     font-weight: 800;
     fill: #fffff;
     stroke: transparent;
+}
+
+/* value anomaly rules */
+.detailed-group.value-anomaly .approver-group .circular-marker {
+    stroke: transparent;
+}
+.detailed-group.value-anomaly .approver-group.highlight .circular-marker {
+    stroke: #555555;
+}
+
+.detailed-group.value-anomaly .approver-group .approver-name-label {
+    stroke: transparent;
+    fill: transparent;
+}
+.detailed-group.value-anomaly .approver-group.highlight .approver-name-label {
+    fill: #555555;
 }
 
 .mainObjectLegend, .bigDiameterLegend, .smallDiameterLegend {
