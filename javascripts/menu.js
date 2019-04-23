@@ -31,13 +31,7 @@ function drawMenu(criteria) {
   function setClusterLabels() {
     d3.select("#cluster-filter .label-left").text(!clusterFilterState ? "GRANULAR" : "");
     d3.select("#cluster-filter .label-right").text(!clusterFilterState ? "CLUSTERED" : "");
-    d3.select("#cluster-filter .label-middle").text(!clusterFilterState ? "" : state.common.clusterLevelToText(clusterLevel));
-    if (clusterFilterState && clusterLevel > 0 && valueAnomalyState) {
-      // reset anomaly state -> cannot go together
-      valueAnomalyState = false;
-      d3.select("#value-anomaly").classed("on", valueAnomalyState);
-      d3.selectAll('.detailed-group').remove();
-    }
+    d3.select("#cluster-filter .label-middle").text(!clusterFilterState ? "" : state.common.clusterLevelToText(clusterLevel, valueAnomalyState));
   }
 
   setTimeRangeLabels();
@@ -162,7 +156,7 @@ function drawMenu(criteria) {
     .on('onchange', val => {
       state.criteria.clusterLevel = clusterLevel = val;
       setClusterLabels();
-      drawDetailedViewByZoomLevel();
+      valueAnomalyState ? drawValueAnomaliesViewByZoomLevel() : drawDetailedViewByZoomLevel();
     });
 
   d3.select("#cluster-filter .stats-slider .slider-container")
@@ -248,8 +242,8 @@ function drawMenu(criteria) {
       // cannot coexist with clustering
       state.criteria.clusterLevel = 0;
       clusterSlider.value(state.criteria.clusterLevel);
-      setClusterLabels();
     }
+    setClusterLabels();
     drawOverviewByCriteria();
   }
 
@@ -281,6 +275,15 @@ function drawMenu(criteria) {
     drawDetailedView(selectedNode, state.overviewParams);
   };
   window.addEventListener("drawApproversChunk", state.drawApproversChunkListener);
+
+  // drawCategoriesChunk handler
+  if (state.drawCategoriesChunkListener) window.removeEventListener("drawCategoriesChunk", state.drawCategoriesChunkListener);
+  state.drawCategoriesChunkListener = function() {
+    var selectedNode = d3.select(".main-units.selected");
+    d3.selectAll('.detailed-group').remove();
+    drawValueAnomaliesView(selectedNode, state.overviewParams);
+  };
+  window.addEventListener("drawCategoriesChunk", state.drawCategoriesChunkListener);
 
   function drawDetailedViewByZoomLevel() {
     // state.noInteraction = false;
@@ -315,6 +318,39 @@ function drawMenu(criteria) {
 
   }
 
+  function drawValueAnomaliesViewByZoomLevel() {
+    // state.noInteraction = false;
+
+    var currentClusterValue = clusterSlider.value();
+
+    if (d3.select(".main-units.selected").size()) {
+      state.overviewParams = drawOverview(mainUnits);
+      var selectedNode = d3.select(".main-units.selected");
+      if (!selectedNode.size()) return;
+
+      state.dataFunc.anomaliesZoomLevel(selectedNode.datum(), currentClusterValue); // will create the necessary bucketed data
+
+      // consider moving to drawDetailedView
+      d3.selectAll(".detailed-group .zoom-sphere").remove();
+      d3.selectAll(".detailed-group .zoom-sphere-background").remove();
+      d3.selectAll(".detailed-group .zoom-bubble-guide").remove();
+
+      if (currentClusterValue > 0) {
+        d3.selectAll(".detailed-group .sphere").style("opacity", 0);
+        d3.selectAll(".detailed-group .bubble-guide").style("opacity", 0);
+
+        d3.select(".detailed-group").classed("zoom", true);
+      }
+
+      drawValueAnomaliesView(selectedNode, state.overviewParams);
+
+      if (currentClusterValue > 0) {
+        refreshTable(mainUnits); // update rows with zoom bucket data
+      }
+    }
+
+  }
+
   function drawOverviewByCriteria(params) {
     // state.noInteraction = false;
 
@@ -325,7 +361,6 @@ function drawMenu(criteria) {
     var currentAmountRange = amountSlider.range();
     var currentWaitRange = waitSlider.range();
 
-    d3.select("svg .zoom-widget-group").remove();
     window.dispatchEvent(new CustomEvent("endConfigureState", { detail : {} }));
     window.dispatchEvent(new CustomEvent("setNonZoomState", {detail: {}}));
 

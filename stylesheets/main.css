@@ -106,7 +106,7 @@ body.fixed {
     user-select: none;
 }
 
-.approval-type-label, .approver-name-label {
+.approval-type-label, .approver-name-label, .category-name-label {
     font-size: 12px;
     font-family: Avenir, sans-serif;
     fill: rgb(91,95,123);
@@ -114,7 +114,7 @@ body.fixed {
     user-select: none;
 }
 
-.approvers-chunk {
+.nav-chunk {
     font-size: 10px;
     font-family: Avenir, sans-serif;
     fill: rgb(200,200,200);
@@ -123,12 +123,12 @@ body.fixed {
     user-select: none;
 }
 
-.next-approvers-chunk, .prev-approvers-chunk {
+.next-nav-chunk, .prev-nav-chunk {
     fill: rgb(54,58,75);
     stroke: transparent;
 }
 
-.next-approvers-chunk:active, .prev-approvers-chunk:active {
+.next-nav-chunk:active, .prev-nav-chunk:active {
     stroke: rgb(143,158,239);
     stroke-width: 2;
 }
@@ -189,7 +189,8 @@ body.fixed {
 .detailed-group.locked .zoom-sphere,
 .detailed-group.locked .bubble-guide,
 .detailed-group.locked .zoom-bubble-guide,
-.detailed-group.locked .approver-group {
+.detailed-group.locked .approver-group,
+.detailed-group.locked .category-group {
     opacity: 0.2;
     transition: opacity 0.15s ease-in-out;
     pointer-events: none;
@@ -274,22 +275,6 @@ body.fixed {
     font-weight: 800;
     fill: #fffff;
     stroke: transparent;
-}
-
-/* value anomaly rules */
-.detailed-group.value-anomaly .approver-group .circular-marker {
-    stroke: transparent;
-}
-.detailed-group.value-anomaly .approver-group.highlight .circular-marker {
-    stroke: #555555;
-}
-
-.detailed-group.value-anomaly .approver-group .approver-name-label {
-    stroke: transparent;
-    fill: transparent;
-}
-.detailed-group.value-anomaly .approver-group.highlight .approver-name-label {
-    fill: #555555;
 }
 
 .mainObjectLegend, .bigDiameterLegend, .smallDiameterLegend {
@@ -1995,6 +1980,8 @@ body.dialog-on .mobile-menu-tab, body.dialog-on .mobile-menu-close {
 
 }
 
+/* value anomaly rules */
+
 .sigma-slice-label {
     font-family: Verdana, sans-serif;
     font-size: 12px;
@@ -2008,3 +1995,36 @@ body.dialog-on .mobile-menu-tab, body.dialog-on .mobile-menu-close {
 #value-anomaly .stats-filter-title {
     color: #a0a0a0;
 }
+
+.category-group.highlight .circular-marker {
+    stroke: #555555;
+}
+
+.category-group.highlight .category-name-label {
+    font-weight: 800;
+}
+
+.detailed-group.value-anomaly .approval-circle-foreground {
+    fill: #555555;
+    stroke: #0a0a0a;
+    stroke-width: 0;
+}
+.detailed-group.value-anomaly .bubble-guide, .detailed-group.value-anomaly .zoom-bubble-guide {
+    stroke: #0a0a0a;
+    stroke-width: 0.5;
+}
+.detailed-group.value-anomaly .approval-value {
+    /*fill: #0a0a0a;*/
+    fill: white;
+}
+
+/*
+.detailed-group.value-anomaly .category-group .category-name-label-background {
+    display: none;
+}
+.detailed-group.value-anomaly .category-group.highlight .category-name-label-background {
+    display: unset;
+}
+*/
+
+

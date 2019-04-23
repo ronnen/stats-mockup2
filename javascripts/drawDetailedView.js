@@ -10,7 +10,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
   const identityMargin = 20;
   const maxApprovalBubble = 0.12; // as ratio of diameter
   const minApprovalBubble = 0.07;
-  const approverRadius = 0.25;
+  const centerRadius = 0.25;
   const ZOOM_DATA = 1;
 
   var unitNode = selectedUnit.node();
@@ -300,7 +300,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .attr("text-anchor", function(d) {return d.flipText ? "middle" : "middle"}) // "start" : "end"
       .attr("dy", "1.2em")
       .attr("x", function (d, index) {
-        var visibleAverageLen = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap) - approverRadius * outerRadius
+        var visibleAverageLen = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap) - centerRadius * outerRadius
         return (d.flipText ? visibleAverageLen : -visibleAverageLen) * 0.5;
       })
       .attr("y", function (d, index) {
@@ -404,6 +404,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
     d3.selectAll(".bubble-guide").classed("highlight", false);
     d3.selectAll(".approver-group").classed("highlight", false);
     d3.select(".detailed-group").classed("approval-highlight", false);
+
+    d3.selectAll(".zoom-bubble-guide").classed("highlight", false);
+    d3.selectAll("g.zoom-sphere").classed("highlight", false);
+    d3.selectAll(".average-guide").classed("highlight", false);
 
     if (!d3.select(".detailed-group").classed("locked")) {
       d3.select(".table-rows").classed("approval-highlight", false);
@@ -644,7 +648,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .append("circle")
       .attr("cx", 0)
       .attr("cy", 0)
-      .attr("r", approverRadius * outerRadius)
+      .attr("r", centerRadius * outerRadius)
       .attr("class", "center center-circle-background");
     centerSphere
       .append("text")
@@ -686,7 +690,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .attr("stroke-width", 0)
       .attr("d",  function(d) {
         return state.common.arcSliceFull({
-          radius: approverRadius * outerRadius - 13,
+          radius: centerRadius * outerRadius - 13,
           to: state.common.toRadians(30),
           from: state.common.toRadians(-90)
         });
@@ -694,7 +698,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
     centerSphere
       .append("text")
-      .attr("class", "approvers-chunk")
+      .attr("class", "nav-chunk")
       .attr("dy", 3)
       .append("textPath") //append a textPath to the text element
       .attr("xlink:href", "#chunk-label") //place the ID of the path here
@@ -708,14 +712,14 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
     var nextChunkGroup = centerSphere
       .append("svg:g")
-      .attr("transform", `rotate(190) translate(0,${approverRadius * outerRadius - 13})`);
+      .attr("transform", `rotate(190) translate(0,${centerRadius * outerRadius - 13})`);
 
     nextChunkGroup
       .append("circle")
       .attr("cx", 0)
       .attr("cy", 0)
       .attr("r", 8)
-      .attr("class", "next-approvers-chunk")
+      .attr("class", "next-nav-chunk")
       .on("mousedown", function() {
         d3.event.stopPropagation();
         if (mainObject.startApproverIndex + state.MAX_APPROVERS < mainObject.approvers.length) {
@@ -731,14 +735,14 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
 
     var prevChunkGroup = centerSphere
       .append("svg:g")
-      .attr("transform", `rotate(105) translate(0,${approverRadius * outerRadius - 13})`);
+      .attr("transform", `rotate(105) translate(0,${centerRadius * outerRadius - 13})`);
 
     prevChunkGroup
       .append("circle")
       .attr("cx", 0)
       .attr("cy", 0)
       .attr("r", 8)
-      .attr("class", "prev-approvers-chunk")
+      .attr("class", "prev-nav-chunk")
       .on("mousedown", function() {
         d3.event.stopPropagation();
         if (mainObject.startApproverIndex > 0) {
@@ -918,7 +922,6 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       d3.selectAll(".detailed-group .sphere").transition().duration(200).style("opacity", 1).style("opacity", null);
       d3.selectAll(".detailed-group .bubble-guide").transition().duration(200).style("opacity", 1).style("opacity", null);
       d3.selectAll(".table-rows .data-row[data-zoom]").attr("data-zoom", null);
-      if (!event.detail || !event.detail.keepWidget) d3.select(".svg-container .zoom-widget-group").remove();
     });
 
     window.addEventListener("windowResize", function(event) {

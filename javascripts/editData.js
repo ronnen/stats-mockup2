@@ -24,29 +24,32 @@ function parseCSV(csvString) {
 
     results.data.forEach(function(row) {
       var request = requests[row.request] = requests[row.request] || {};
-      var approver = request[row.approver] = request[row.approver] || [];
+      var approver = request[row.approver] = request[row.approver] || {};
+      var approval = approver[row.approvalId];
 
-/*
-      if (row.value == "3380.08") {
-        console.log(row.value);
+      if (approver[row.approvalId] === undefined) {
+        approval = approver[row.approvalId] = {
+          id: row.approvalId,
+          submitter: row.submitter,
+          value: parseFloat(row.value.replace(re,"")),
+          reportedValue: parseFloat(row.reportedValue.replace(re,"")),
+          currency: row.currency,
+          waitTime: parseFloat(row.waitTime),
+          presentation: row.presentation,
+          approverDept: row.approverDept,
+          time: (new Date(row.time)).getTime(),
+          items: []
+        }
       }
-*/
 
-      approver.push({
-        approvalId: row.approvalId,
-        submitter: row.submitter,
-        value: parseFloat(row.value.replace(re,"")),
-        reportedValue: parseFloat(row.reportedValue.replace(re,"")),
-        currency: row.currency,
-        waitTime: parseFloat(row.waitTime),
-        presentation: row.presentation,
-        approverDept: row.approverDept,
-        time: (new Date(row.time)).getTime(),
+      // pushing line item to approval
+      approval.items.push({
+        approvalId: row.approvalId, // is it necessary?
         itemCategory: row.itemCategory,
-        itemIndex: row.itemIndex,
-        itemValue: row.itemValue,
+        itemIndex: parseInt(row.itemIndex.replace(re,"")),
+        itemValue: parseFloat(row.itemValue.replace(re,"")),
         itemCurrency: row.itemCurrency,
-        itemValueUSD: row.itemValueUSD
+        itemValueUSD: parseFloat(row.itemValueUSD.replace(re,"")),
         // time: timeGenerator(Math.random())
       });
     });
@@ -63,6 +66,9 @@ function parseCSV(csvString) {
           approverName: approver,
           approvals: requests[request][approver]
         };
+        objApprover.approvals = Object.keys(objApprover.approvals).map(function(approvalId) {
+          return objApprover.approvals[approvalId]
+        });
         objApprover.approvals = objApprover.approvals.sort(function(a,b) {
           if (a.waitTime < b.waitTime) return -1;
           if (a.waitTime > b.waitTime) return 1;

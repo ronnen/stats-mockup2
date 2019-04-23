@@ -95,19 +95,22 @@ state.common.typedValueToTextShort = function(value, type, object) {
     return value;
 };
 
-state.common.smartValueToText = function(object) {
-  if (object.presentation == "currency") {
+state.common.smartValueToText = function(object, value=null, presentation = null) {
+  presentation = presentation || object.presentation;
+  value = value || object.value;
+
+  if (presentation == "currency") {
     var str;
     if (object.reportedValue !== undefined) {
       str = new Intl.NumberFormat('us-US', { style: 'currency', currency: object.currency }).format(object.reportedValue);
     }
     else {
-      str = new Intl.NumberFormat('us-US', { style: 'currency', currency: 'USD' }).format(object.value);
+      str = new Intl.NumberFormat('us-US', { style: 'currency', currency: 'USD' }).format(value);
     }
     return "Total Value: " + str;
   }
   else {
-    return "Total Value: " + object.value;
+    return "Total Value: " + value;
   }
 };
 
@@ -128,18 +131,36 @@ state.common.waitDaysHoursToText = function(value) {
   return `${days}d:${hours}h`;
 };
 
-state.common.clusterLevelToText = function(value) {
-  switch (value) {
-    case 0:
-      return "HOURS";
-    case 1:
-      return "DAYS";
-    case 2:
-      return "WEEKS";
-    case 3:
-      return "MONTHS";
-    default:
-      return "HOURS";
+state.common.clusterLevelToText = function(value, valueAnomalyState) {
+  const SigmaSymbol = '\u03C3';
+
+  if (valueAnomalyState) {
+    switch (value) {
+      case 0:
+        return "RAW";
+      case 1:
+        return "0.1" + SigmaSymbol;
+      case 2:
+        return "0.2" + SigmaSymbol;
+      case 3:
+        return "0.5" + SigmaSymbol;
+      default:
+        return "RAW";
+    }
+  }
+  else {
+    switch (value) {
+      case 0:
+        return "HOURS";
+      case 1:
+        return "DAYS";
+      case 2:
+        return "WEEKS";
+      case 3:
+        return "MONTHS";
+      default:
+        return "HOURS";
+    }
   }
 };
 
@@ -223,7 +244,7 @@ state.common.colorForSigma = function(sigmaRange) {
   ];
 
   return function(sigma) {
-    var colorPoint = linearScale(sigma);
+    var colorPoint = linearScale(Math.min(sigma,sigmaRange));
     if (colorPoint < 0) return state.GREEN_COLOR;
     if (colorPoint >= 2) return state.RED_COLOR;
 
