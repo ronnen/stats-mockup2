@@ -391,7 +391,17 @@ function drawMenu(criteria) {
       var selectedNode = d3.select(".main-units.selected");
 
       var currentClusterValue = clusterSlider.value();
-      if (currentClusterValue > 0) state.dataFunc.zoomLevel(selectedNode.datum(), currentClusterValue); // will refresh the bucketed data (hidden spheres) based on new criteria
+      if (currentClusterValue > 0) {
+        if (state.valueAnomalyState) {
+          // if sigma not calculated yet then calculate it
+          if (selectedNode.datum().above3sigma === undefined) state.dataFunc.sigma(selectedNode.datum());
+
+          state.dataFunc.anomaliesZoomLevel(selectedNode.datum(), currentClusterValue);
+        }
+        else {
+          state.dataFunc.zoomLevel(selectedNode.datum(), currentClusterValue);
+        }
+      } // will refresh the bucketed data (hidden spheres) based on new criteria
 
       if (selectedNode.size()) {
         d3.selectAll('.detailed-group').remove();
