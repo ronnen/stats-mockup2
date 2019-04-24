@@ -118,6 +118,7 @@ function drawOverview(mainUnits) {
 
   var sumOfStandardAreas = d3.sum(mainUnits, function(d) {return countGenerator(d.totalCount)});
   var outerRadiusFactor = width*height*0.6 / (sumOfStandardAreas || 1); // measure how much space per unit given screen size
+  var maxRadius = Math.min(width/2, height/2) - 5;
 
   var outerRadiusGenerator = d3.scaleLinear()
     .domain([state.minCount, state.maxCount])
@@ -125,7 +126,7 @@ function drawOverview(mainUnits) {
 
 
   mainUnits.forEach(function(d) {
-    d.outerRadius = Math.sqrt(outerRadiusGenerator(d.totalCount) / Math.PI)
+    d.outerRadius = Math.min(Math.sqrt(outerRadiusGenerator(d.totalCount) / Math.PI), maxRadius);
     // d.outerRadius = Math.sqrt(outerRadiusFactor / Math.PI); // not differential right now
   });
 

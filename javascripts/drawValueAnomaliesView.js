@@ -28,7 +28,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
 
   var sigmaRange = mainObject.maxSigmaDev <= 0 ? 1 : Math.min(Math.ceil(mainObject.maxSigmaDev),state.SIGMA_CAP_LIMIT);
 
-  var colorGenerator = state.common.colorForSigma(sigmaRange);
+  // var colorGenerator = state.common.colorForSigma(sigmaRange);
 
   d3.select(unitNode).raise();
 
@@ -232,10 +232,10 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
   }
 
   const SliceBackgroundColor = [
-    '#006344FF',               // for transparency change last two hex '80' for 50%
-    '#B6C61AFF',
-    '#D8A800FF',
-    '#BD3B1BFF'
+    '#00634499',               // for transparency change last two hex '80' for 50%
+    '#B6C61A99',
+    '#D8A80099',
+    '#BD3B1B99'
   ];
 
   var sliceCount = Math.max(sigmaRange,1); // mainObject.sigma <= 0 ? 1 : Math.ceil(mainObject.maxSigmaDev);

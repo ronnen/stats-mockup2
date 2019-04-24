@@ -330,6 +330,7 @@ state.dataFunc.zoomLevel = function(request, level) {
 };
 
 state.dataFunc.sigma = function(request) {
+  console.log("start calculating sigma for " + request.request);
   // sigma is computed based on the itemCategory field
   if (request.totalCount <= 0) {
     console.error("sigma: totalCount error " + request.totalCount);
@@ -410,7 +411,8 @@ state.dataFunc.sigma = function(request) {
   request.categories = categories;
 
   console.log("# of categories " + request.categories.length);
-  console.log("Categories: " + request.categories.map(c => c.categoryName));
+  // console.log("Categories: " + request.categories.map(c => c.categoryName));
+  console.log("finished calculating sigma for " + request.request);
 
 };
 
