@@ -99,23 +99,25 @@ function openEditDialog() {
     units.forEach(function(unit) {
       unit.approvers.forEach(function(approver) {
         approver.approvals.forEach(function(approval) {
-          result +=
-            "\"" + approval.approvalId + "\"," +
-            "\"" + approval.approverDept + "\"," +
-            "\"" + approver.approverName + "\"," +
-            "\"" + unit.request + "\"," +
-            "\"" + approval.presentation + "\"," +
-            "\"" + approval.submitter + "\"," +
-            approval.value + "," +
-            approval.reportedValue + "," +
-            "\"" + approval.currency + "\"," +
-            approval.waitTime + "," +
-            "\"" + state.common.valueToDate(approval.time) + "\"," +
-            "\"" + approval.itemCategory + "\"," +
-            "\"" + approval.itemIndex + "\"," +
-            approval.itemValue + "," +
-            "\"" + approval.itemCurrency + "\"," +
-            approval.itemValueUSD + "\n";
+          approval.items.forEach(function(item) {
+            result +=
+              "\"" + approval.id + "\"," +
+              "\"" + approval.approverDept + "\"," +
+              "\"" + approver.approverName + "\"," +
+              "\"" + unit.request + "\"," +
+              "\"" + approval.presentation + "\"," +
+              "\"" + approval.submitter + "\"," +
+              approval.value + "," +
+              approval.reportedValue + "," +
+              "\"" + approval.currency + "\"," +
+              approval.waitTime + "," +
+              "\"" + state.common.valueToDate(approval.time) + "\"," +
+              "\"" + item.itemCategory + "\"," +
+              "\"" + item.itemIndex + "\"," +
+              item.itemValue + "," +
+              "\"" + item.itemCurrency + "\"," +
+              item.itemValueUSD + "\n";
+          });
         });
       });
     });
