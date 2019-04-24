@@ -359,7 +359,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         .style("opacity", 0)
         .attr("class", function(d) {return className + " " + className + approverIndex + (d.hidden ? " hidden" : "")})
         .attr("id", function(d,i) {
-          return "a" + approverIndex + "g" + i; // a [approver index] g [approval index]
+          return "a" + approverIndex + "g" + d.id; // a [approver index] g [approval index]
         })
         .attr("fill", "transparent")
         // .attr("stroke", "black")
@@ -486,7 +486,7 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         if (dataToShow == ZOOM_DATA && d.zoomBucket)
           d3.select(".table-rows").selectAll(`.data-row[data-zoom=${d.zoomBucket}]`).classed("highlight", true);
         else
-          d3.select("#r" + requestIndex + sphereID).classed("highlight", true); // r4a3b5 (request 4, approver 3, approval 5)
+          d3.selectAll(".r" + requestIndex + sphereID).classed("highlight", true);  // r4a3b5 (request 4, approver 3, approval 5)
 
         d3.select(".table-container").classed("on", true);
 
@@ -499,9 +499,10 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       var approvalRadius = parseFloat(currentApprovalCircle.attr("r"));
 
       var sphereID = d3.select(this).attr("id"); //e.g.  a3b8 will be matched with guide a3g8
+      var split = sphereID.split("b");
 
       d3.select(this).classed("highlight", true);
-      d3.select("#" + sphereID.replace("b","g")).classed("highlight", true);
+      d3.select("#" + split[0] + "g" + split[1]).classed("highlight", true);
       d3.select(".detailed-group").classed("approval-highlight", true);
 
 /*
@@ -550,7 +551,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
           .append("svg:g")
           .attr("class", className + " " + className + approverIndex)
           .attr("id", function(d,i) {
-            return foreground ? ("a" + approverIndex + "b" + i) : null; // a [approver index] b [approval index]
+            var id = (dataToShow == ZOOM_DATA) ? d.zoomBucket : d.id;
+            return foreground ? ("a" + approverIndex + "b" + id) : null; // a [approver index] b [approval id]
           });
 
         // the first iteration will create an opaque background to hide background

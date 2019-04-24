@@ -11,7 +11,7 @@ function drawMenu(criteria) {
   var timeFilterState = true;
   var waitFilterState = true;
   var clusterFilterState = true;
-  var valueAnomalyState = false;
+  state.valueAnomalyState = false;
 
   function setTimeRangeLabels() {
     d3.select("#time-range-filter .label-left").text(!timeFilterState ? "START DATE" : state.common.valueToDate(timeRangeMin));
@@ -31,7 +31,7 @@ function drawMenu(criteria) {
   function setClusterLabels() {
     d3.select("#cluster-filter .label-left").text(!clusterFilterState ? "GRANULAR" : "");
     d3.select("#cluster-filter .label-right").text(!clusterFilterState ? "CLUSTERED" : "");
-    d3.select("#cluster-filter .label-middle").text(!clusterFilterState ? "" : state.common.clusterLevelToText(clusterLevel, valueAnomalyState));
+    d3.select("#cluster-filter .label-middle").text(!clusterFilterState ? "" : state.common.clusterLevelToText(clusterLevel, state.valueAnomalyState));
   }
 
   setTimeRangeLabels();
@@ -156,7 +156,7 @@ function drawMenu(criteria) {
     .on('onchange', val => {
       state.criteria.clusterLevel = clusterLevel = val;
       setClusterLabels();
-      valueAnomalyState ? drawValueAnomaliesViewByZoomLevel() : drawDetailedViewByZoomLevel();
+      state.valueAnomalyState ? drawValueAnomaliesViewByZoomLevel() : drawDetailedViewByZoomLevel();
     });
 
   d3.select("#cluster-filter .stats-slider .slider-container")
@@ -230,15 +230,15 @@ function drawMenu(criteria) {
   }
 
   // anomalies view
-  d3.select("#value-anomaly").classed("on", valueAnomalyState);
+  d3.select("#value-anomaly").classed("on", state.valueAnomalyState);
 
   d3.select("#value-anomaly .switch-container")
     .on("click", valueAnomalyClick);
 
   function valueAnomalyClick() {
-    d3.select("#value-anomaly").classed("on", !valueAnomalyState);
-    valueAnomalyState = !valueAnomalyState;
-    if (valueAnomalyState) {
+    d3.select("#value-anomaly").classed("on", !state.valueAnomalyState);
+    state.valueAnomalyState = !state.valueAnomalyState;
+    if (state.valueAnomalyState) {
       // cannot coexist with clustering
       state.criteria.clusterLevel = 0;
       clusterSlider.value(state.criteria.clusterLevel);
@@ -395,7 +395,7 @@ function drawMenu(criteria) {
 
       if (selectedNode.size()) {
         d3.selectAll('.detailed-group').remove();
-        if (valueAnomalyState) {
+        if (state.valueAnomalyState) {
           drawValueAnomaliesView(selectedNode, state.overviewParams);
         }
         else {

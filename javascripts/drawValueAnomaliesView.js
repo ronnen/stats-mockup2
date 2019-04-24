@@ -359,7 +359,8 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
         .style("opacity", 0)
         .attr("class", function(d) {return className + " " + className + categoryIndex})
         .attr("id", function(d,i) {
-          return "c" + categoryIndex + "g" + i; // c [category index] g [item index]
+          return "c" + categoryIndex + "g" + (d.parentApproval && d.parentApproval.id) + "i" + d.itemIndex; // a [approver index] b [approval index]
+          // return "c" + categoryIndex + "g" + i; // c [category index] g [item index]
         })
 /*
         .attr("fill", "transparent")
@@ -444,7 +445,8 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
         releaseLockedState();
       }
       else {
-        var sphereID = d3.select(this).attr("id"); //e.g.  a3b8 will be matched with guide a3g8
+        // var sphereID = d3.select(this).attr("id"); //e.g.  a3b8 will be matched with guide a3g8
+        var approvalId = d3.select(this).attr("approval-id"); //e.g.  a3b8 will be matched with guide a3g8
         d3.select(this).classed("locked", true);
         d3.select(".detailed-group").classed("locked", true);
         var currentApprovalCircle = d3.select(this).select(".approval-circle-foreground");
@@ -464,12 +466,11 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
         d3.select(".table-rows").classed("approval-highlight", true);
         d3.selectAll(".table-rows .data-row").classed("highlight", false); // in case mouseLeave was not fired
 
-        // TODO
         // if in zoom state we highlight according to rows according to anomalyZoomBucket, otherwise use sphere ID
         if (dataToShow == ZOOM_DATA && d.anomalyZoomBucket)
           d3.select(".table-rows").selectAll(`.data-row[data-zoom=${d.anomalyZoomBucket}]`).classed("highlight", true);
         else
-          d3.select("#r" + requestIndex + sphereID).classed("highlight", true); // r4a3b5 (request 4, approver 3, approval 5)
+          d3.selectAll(`.data-row[approval-id="${approvalId}"]`).classed("highlight", true); //
 
         d3.select(".table-container").classed("on", true);
 
@@ -482,10 +483,10 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
       var approvalRadius = parseFloat(currentApprovalCircle.attr("r"));
 
       var sphereID = d3.select(this).attr("id"); //e.g.  a3b8 will be matched with guide a3g8
+      var split = sphereID.split("b");
 
-      // TODO "b" to "c"
       d3.select(this).classed("highlight", true);
-      d3.select("#" + sphereID.replace("i","g")).classed("highlight", true); // find relevant guideline
+      d3.select("#" + split[0] + "g" + split[1]).classed("highlight", true);
       d3.select(".detailed-group").classed("approval-highlight", true);
 
       var categoryIndex = parseInt(sphereID.substring(1));
@@ -527,7 +528,15 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
           .append("svg:g")
           .attr("class", className + " " + className + categoryIndex)
           .attr("id", function(d,i) {
-            return foreground ? ("c" + categoryIndex + "i" + i) : null; // a [approver index] b [approval index]
+            // return foreground ? ("c" + categoryIndex + "i" + i) : null; // a [approver index] b [approval index]
+            var id = (dataToShow == ZOOM_DATA) ? d.anomalyZoomBucket : (d.parentApproval && d.parentApproval.id);
+            return foreground ? ("c" + categoryIndex + "b" + id + "i" + d.itemIndex) : null; // a [approver index] b [approval index]
+          })
+          .attr("approval-id", function(d,i) {
+            return foreground ? (d.parentApproval && d.parentApproval.id) : null; // a [approver index] b [approval index]
+          })
+          .attr("item-index", function(d,i) {
+            return foreground ? d.itemIndex : null; // a [approver index] b [approval index]
           });
 
         // the first iteration will create an opaque background to hide background

@@ -1066,6 +1066,27 @@ body.debug .view-json {
     flex: 0 200px;
 }
 
+.caption-row .category, .data-row .category {
+    display: flex;
+    flex: 0 170px;
+    padding-right: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.caption-row .item, .data-row .item {
+    display: flex;
+    flex: 0 170px;
+    padding-right: 30px;
+    overflow: hidden;
+}
+
+.data-row .item {
+    justify-content: flex-end;
+    overflow: hidden;
+}
+
 .caption-row .caption {
     color: white;
     font-weight: bolder;

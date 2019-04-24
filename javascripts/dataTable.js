@@ -15,6 +15,7 @@ function drawTable() {
 }
 
 function refreshTable(mainUnits) {
+  console.log("refreshTable called");
   var tableRows = d3.select(".table-rows");
 
   if (state.freshDataLoaded) {
@@ -25,56 +26,74 @@ function refreshTable(mainUnits) {
 
   mainUnits.forEach(function(request, requestIndex) {
     request.approvers.forEach(function(approver/*, approverIndex*/) {
-      var dataRows = tableRows.selectAll(".data-row.r" + requestIndex + "a" + approver.approverIndex)
-        .data(approver.approvals/*, function(d, i) {return [requestIndex, approverIndex, i]}*/);
+      approver.approvals.forEach(function(approval) {
+        var dataRows = tableRows.selectAll(".data-row.r" + requestIndex + "a" + approver.approverIndex + "b" + approval.id)
+          .data(approval.items /*, function(d, i) {return [requestIndex, approverIndex, i]}*/);
 
-      var enteredDataRows = dataRows
-        .enter()
-        .append("div")
-        .attr("id", function(d,i) {return "r" + requestIndex + "a" + approver.approverIndex + "b" + i})  // r4a3b5 (request 4, approver 3, approval 5)
-        .attr("class", "data-row " + "r" + requestIndex + "a" + approver.approverIndex); // r2a3 (request 2, approver 3)
+        var enteredDataRows = dataRows
+          .enter()
+          .append("div")
+          .attr("id", function(d,i) {return "r" + requestIndex + "a" + approver.approverIndex + "b" + approval.id + "i" + d.itemIndex})  // r4a3b5 (request 4, approver 3, approval ID17, item 2)
+          .attr("class", "data-row " + "r" + requestIndex + "a" + approver.approverIndex + "b" + approval.id) // r2a3iID15 (request 2, approver 3, id ID15)
+          .attr("approval-id", function(d) {return d.parentApproval.id})
+          .attr("item-index", function(d) {return d.itemIndex});
 
-      enteredDataRows
-        .append("div")
-        .attr("class", "request data")
-        .text(function(d) {return request.request});
-      enteredDataRows
-        .append("div")
-        .attr("class", "time data")
-        .text(function(d) {return state.common.valueToDate(d.time)});
-      enteredDataRows
-        .append("div")
-        .attr("class", "approver data")
-        .text(function(d) {return approver.approverName});
-      enteredDataRows
-        .append("div")
-        .attr("class", "submitter data")
-        .text(function(d) {return d.submitter});
-      enteredDataRows
-        .append("div")
-        .attr("class", "value data")
-        .text(function(d) {return state.common.typedValueToTextShort(d.reportedValue || d.value, d.presentation)});
-      enteredDataRows
-        .append("div")
-        .attr("class", "table-wait-time data")
-        .text(function(d) {
-          return state.common.waitDaysHoursToText(d.waitTime)
-        });
+        enteredDataRows
+          .append("div")
+          .attr("class", "request data")
+          .text(function(d) {return request.request});
+        enteredDataRows
+          .append("div")
+          .attr("class", "time data")
+          .text(function(d) {return state.common.valueToDate(d.parentApproval.time)});
+        enteredDataRows
+          .append("div")
+          .attr("class", "approver data")
+          .text(function(d) {return approver.approverName});
+        enteredDataRows
+          .append("div")
+          .attr("class", "submitter data")
+          .text(function(d) {return d.parentApproval.submitter});
+        enteredDataRows
+          .append("div")
+          .attr("class", "value data")
+          .text(function(d) {return state.common.typedValueToTextShort(d.parentApproval.reportedValue || d.parentApproval.value, d.parentApproval.presentation)});
+        enteredDataRows
+          .append("div")
+          .attr("class", "category data")
+          .text(function(d) {return d.itemCategory});
+        enteredDataRows
+          .append("div")
+          .attr("class", "item data")
+          .text(function(d) {return state.common.typedValueToTextShort(d.itemValueUSD, d.parentApproval.presentation)});
+        enteredDataRows
+          .append("div")
+          .attr("class", "table-wait-time data")
+          .text(function(d) {
+            return state.common.waitDaysHoursToText(d.parentApproval.waitTime)
+          });
 
+        // update existing and new
+        enteredDataRows.merge(dataRows)
+          .classed("hidden", function(d) {
+            if (selectedRequestIndex >= 0 && requestIndex != selectedRequestIndex)
+              return true;
+            return d.parentApproval.hidden;
+          })
+          .attr("data-zoom", function(d) {
+            if (selectedRequestIndex >= 0 && requestIndex == selectedRequestIndex) {
+              if (!state.valueAnomalyState && d.parentApproval.zoomBucket)
+                return d.parentApproval.zoomBucket;
+              else if (state.valueAnomalyState && d.anomalyZoomBucket)
+                return d.anomalyZoomBucket;
+              else
+                return null;
+            }
+            else
+              return null;
+          });
 
-      // update existing and new
-      enteredDataRows.merge(dataRows)
-        .classed("hidden", function(d) {
-          if (selectedRequestIndex >= 0 && requestIndex != selectedRequestIndex)
-            return true;
-          return d.hidden;
-        })
-        .attr("data-zoom", function(d) {
-          if (selectedRequestIndex >= 0 && requestIndex == selectedRequestIndex && d.zoomBucket)
-            return d.zoomBucket;
-          else
-            return null;
-        });
+      });
 
     });
   });

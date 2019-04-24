@@ -343,7 +343,6 @@ state.dataFunc.sigma = function(request) {
   request.approvers.forEach(function(approver) {
     approver.approvals.forEach(function(approval) {
       approval.items.forEach(function(item) {
-        item.parentApproval = approval;
         categories[item.itemCategory] = categories[item.itemCategory] || {sum: 0, count: 0, sumSqr: 0, items: []};
         categories[item.itemCategory].sum += item.itemValueUSD;
         categories[item.itemCategory].count ++;
@@ -354,10 +353,6 @@ state.dataFunc.sigma = function(request) {
 
   // calculate mean for each category
   Object.keys(categories).forEach(function(category) {
-    // TODO remove after dev
-    if (category == "Tolls, Taxis, Bus, Rail  ") {
-      var zzz = 0;
-    }
     categories[category].meanValue = categories[category].sum / (categories[category].count || 1);
   });
 

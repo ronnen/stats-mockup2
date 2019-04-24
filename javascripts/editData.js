@@ -44,6 +44,7 @@ function parseCSV(csvString) {
 
       // pushing line item to approval
       approval.items.push({
+        parentApproval: approval,
         approvalId: row.approvalId, // is it necessary?
         itemCategory: row.itemCategory,
         itemIndex: parseInt(row.itemIndex.replace(re,"")),
