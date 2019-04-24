@@ -359,16 +359,16 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
         .style("opacity", 0)
         .attr("class", function(d) {return className + " " + className + categoryIndex})
         .attr("id", function(d,i) {
-          return "c" + categoryIndex + "g" + (d.parentApproval && d.parentApproval.id) + "i" + d.itemIndex; // a [approver index] b [approval index]
-          // return "c" + categoryIndex + "g" + i; // c [category index] g [item index]
+          var id;
+          if (dataToShow == ZOOM_DATA) {
+            var split = d.anomalyZoomBucket.split("b");
+            id = split[0] + "g" + split[1];
+          }
+          else {
+            id = "c" + categoryIndex + "g" + (d.parentApproval && d.parentApproval.id) + "i" + d.itemIndex;
+          }
+          return id;
         })
-/*
-        .attr("fill", "transparent")
-        .attr("stroke", function (d) {
-          return colorGenerator(d.sigmaDev);
-        })
-        .attr("stroke-width", 1)
-*/
         .attr("x1", 0)
         .attr("y1", 0)
         .attr("x2", 0)
@@ -528,9 +528,17 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
           .append("svg:g")
           .attr("class", className + " " + className + categoryIndex)
           .attr("id", function(d,i) {
-            // return foreground ? ("c" + categoryIndex + "i" + i) : null; // a [approver index] b [approval index]
+            if (foreground) {
+              return (dataToShow == ZOOM_DATA) ? d.anomalyZoomBucket :
+                ("c" + categoryIndex + "b" + (d.parentApproval && d.parentApproval.id) + "i" + d.itemIndex);
+            }
+            else
+              return null;
+
+/*
             var id = (dataToShow == ZOOM_DATA) ? d.anomalyZoomBucket : (d.parentApproval && d.parentApproval.id);
             return foreground ? ("c" + categoryIndex + "b" + id + "i" + d.itemIndex) : null; // a [approver index] b [approval index]
+*/
           })
           .attr("approval-id", function(d,i) {
             return foreground ? (d.parentApproval && d.parentApproval.id) : null; // a [approver index] b [approval index]

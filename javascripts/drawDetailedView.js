@@ -359,7 +359,15 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
         .style("opacity", 0)
         .attr("class", function(d) {return className + " " + className + approverIndex + (d.hidden ? " hidden" : "")})
         .attr("id", function(d,i) {
-          return "a" + approverIndex + "g" + d.id; // a [approver index] g [approval index]
+          var id;
+          if (dataToShow == ZOOM_DATA) {
+            var split = d.zoomBucket.split("b");
+            id = split[0] + "g" + split[1];
+          }
+          else {
+            id = "a" + approverIndex + "g" + d.id;
+          }
+          return id;
         })
         .attr("fill", "transparent")
         // .attr("stroke", "black")
@@ -551,8 +559,8 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
           .append("svg:g")
           .attr("class", className + " " + className + approverIndex)
           .attr("id", function(d,i) {
-            var id = (dataToShow == ZOOM_DATA) ? d.zoomBucket : d.id;
-            return foreground ? ("a" + approverIndex + "b" + id) : null; // a [approver index] b [approval id]
+            var id = (dataToShow == ZOOM_DATA) ? d.zoomBucket : ("a" + approverIndex + "b" + d.id);
+            return foreground ? id : null; // a [approver index] b [approval id]
           });
 
         // the first iteration will create an opaque background to hide background
