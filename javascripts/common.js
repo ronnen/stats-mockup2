@@ -77,6 +77,29 @@ state.common.valueToText = function(value, object) {
   return "$" + totalValueText;
 };
 
+state.common.decimalPlaces = function(value) {
+  var match = (''+value).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+  if (!match) { return 0; }
+  return Math.max(
+    0,
+    // Number of digits right of decimal point.
+    (match[1] ? match[1].length : 0)
+    // Adjust for scientific notation.
+    - (match[2] ? +match[2] : 0));
+};
+
+state.common.smartRoundValue = function(value) {
+  if (state.common.decimalPlaces(value) > 1) {
+    if (value > 100)
+      value = value.toFixed(0);
+    else if (value > 10)
+      value = value.toFixed(1);
+    else
+      value = value.toFixed(2);
+  }
+  return value;
+};
+
 state.common.typedValueToText = function(value, type) {
   if (type == "currency")
     return state.common.valueToText(value);
@@ -84,15 +107,16 @@ state.common.typedValueToText = function(value, type) {
     // ugly way to deduce singular from plural (as I don't get it from the data feed)
     var typeSingularOrPlural = (value == 1 && type.length > 1 && type.slice(-1) == "s")
       ? type.slice(0,-1) : type;
-    return value + " " + typeSingularOrPlural;
+    return state.common.smartRoundValue(value) + " " + typeSingularOrPlural;
   }
 };
 
 state.common.typedValueToTextShort = function(value, type, object) {
   if (type == "currency")
     return state.common.valueToText(value, object);
-  else
-    return value;
+  else {
+    return state.common.smartRoundValue(value);
+  }
 };
 
 state.common.smartValueToText = function(object, value=null, presentation = null) {
@@ -110,6 +134,9 @@ state.common.smartValueToText = function(object, value=null, presentation = null
     return "Total Value: " + str;
   }
   else {
+    if (state.common.decimalPlaces(value) > 2) {
+      value = value.toFixed(2);
+    }
     return "Total Value: " + value;
   }
 };
