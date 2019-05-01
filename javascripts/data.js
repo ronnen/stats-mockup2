@@ -331,6 +331,19 @@ state.dataFunc.zoomLevel = function(request, level) {
 
 state.dataFunc.sigma = function(request) {
   console.log("start calculating sigma for " + request.request);
+
+  // this function might be modified in the future for special criteria to "group" same requests
+  function itemAlreadyExist(newItem, items) {
+    return items.some(function(item) {
+      return (item.request == newItem.request &&
+          item.submitter == newItem.submitter &&
+          item.value == newItem.value &&
+          item.time == newItem.time &&
+          item.itemCategory == newItem.itemCategory &&
+          item.itemValue == newItem.itemValue);
+    });
+  }
+
   // sigma is computed based on the itemCategory field
   if (request.totalCount <= 0) {
     console.error("sigma: totalCount error " + request.totalCount);
@@ -344,9 +357,11 @@ state.dataFunc.sigma = function(request) {
     approver.approvals.forEach(function(approval) {
       approval.items.forEach(function(item) {
         categories[item.itemCategory] = categories[item.itemCategory] || {sum: 0, count: 0, sumSqr: 0, items: []};
-        categories[item.itemCategory].sum += item.itemValueUSD;
-        categories[item.itemCategory].count ++;
-        categories[item.itemCategory].items.push(item);
+        if (!itemAlreadyExist(item, categories[item.itemCategory].items)) {
+          categories[item.itemCategory].sum += item.itemValueUSD;
+          categories[item.itemCategory].count ++;
+          categories[item.itemCategory].items.push(item);
+        }
       });
     })
   });

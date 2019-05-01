@@ -103,17 +103,17 @@ function openEditDialog() {
           approval.items.forEach(function(item) {
             result +=
               "\"" + approval.id + "\"," +
-              "\"" + approval.approverDept + "\"," +
-              "\"" + approver.approverName + "\"," +
+              "\"" + approval.approverDept.replace(/\"/g, "\"\"") + "\"," +
+              "\"" + approver.approverName.replace(/\"/g, "\"\"") + "\"," +
               "\"" + unit.request + "\"," +
               "\"" + approval.presentation + "\"," +
-              "\"" + approval.submitter + "\"," +
+              "\"" + approval.submitter.replace(/\"/g, "\"\"") + "\"," +
               approval.value + "," +
               approval.reportedValue + "," +
               "\"" + approval.currency + "\"," +
               approval.waitTime + "," +
               "\"" + state.common.valueToDate(approval.time) + "\"," +
-              "\"" + item.itemCategory + "\"," +
+              "\"" + item.itemCategory.replace(/\"/g, "\"\"") + "\"," +
               "\"" + item.itemIndex + "\"," +
               item.itemValue + "," +
               "\"" + item.itemCurrency + "\"," +
