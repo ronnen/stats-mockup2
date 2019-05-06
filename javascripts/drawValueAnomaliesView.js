@@ -138,7 +138,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
       .append("svg:g")
       .attr("class", "category-group")
       .attr("id", function(d,i) {
-        return "c" + i
+        return "c" + d.category.categoryIndex;
       })
       .on("mouseenter", categoryMouseEnter)
       .on("mouseleave", categoryMouseLeave);
@@ -161,7 +161,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
     circularGroups
       .append("svg:path")
       .attr("id", function(d, i) {
-        return "categoryID" + i;
+        return "categoryID" + d.category.categoryIndex;
       })
       .attr("class", "category-name-label-background background-stroke")
       .attr("fill", "transparent")
@@ -181,7 +181,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
       .attr("dy", 3)
       .append("textPath") //append a textPath to the text element
       .attr("xlink:href", function(d,i) {
-        return "#categoryID" + i
+        return "#categoryID" + d.category.categoryIndex;
       }) //place the ID of the path here
       .style("text-anchor","middle") //place the text halfway on the arc
       // .attr("startOffset", "79%") // this will show the invert text
@@ -191,20 +191,23 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
       });
 
     function categoryMouseEnter(d,i) {
-      var index = i;
+      var index = d.category.categoryIndex;
       d3.select(this).classed("highlight", true);
       d3.select(".detailed-group").classed("approver-highlight", true);
       d3.selectAll("g.sphere"+index).classed("highlight", true);
       d3.selectAll("g.zoom-sphere"+index).classed("highlight", true);
       d3.selectAll(".bubble-guide"+index).classed("highlight", true);
       d3.selectAll(".zoom-bubble-guide"+index).classed("highlight", true);
-/*
       d3.select("#average-guide" + index).classed("highlight", true);
+
+      //     centerSphere
       d3.select(".detailed-group .request-value")
-        .text(state.common.typedValueToText(d.approver.value, mainObject.presentation));
-      var approverPercent = (100*d.approver.value/mainObject.totalValue).toFixed(0) + "%"
-      d3.select(".detailed-group .detailed-request-percent").text(approverPercent);
-*/
+        .text(">3" + SigmaSymbol + " = " + state.common.sigmaToText(d.category.valueAbove3sigma, d.category));
+      // d3.select(".detailed-group .detailed-request-percent").text(approverPercent);
+
+      // circumference
+      var circularMarkerLabel = mainObject.request + ". " + d.category.totalCount + " items. " + d.category.above3sigma + " above 3" + SigmaSymbol + ".";
+      d3.select(".detailed-group .approval-type-label textPath").text(circularMarkerLabel);
 
       // TODO revisit
       d3.select(".table-rows").classed("category-highlight", true);
@@ -218,12 +221,14 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
       d3.selectAll(".zoom-bubble-guide").classed("highlight", false);
       d3.selectAll("g.sphere").classed("highlight", false);
       d3.selectAll("g.zoom-sphere").classed("highlight", false);
-/*
       d3.selectAll(".average-guide").classed("highlight", false);
       d3.select(".detailed-group .request-value")
-        .text(state.common.typedValueToText(mainObject.totalValue, mainObject.presentation));
-      d3.select(".detailed-group .detailed-request-percent").text("");
-*/
+        .text(">3" + SigmaSymbol + " = " + state.common.sigmaToText(mainObject.valueAbove3sigma, mainObject));
+      // d3.select(".detailed-group .detailed-request-percent").text("");
+
+      // circumference
+      var circularMarkerLabel = mainObject.request + ". " + mainObject.totalCount + " requests. " + mainObject.above3sigma + " above 3" + SigmaSymbol + ".";
+      d3.select(".detailed-group .approval-type-label textPath").text(circularMarkerLabel);
 
       d3.select(".table-rows").classed("category-highlight", false);
       d3.selectAll(".table-rows .data-row").classed("highlight", false);
@@ -333,6 +338,54 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
 
   // TODO consider adding to table classes "c" for category and "i" for category index (alongside approver and approval)
 
+  function drawAverageMarkers() {
+
+    // draw average values guideline
+    var avgGuideGroup = detailedGroup.selectAll("g.average-guide")
+      .data(subUnits)
+      .enter()
+      .append("svg:g")
+      .attr("class", "average-guide")
+      .attr("id", function(d,i) {
+        return "average-guide" + d.categoryIndex;
+      })
+      .style("transform", "rotate(180deg)");
+
+    avgGuideGroup
+      .append("svg:line")
+      .attr("class", "average-guide-line")
+      .style("stroke-dasharray", ("5, 2"))
+      .attr("x1", 0)
+      .attr("y1", 0)
+      .attr("x2", 0)
+      .attr("y2", function (d, index) {
+        return outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap)
+      });
+
+    avgGuideGroup
+      .append("text")
+      .attr("class", "average-guide-label")
+      .attr("text-anchor", "end")
+      .attr("dx", "-0.5em")
+      .attr("dy", "-0.8em")
+      .attr("x", function (d, index) {
+        return 0;
+      })
+      .attr("y", function (d, index) {
+        return outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap);
+      })
+      .text(function (d) {
+        return state.common.typedValueToTextShort(d.meanValue, d.presentation);
+      })
+      .attr("transform", function (d, index) {
+        var radius = outerRadius * (circleStartRadius + (index + 1) * circleMarkersGap);
+        return d3.svg.transform()
+          .translate(d.flipText ? -radius : radius, radius)
+          .rotate(d.flipText ? -90 : 90)();
+      });
+  }
+
+
   function drawSpheresGuidelines(dataToShow, classModifier) {
     if (state.criteria.clusterLevel) {
       dataToShow = ZOOM_DATA;
@@ -345,7 +398,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
 
     subUnits.forEach(function (t, index) {
       // var approverIndex = (dataToShow == ZOOM_DATA) ? index : t.approverIndex;
-      var categoryIndex = index;
+      var categoryIndex = t.categoryIndex;
 
       var elements = dataToShow == ZOOM_DATA ? t.zoomItems : t.items;
       var className = classModifier + "bubble-guide";
@@ -489,8 +542,10 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
       d3.select("#" + split[0] + "g" + split[1]).classed("highlight", true);
       d3.select(".detailed-group").classed("approval-highlight", true);
 
-      var categoryIndex = parseInt(sphereID.substring(1));
+      // var categoryIndex = parseInt(sphereID.substring(1));
+      var categoryIndex = d.categoryIndex;
       d3.select("#c" + categoryIndex).classed("highlight", true); // .approver-group of specific approver
+      d3.select("#average-guide" + categoryIndex).classed("highlight", true);
 
       d3.select(this).on("mouseleave", approvalMouseLeave);
 
@@ -515,7 +570,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
       subUnits.forEach(function (t, index) {
 
         // var approverIndex = (dataToShow == ZOOM_DATA) ? index : t.approverIndex;
-        var categoryIndex = index;
+        var categoryIndex = t.categoryIndex;
 
         var elements = dataToShow == ZOOM_DATA ? t.zoomItems : t.items;
         var className = classModifier + (foreground ? "sphere" : "sphere-background");
@@ -761,6 +816,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
   drawCircularMarkers();
   drawSigmaSlicesOuter();
   drawSpheresGuidelines();
+  drawAverageMarkers();
   drawSigmaSlicesInner();
   drawSpheres();
   drawCenterSphere();
@@ -770,6 +826,12 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
     d3.select(".detailed-group").insert(function() {
       return d3.select(".detailed-group .slices-inner").remove().node();
     }, ".zoom-sphere-background");
+  }
+  else {
+    d3.select(".detailed-group .center-sphere").raise();
+    d3.select(".detailed-group").insert(function() {
+      return d3.select(".detailed-group .slices-inner").remove().node();
+    }, ".sphere-background");
   }
 
 }

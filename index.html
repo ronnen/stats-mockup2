@@ -23,6 +23,7 @@
 <script src="javascripts/configure3.js"></script>
 <script src="javascripts/benchmark.js"></script>
 <script src="javascripts/ratesapi.js"></script>
+<script src="javascripts/groupApprovals.js"></script>
 <script>
     var debugMode = false;
     const FADE_HIDDEN = true;
@@ -153,7 +154,7 @@
                 </div>
             </div>
         </div>
-        <div id="anomalies-view" class="stats-filter small-toggles-container anomalies-view">
+        <div id="anomalies-view" class="stats-filter anomalies-view">
             <div class="filter-header">
                 <div class="stats-filter-title">Anomalies Detection</div>
             </div>
@@ -162,6 +163,9 @@
                 <div class="switch-container">
                     <div class="switch-handle"></div>
                 </div>
+            </div>
+            <div class="group-approval-button-container">
+                <div class="group-approval-button">Configure</div>
             </div>
         </div>
         <div id="approval-type-switches">
@@ -303,5 +307,18 @@
         </filter>
     </defs>
 </svg>
+
+<div class="dialog group-approvals-dialog">
+    <div class="caption">
+        <div class="primary">Group line items</div>
+        <div class="secondary">Mark the fields that determine same approval</div>
+    </div>
+    <div class="fields">
+    </div>
+    <div class="actions">
+        <div class="cancel">Cancel</div>
+        <div class="set">Set</div>
+    </div>
+</div>
 
 </body>

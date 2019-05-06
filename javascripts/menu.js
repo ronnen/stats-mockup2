@@ -698,6 +698,9 @@ function drawMenu(criteria) {
     window.addEventListener("endBenchmarkState", state.endBenchmarkStateListener);
   }
 
+  d3.select(".group-approval-button")
+    .on("click", groupApprovals);
+
   function showMenu() {
     d3.select(".menu-right").style("right", 0);
     d3.select(".mobile-menu-tab").classed("on", false);

@@ -95,7 +95,7 @@ ID76,Finance,Stacy Hoolahan,Purchase,currency,Julian Morelli,28491.96,28491.96,U
 ID77,Finance,Stacy Hoolahan,Purchase,currency,Reto Wettstein,146398.98,146398.98,USD,52.46,3-Dec-18,General 08,1,146398.98,USD,146398.98\n\
 ID78,Finance,Stacy Hoolahan,Purchase,currency,Hector Gallo De Diego,200419.15,200419.15,USD,55.42,14-Nov-18,General 09,1,200419.15,USD,200419.15\n\
 ID79,Finance,Stacy Hoolahan,Purchase,currency,Sharansh Srivastava,263631.13,263631.13,USD,61.14,16-Dec-18,General 09,1,263631.13,USD,263631.13\n\
-ID80,Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,472030.27,472030.27,USD,65.03,6-Nov-18,General 09,1,472030.27,USD,472030.27\n\
+ID80,Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,972030.27,972030.27,USD,65.03,6-Nov-18,General 09,1,972030.27,USD,972030.27\n\
 ID81,Finance,Stacy Hoolahan,Purchase,currency,Germano Bertoldo,99097.11,99097.11,USD,70.12,29-Oct-18,General 09,1,99097.11,USD,99097.11\n\
 ID82,Finance,Stacy Hoolahan,Purchase,currency,Kumaresan MS,45194.44,45194.44,USD,74.09,15-Nov-18,General 09,1,45194.44,USD,45194.44\n\
 ID83,Finance,Stacy Hoolahan,Purchase,currency,Fernando Tezanos Pinto,189659.04,189659.04,USD,77.17,13-Nov-18,General 09,1,189659.04,USD,189659.04\n\
@@ -141,6 +141,8 @@ ID122,G&A,Chris McCoy,Purchase,currency,Dennis Frimpong,7247.8,7247.8,USD,57.28,
 ID123,G&A,Chris McCoy,Purchase,currency,Tom Tatarczuk,252423.98,252423.98,USD,60.17,6-Dec-18,General 12,1,252423.98,USD,252423.98\n\
 ID124,G&A,Chris McCoy,Purchase,currency,Sunny Davis,37698.2,37698.2,USD,76.15,14-Nov-18,General 12,1,37698.2,USD,37698.2\n\
 ID125,Finance,Chris McCoy,Purchase,currency,Willem Geyer,357392.06,357392.06,USD,126.3,5-Nov-18,General,1,357392.06,USD,357392.06\n\
+ID126,Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,111111.33,111111.33,USD,45.12,6-Nov-18,General 09,1,111111.33,USD,111111.33\n\
+ID127,Finance,Stacy Hoolahan,Purchase,currency,Chris McCoy,64000.0,64000.0,USD,88.5,6-Nov-18,General 09,1,64000.0,USD,64000.0\n\
 ';
 
 var mainUnits;
@@ -356,8 +358,18 @@ state.dataFunc.sigma = function(request) {
   request.approvers.forEach(function(approver) {
     approver.approvals.forEach(function(approval) {
       approval.items.forEach(function(item) {
-        categories[item.itemCategory] = categories[item.itemCategory] || {sum: 0, count: 0, sumSqr: 0, items: []};
+        categories[item.itemCategory] = categories[item.itemCategory] || {
+          sum: 0,
+          count: 0,
+          sumSqr: 0,
+          items: [],
+          presentation: item.parentApproval.presentation,
+          totalCount: 0, // how many items in this category (could be multiple times in approval)
+          above3sigma: 0,
+          valueAbove3sigma: 0,
+        };
         if (!itemAlreadyExist(item, categories[item.itemCategory].items)) {
+          categories[item.itemCategory].totalCount ++;
           categories[item.itemCategory].sum += item.itemValueUSD;
           categories[item.itemCategory].count ++;
           categories[item.itemCategory].items.push(item);
@@ -371,6 +383,16 @@ state.dataFunc.sigma = function(request) {
     categories[category].meanValue = categories[category].sum / (categories[category].count || 1);
   });
 
+  // TODO assign request.categories and continue calculations on this new object
+
+  // add up all squared deviations from mean
+  Object.keys(categories).forEach(function(category) {
+    categories[category].items.forEach(function(item) {
+      categories[category].sumSqr += Math.pow(item.itemValueUSD - categories[category].meanValue, 2);
+    });
+  });
+
+/*
   // add up all squared deviations from mean
   request.approvers.forEach(function(approver) {
     approver.approvals.forEach(function(approval) {
@@ -379,17 +401,43 @@ state.dataFunc.sigma = function(request) {
       });
     })
   });
+*/
 
   // calculate std deviation for each category
   Object.keys(categories).forEach(function(category) {
     categories[category].sigma = Math.sqrt(categories[category].sumSqr/categories[category].count);
-    // categories[category].sigmaX3 = categories[category].sigma * 3;
   });
 
   request.maxSigmaDev = 0;
   request.above3sigma = 0; // several line items from same approval might add to this number
   request.valueAbove3sigma = 0; // several line items from same approval might add to this number
 
+  // compute sigma value for each line item (not keeping anything at the approval level)
+  Object.keys(categories).forEach(function(c) {
+    var category = categories[c];
+
+    category.items.forEach(function(item) {
+      if (category.presentation == "currency") {
+        item.sigmaDev = (item.itemValueUSD > category.meanValue) ?
+        (item.itemValueUSD - category.meanValue) / (category.sigma || 1) : 0;
+      }
+      else {
+        item.sigmaDev = Math.abs(item.itemValueUSD - category.meanValue) / (category.sigma || 1);
+      }
+
+      if (item.sigmaDev > request.maxSigmaDev) {
+        request.maxSigmaDev = item.sigmaDev;
+      }
+      if (item.sigmaDev >= 3) {
+        category.above3sigma ++;
+        category.valueAbove3sigma += item.itemValueUSD;
+        request.above3sigma ++;
+        request.valueAbove3sigma += item.itemValueUSD;
+      }
+    });
+  });
+
+/*
   // compute sigma value for each line item
   request.approvers.forEach(function(approver) {
     approver.approvals.forEach(function(approval) {
@@ -397,7 +445,13 @@ state.dataFunc.sigma = function(request) {
 
       approval.items.forEach(function(item) {
         var category = categories[item.itemCategory];
-        item.sigmaDev = Math.abs(item.itemValueUSD - category.meanValue)/(category.sigma || 1);
+        if (approval.presentation == "currency") {
+          item.sigmaDev = (item.itemValueUSD > category.meanValue) ?
+            (item.itemValueUSD - category.meanValue) / (category.sigma || 1) : 0;
+        }
+        else {
+          item.sigmaDev = Math.abs(item.itemValueUSD - category.meanValue) / (category.sigma || 1);
+        }
 
         if (item.sigmaDev > approval.sigmaDev) {
           approval.sigmaDev = item.sigmaDev;
@@ -407,15 +461,26 @@ state.dataFunc.sigma = function(request) {
           request.maxSigmaDev = item.sigmaDev;
         }
         if (item.sigmaDev >= 3) {
+          category.above3sigma ++;
+          category.valueAbove3sigma += item.itemValueUSD;
           request.above3sigma ++;
           request.valueAbove3sigma += item.itemValueUSD;
         }
       });
     })
   });
+*/
 
-  // plant category name
-  Object.keys(categories).forEach(function(c) {categories[c].categoryName = c;});
+  // plant category name and filter out anything with sigma less than 0.5
+  Object.keys(categories).forEach(function(c, index) {
+    categories[c].categoryName = c;
+    categories[c].categoryIndex = index;
+    categories[c].items = categories[c].items.filter(function(item) {
+      item.categoryIndex = index;
+      return item.sigmaDev >= 0.5;
+    })
+  });
+
   // sort categories alphabetically
   categories = Object.keys(categories).sort().map(function(c) {return categories[c]});
   request.categories = categories;
@@ -446,19 +511,22 @@ state.dataFunc.anomaliesZoomLevel = function(request, level) {
     .range([0, buckets]);
 */
 
-  request.categories.forEach((category, categoryIndex) => {
+  request.categories.forEach((category) => {
     var data = [];
 
     category.items.forEach(item => {
       var bucketedIndex = Math.min(Math.round(item.sigmaDev/levelGranularity[level]), buckets-1);
       if (!data[bucketedIndex]) data[bucketedIndex] = {sigmaDev: 0, itemValueUSD: 0, count: 0};
       data[bucketedIndex].sigmaDev += item.sigmaDev;
-      data[bucketedIndex].itemValueUSD += item.itemValueUSD;
-      // data[bucketedIndex].hidden += item.hidden ? 1 : 0;
+      // data[bucketedIndex].itemValueUSD += item.itemValueUSD;
       data[bucketedIndex].count ++;
+      // calculating the new average based on the addition of a new sample
+      data[bucketedIndex].itemValueUSD =
+        (data[bucketedIndex].itemValueUSD*(data[bucketedIndex].count-1) + item.itemValueUSD) / data[bucketedIndex].count;
       // TODO review class markers
-      item.anomalyZoomBucket = "a" + categoryIndex + "b" + bucketedIndex;
-      data[bucketedIndex].anomalyZoomBucket = "a" + categoryIndex + "b" + bucketedIndex; // to keep track of which approvals belongs to each bucket
+      item.anomalyZoomBucket = "a" + category.categoryIndex + "b" + bucketedIndex;
+      data[bucketedIndex].anomalyZoomBucket = "a" + category.categoryIndex + "b" + bucketedIndex; // to keep track of which approvals belongs to each bucket
+      data[bucketedIndex].categoryIndex = category.categoryIndex;
     });
 
     data = data.filter(t => t !== undefined);

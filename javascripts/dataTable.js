@@ -57,7 +57,7 @@ function refreshTable(mainUnits) {
         enteredDataRows
           .append("div")
           .attr("class", "value data")
-          .text(function(d) {return state.common.typedValueToTextShort(d.parentApproval.reportedValue || d.parentApproval.value, d.parentApproval.presentation)});
+          .text(function(d) {return state.common.sigmaToText(d.parentApproval.reportedValue || d.parentApproval.value, d.parentApproval)});
         enteredDataRows
           .append("div")
           .attr("class", "category data")
@@ -65,7 +65,7 @@ function refreshTable(mainUnits) {
         enteredDataRows
           .append("div")
           .attr("class", "item data")
-          .text(function(d) {return state.common.typedValueToTextShort(d.itemValueUSD, d.parentApproval.presentation)});
+          .text(function(d) {return state.common.sigmaToText(d.itemValueUSD, d.parentApproval)});
         enteredDataRows
           .append("div")
           .attr("class", "table-wait-time data")

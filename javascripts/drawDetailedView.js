@@ -274,7 +274,9 @@ function drawDetailedView(selectedUnit, drawOverviewParam) {
       .enter()
       .append("svg:g")
       .attr("class", "average-guide")
-      .attr("id", function(d,i) {return "average-guide" + i})
+      .attr("id", function(d,i) {
+        return "average-guide" + d.approverIndex; // d.approver.approverIndex;
+      })
       .attr("transform", function (d) {
         var sampleDegrees = -180 + state.approvalsRadialStart +
           (state.approvalsRadialEnd - state.approvalsRadialStart) * (d.average / mainObject.maxWait);
