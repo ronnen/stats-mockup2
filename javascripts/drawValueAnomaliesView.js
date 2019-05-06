@@ -499,7 +499,8 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
       }
       else {
         // var sphereID = d3.select(this).attr("id"); //e.g.  a3b8 will be matched with guide a3g8
-        var approvalId = d3.select(this).attr("approval-id"); //e.g.  a3b8 will be matched with guide a3g8
+        var approvalId = d3.select(this).attr("approval-id");
+        var itemIndex = d3.select(this).attr("item-index");
         d3.select(this).classed("locked", true);
         d3.select(".detailed-group").classed("locked", true);
         var currentApprovalCircle = d3.select(this).select(".approval-circle-foreground");
@@ -523,7 +524,7 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
         if (dataToShow == ZOOM_DATA && d.anomalyZoomBucket)
           d3.select(".table-rows").selectAll(`.data-row[data-zoom=${d.anomalyZoomBucket}]`).classed("highlight", true);
         else
-          d3.selectAll(`.data-row[approval-id="${approvalId}"]`).classed("highlight", true); //
+          d3.selectAll(`.data-row[approval-id="${approvalId}"][item-index="${itemIndex}"`).classed("highlight", true); //
 
         d3.select(".table-container").classed("on", true);
 
