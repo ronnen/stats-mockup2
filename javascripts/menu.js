@@ -751,6 +751,39 @@ function drawMenu(criteria) {
       })
     });
 
+  // initialize loading indicator
+  if (state.firstTimeDrawDetailedView && !d3.select(".loading-animation svg").size()) {
+    var svg = d3.select(".loading-animation")
+      .append("svg")
+      .attr("width", 100)
+      .attr("height", 100);
+
+    var loadingIndicatorGroup = svg
+      .append("g")
+      .attr("class","loading-indicator-group")
+      .style("transform","translate(50%,50%)");
+
+    var slicesData = [0,1,2,3,4,5];
+    var sliceDegrees = 360/slicesData.length;
+
+    loadingIndicatorGroup
+      .selectAll(".indicator-slice")
+      .data(slicesData)
+      .enter()
+      .append("svg:path")
+      .attr("class", function(d,i) {return "indicator-slice " + (i%2 ? "odd" : "even")})
+      .attr("stroke-width", 0)
+      .attr("d",  function(d) {
+        var arc = d3.arc()
+          .startAngle(state.common.toRadians(d * sliceDegrees))
+          .endAngle(state.common.toRadians((d+1) * sliceDegrees))
+          .innerRadius(0)
+          .outerRadius(50);
+        return arc();
+      });
+
+  }
+
   /*
     if (state.noInteraction) {
       window.addEventListener("openLargestUnit", function() {

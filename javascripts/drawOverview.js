@@ -81,6 +81,8 @@ function drawOverview(mainUnits) {
 
     refreshTable(mainUnits);
     d3.select(".mobile-menu-tab").classed("on", true);
+
+    d3.select(".loading-shield").classed("on", false);
   }
 
   var width = parseInt(d3.select('.svg-container').style('width')),

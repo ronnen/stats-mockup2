@@ -2123,3 +2123,108 @@ body.dialog-on .mobile-menu-tab, body.dialog-on .mobile-menu-close {
     min-height: 20px;
     border-bottom: 1px solid black;
 }
+
+.loading-shield {
+    display: none;
+}
+
+.loading-shield.on {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.indicator-slice {
+}
+.indicator-slice.odd {
+    fill: rgb(88,92,122);;
+}
+.indicator-slice.even {
+    fill: rgb(143,158,239);
+}
+
+.loading-animation{
+    width: 100px;
+    height: 100px;
+    background-color: transparent;
+
+    animation: loadingAnimationFrames linear 1.0s;
+    animation-iteration-count: infinite;
+    transform-origin: 50% 50%;
+    animation-fill-mode:forwards; /*when the spec is finished*/
+    -webkit-animation: loadingAnimationFrames linear 2.0s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-transform-origin: 50% 50%;
+    -webkit-animation-fill-mode:forwards; /*Chrome 16+, Safari 4+*/
+    -moz-animation: loadingAnimationFrames linear 1.0s;
+    -moz-animation-iteration-count: infinite;
+    -moz-transform-origin: 50% 50%;
+    -moz-animation-fill-mode:forwards; /*FF 5+*/
+    -o-animation: loadingAnimationFrames linear 1.0s;
+    -o-animation-iteration-count: infinite;
+    -o-transform-origin: 50% 50%;
+    -o-animation-fill-mode:forwards; /*Not implemented yet*/
+    -ms-animation: loadingAnimationFrames linear 1.0s;
+    -ms-animation-iteration-count: infinite;
+    -ms-transform-origin: 50% 50%;
+    -ms-animation-fill-mode:forwards; /*IE 10+*/
+}
+
+@keyframes loadingAnimationFrames{
+    0% {
+        /*opacity:0;*/
+        transform:  rotate(-360deg) ;
+    }
+    100% {
+        /*opacity:1;*/
+        transform:  rotate(0deg) ;
+    }
+}
+
+@-moz-keyframes loadingAnimationFrames{
+    0% {
+        opacity:0;
+        -moz-transform:  rotate(-200deg) ;
+    }
+    100% {
+        opacity:1;
+        -moz-transform:  rotate(0deg) ;
+    }
+}
+
+@-webkit-keyframes loadingAnimationFrames {
+    0% {
+        /*opacity:0;*/
+        -webkit-transform:  rotate(-200deg) ;
+    }
+    100% {
+        /*opacity:1;*/
+        -webkit-transform:  rotate(0deg) ;
+    }
+}
+
+@-o-keyframes loadingAnimationFrames {
+    0% {
+        opacity:0;
+        -o-transform:  rotate(-200deg) ;
+    }
+    100% {
+        opacity:1;
+        -o-transform:  rotate(0deg) ;
+    }
+}
+
+@-ms-keyframes loadingAnimationFrames {
+    0% {
+        opacity:0;
+        -ms-transform:  rotate(-200deg) ;
+    }
+    100% {
+        opacity:1;
+        -ms-transform:  rotate(0deg) ;
+    }
+}

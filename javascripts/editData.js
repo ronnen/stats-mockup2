@@ -148,13 +148,17 @@ function openEditDialog() {
   });
 
   d3.select(".load-edit").on("click", function() {
-    mainUnits = parseCSV(editor.getValue());
+    d3.select(".loading-shield").classed("on", true);
 
-    d3.select(".shield").classed("on", false);
-    d3.select(".loadDataDialog").classed("on", false);
-    d3.select("body").classed("dialog-on", false);
+    setTimeout(function() {
+      mainUnits = parseCSV(editor.getValue());
 
-    drawOverview(mainUnits);
+      d3.select(".shield").classed("on", false);
+      d3.select(".loadDataDialog").classed("on", false);
+      d3.select("body").classed("dialog-on", false);
+
+      drawOverview(mainUnits);
+    }, 100);
 
   });
 
