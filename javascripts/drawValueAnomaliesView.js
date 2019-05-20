@@ -830,9 +830,11 @@ function drawValueAnomaliesView(selectedUnit, drawOverviewParam) {
   }
   else {
     d3.select(".detailed-group .center-sphere").raise();
-    d3.select(".detailed-group").insert(function() {
-      return d3.select(".detailed-group .slices-inner").remove().node();
-    }, ".sphere-background");
+    if (d3.select(".detailed-group .slices-inner").size()) {
+      d3.select(".detailed-group").insert(function() {
+        return d3.select(".detailed-group .slices-inner").remove().node();
+      }, ".sphere-background");
+    }
   }
 
 }
