@@ -135,11 +135,18 @@ function openEditDialog() {
     selectionStyle: "text"
   });
   editor.setTheme("ace/theme/monokai");
-  var csv = flattenJSON(mainUnits);
-  editor.setValue(csv);
-  editor.selection.clearSelection();
-  editor.moveCursorTo(0,0);
-  editor.focus();
+
+  d3.select(".loading-shield").classed("on", true);
+  setTimeout(function() {
+    var csv = flattenJSON(mainUnits);
+    editor.setValue(csv);
+    editor.selection.clearSelection();
+    editor.moveCursorTo(0,0);
+    editor.renderer.scrollCursorIntoView({row: 0, column: 0}, 0);
+    // editor.scrollToLine(0,false,false,function() {});
+    editor.focus();
+    d3.select(".loading-shield").classed("on", false);
+  }, 50);
 
   d3.select(".cancel-edit").on("click", function() {
     d3.select(".shield").classed("on", false);
