@@ -1,0 +1,89 @@
+<messaging:emailTemplate subject="ApproveSimple Go Live: {!relatedTo.Account__r.Simple_Name_No_Link__c} | {!IF(relatedTo.Source_System__c=='Other',relatedTo.Homegrown_Source_Platform__c,relatedTo.Source_System__c)} | {!IF(relatedTo.Approval_Type__c=='Custom',relatedTo.Custom_Approval_Type__c,relatedTo.Approval_Type__c)}" recipientType="User" relatedToType="Approval__c">
+    <messaging:htmlEmailBody >
+        <html>
+        <head></head>
+        <apex:variable var="SourceSystem" value="{!IF(relatedTo.Source_System__c=='Other',relatedTo.Homegrown_Source_Platform__c,relatedTo.Source_System__c)}" />
+        <apex:variable var="ApprovalType" value="{!IF(relatedTo.Approval_Type__c=='Custom',relatedTo.Custom_Approval_Type__c,relatedTo.Approval_Type__c)}" />
+        <body style="font-family: arial; color: rgb(58, 58, 58); text-align: center; background: #e5e5e5; margin: 0; padding: 67px 20px 68px;" bgcolor="#e5e5e5">
+
+        <div class="container" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); max-width: 1200px; background: white; margin: 0 auto;">
+
+            <header><div class="header" style="height: 75px; color: white; padding-left: 20px; text-align: left; background: #5C5C5C;" align="left">
+                <img id="capriza-logo" src="https://images.capriza.com/uploads/5e03117a701ada65090127fa17a71bc5.png" style="float: right; width: 90px; height: 25px; margin: 28px;" align="right" /><h1 style="font-size: 24px; font-weight: 700; line-height: 27px; margin: 0; padding: 23px 0 0;">ApproveSimple GO LIVE:<br />{!relatedTo.Account__r.Simple_Name_No_Link__c} | {!SourceSystem} | {!ApprovalType}!</h1>
+            </div>
+            </header><div class="container-inside" style="padding: 35px 40px;">
+
+            <div class="right-box" style="float: right; margin-left: 40px; width: 200px; color: #3a3a3a; text-align: center; padding-bottom: 10px;" align="center">
+                <img id="goliveshine" src="https://www.capriza.com/wp-content/uploads/finance1-resize.png" style="max-width: 200px; height: auto; margin: 0px;" />
+            </div>
+
+
+            <div class="primary" style="text-align: left;" align="left">
+
+                <h2 style="font-size: 16px; font-weight: 700; line-height: 17px; margin: 0; padding: 0;">Company</h2>
+                <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; margin: 5px 0 20px; padding: 0;">{!relatedTo.Company_Description__c}</p>
+
+                <h2 style="font-size: 16px; font-weight: 700; line-height: 17px; margin: 0; padding: 0;">Go Live Date</h2>
+                <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; margin: 5px 0 20px; padding: 0;"><apex:outputtext value="{0,date,MMMM d','  yyyy}"><apex:param value="{!relatedTo.Actual_Golive__c}" /></apex:outputtext></p>
+
+                <h2 style="font-size: 16px; font-weight: 700; line-height: 17px; margin: 0; padding: 0;">Approval Type</h2>
+                <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; margin: 5px 0 20px; padding: 0;">{!ApprovalType}</p>
+
+                <h2 style="font-size: 16px; font-weight: 700; line-height: 17px; margin: 0; padding: 0;">Source System</h2>
+                <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; margin: 5px 0 20px; padding: 0;">{!SourceSystem}</p>
+
+            </div>
+
+            <div class="bubbles" style="clear: both; margin: 0; padding: 40px 0 20px;">
+                <div class="bubble" style="float: left; margin-right: 35px; margin-bottom: 20px; width: 200px; height: 75px; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px; background: #3a3a3a;">
+                    <h3 style="color: #face42; font-size: 16px; font-weight: 700; line-height: 17px; margin: 17px 0 0; padding: 0;">Source App</h3>
+                    <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; color: white; margin: 5px 0 0; padding: 0;">{!relatedTo.Source_System__c}</p>
+                </div>
+
+                <div class="bubble" style="float: left; margin-right: 35px; margin-bottom: 20px; width: 200px; height: 75px; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px; background: #3a3a3a;">
+                    <h3 style="color: #face42; font-size: 16px; font-weight: 700; line-height: 17px; margin: 17px 0 0; padding: 0;">Addressable User Base</h3>
+                    <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; color: white; margin: 5px 0 0; padding: 0;"><apex:outputtext value="{0,number,### users}"><apex:param value="{!relatedTo.Addressable_User_Base__c}" /></apex:outputtext></p>
+                </div>
+
+                <div class="bubble" style="float: left; margin-right: 35px; margin-bottom: 20px; width: 200px; height: 75px; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px; background: #3a3a3a;">
+                    <h3 style="color: #face42; font-size: 16px; font-weight: 700; line-height: 17px; margin: 17px 0 0; padding: 0;">Developer</h3>
+                    <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; color: white; margin: 5px 0 0; padding: 0;">{!relatedTo.Dev_Contact__r.FirstName} {!relatedTo.Dev_Contact__r.LastName}</p>
+                </div>
+
+                <div class="bubble" style="float: left; margin-right: 35px; margin-bottom: 20px; width: 200px; height: 75px; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px; background: #3a3a3a;">
+                    <h3 style="color: #face42; font-size: 16px; font-weight: 700; line-height: 17px; margin: 17px 0 0; padding: 0;">Capriza Involvement</h3>
+                    <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; color: white; margin: 5px 0 0; padding: 0;">{!relatedTo.Dev_Ownership__c}</p>
+                </div>
+            </div>
+
+            <div class="hr" style="clear: both; margin-bottom: 30px; width: 100%; height: 2px; border-bottom-width: 0.5px; border-bottom-color: #4a4a4a; border-bottom-style: dotted; padding: 20px 0;"></div>
+
+            <div class="secondary" style="text-align: left;" align="left">
+
+                <h2 style="font-size: 16px; font-weight: 700; line-height: 17px; margin: 0; padding: 0;">Strong Points</h2>
+                <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; margin: 5px 0 20px; padding: 0;">{!relatedTo.Strong_Points__c}</p>
+
+                <h2 style="font-size: 16px; font-weight: 700; line-height: 17px; margin: 0; padding: 0;">Needs Improvement</h2>
+                <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; margin: 5px 0 20px; padding: 0;">{!relatedTo.Needs_Improvement__c}</p>
+
+                <h2 style="font-size: 16px; font-weight: 700; line-height: 17px; margin: 0; padding: 0;">Technical Challenges</h2>
+                <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; margin: 5px 0 20px; padding: 0;">{!relatedTo.Technical_Challenges__c}</p>
+
+                <h2 style="font-size: 16px; font-weight: 700; line-height: 17px; margin: 0; padding: 0;">Approval Details</h2>
+                <p style="font-size: 13px; font-weight: 400; line-height: 15px; white-space: pre-line; margin: 5px 0 20px; padding: 0;"><a href="https://capriza.my.salesforce.com/{!relatedTo.Id}">Salesforce Link</a></p>
+
+            </div>
+
+        </div>
+
+            <footer><div class="footer" style="height: 50px; color: white; background: #5C5C5C;">
+                <h1 style="font-size: 20px; font-weight: 700; line-height: 22px; margin: 0; padding: 14px 0 0;">Congratulations, Team!</h1>
+            </div>
+            </footer>
+        </div>
+
+        </body>
+        </html>
+
+    </messaging:htmlEmailBody>
+</messaging:emailTemplate>
